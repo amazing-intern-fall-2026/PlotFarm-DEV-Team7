@@ -1,29 +1,33 @@
-name: Auto Backlog Issue Status Transition
+name: Auto Backlog & QA Status Transition
 
 on:
   pull_request:
     types: [opened, reopened, closed]
+    branches:
+      - develop
+      - main
   issues:
     types: [opened]
 
 jobs:
   update-backlog-issue:
-    name: 📌 Update Backlog Issue Status
+    name: 📌 Update Backlog & QA Status
     runs-on: ubuntu-latest
 
     steps:
-      - name: Log Issue & PR Link Event
+      - name: Log Issue & PR Event Metadata
         run: |
           echo "Processing PR #${{ github.event.pull_request.number }} action: ${{ github.event.action }}"
           echo "PR Title: ${{ github.event.pull_request.title }}"
-          echo "PR Merged: ${{ github.event.pull_request.merged }}"
+          echo "Target Branch: ${{ github.event.pull_request.base.ref }}"
+          echo "PR Merged Status: ${{ github.event.pull_request.merged }}"
 
-      - name: Auto Transition Issue State
-        if: github.event.pull_request.merged == true
+      - name: Auto Transition Status to [In Review] on PR Open
+        if: (github.event.action == 'opened' || github.event.action == 'reopened') && github.event.pull_request != null
         run: |
-          echo "PR merged! Transitioning linked User Story / Issue to DONE."
+          echo "PR opened! Automatically transitioning linked User Story / Ticket to [In Review]."
 
-      - name: Auto Transition Issue State On Open
-        if: github.event.action == 'opened' && github.event.pull_request != null
+      - name: Auto Transition Status to [Ready for QA] on PR Merge
+        if: github.event.action == 'closed' && github.event.pull_request.merged == true
         run: |
-          echo "PR opened! Transitioning linked User Story / Issue to IN PROGRESS."
+          echo "PR merged into develop/main! Automatically transitioning linked User Story to [Ready for QA]."
