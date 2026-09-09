@@ -2,7 +2,7 @@
  * DESIGN TOKENS — PlotFarm Design System
  * Tone: BioCloud Farming — Light Mode
  * Font: Plus Jakarta Sans
- * Primary: #1B5E20 (Forest Green)
+ * Primary: #16A34A (Bio Green)
  * Secondary: #D97706 (Harvest Amber)
  * Neutral: #1F2937 (Dark Navy)
  *
@@ -24,41 +24,41 @@
     --card-foreground: 217 33% 17%;
     --popover: 0 0% 100%;
     --popover-foreground: 217 33% 17%;
-    --primary: 125 55% 24%;
+    --primary: 142 72% 36%;
     --primary-foreground: 0 0% 100%;
     --secondary: 35 92% 44%;
     --secondary-foreground: 0 0% 100%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215 16% 47%;
-    --accent: 125 35% 94%;
-    --accent-foreground: 125 55% 24%;
+    --accent: 142 60% 95%;
+    --accent-foreground: 142 72% 36%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 125 55% 24%;
+    --ring: 142 72% 36%;
     --radius: 0.5rem;
   }
 }
 
-/* ── PRIMARY COLOR — Forest Green ────────────────────────── */
+/* ── PRIMARY COLOR — Bio Green ───────────────────────────── */
 :root {
-  --color-primary-950: #0a1e0b;
-  --color-primary-900: #102712;
-  --color-primary-800: #1b5e20;   /* #1B5E20 — brand anchor */
-  --color-primary-700: #2e7d32;   /* #2E7D32 — tertiary */
-  --color-primary-600: #388e3c;
-  --color-primary-500: #43a047;
-  --color-primary-400: #66bb6a;
-  --color-primary-300: #81c784;
-  --color-primary-200: #a5d6a7;
-  --color-primary-100: #c8e6c9;
-  --color-primary-50:  #e8f5e9;
+  --color-primary-950: #052e16;
+  --color-primary-900: #14532d;
+  --color-primary-800: #166534;
+  --color-primary-700: #15803d;
+  --color-primary-600: #16a34a;
+  --color-primary-500: #22c55e;
+  --color-primary-400: #4ade80;
+  --color-primary-300: #86efac;
+  --color-primary-200: #bbf7d0;
+  --color-primary-100: #dcfce7;
+  --color-primary-50:  #f0fdf4;
 
   /* Semantic aliases */
-  --color-primary:        var(--color-primary-800);
-  --color-primary-hover:  var(--color-primary-700);
-  --color-primary-active: var(--color-primary-900);
+  --color-primary:        var(--color-primary-600);
+  --color-primary-hover:  var(--color-primary-500);
+  --color-primary-active: var(--color-primary-700);
   --color-primary-subtle: var(--color-primary-50);
   --color-primary-muted:  var(--color-primary-100);
 }
@@ -124,7 +124,7 @@
   --color-text-disabled:  var(--color-neutral-300);
   --color-text-inverse:   #ffffff;
   --color-text-on-primary: #ffffff;
-  --color-text-brand:     var(--color-primary-800);
+  --color-text-brand:     var(--color-primary-600);
 }
 
 /* ── BORDER SCALE ─────────────────────────────────────────── */
@@ -220,7 +220,7 @@
   --shadow-xl:  0 20px 25px rgba(0, 0, 0, 0.10), 0 10px 10px rgba(0, 0, 0, 0.04);
 
   /* Brand-tinted shadow */
-  --shadow-primary: 0 4px 14px rgba(27, 94, 32, 0.25);
+  --shadow-primary: 0 4px 14px rgba(22, 163, 74, 0.25);
   --shadow-secondary: 0 4px 14px rgba(217, 119, 6, 0.25);
 }
 
