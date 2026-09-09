@@ -1,4 +1,3 @@
-import path from "path";
 import type { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
@@ -11,18 +10,6 @@ const config: StorybookConfig = {
   framework: {
     name: "@storybook/react-vite",
     options: {}
-  },
-  async viteFinal(config) {
-    return {
-      ...config,
-      resolve: {
-        ...config.resolve,
-        alias: {
-          ...config.resolve?.alias,
-          "@": path.resolve(__dirname, "../src")
-        }
-      }
-    };
   }
 };
 
