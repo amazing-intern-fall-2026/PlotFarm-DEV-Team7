@@ -3,3 +3,8 @@ export * from "./Badge";
 export * from "./Input";
 export * from "./Card";
 export * from "./Separator";
+export * from "./Avatar";
+export * from "./RichTextarea";
+export * from "./ActionButton";
+export * from "./Tag";
+export * from "./SearchBar";
