@@ -11,3 +11,7 @@ export * from "./SearchBar";
 export * from "./Skeleton";
 export * from "./EmptyState";
 export * from "./UserHoverCard";
+export * from "./MediaGrid";
+export * from "./ReactionPicker";
+export * from "./CommentThread";
+export * from "./PostCard";
