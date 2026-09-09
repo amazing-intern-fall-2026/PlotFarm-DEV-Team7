@@ -4,7 +4,7 @@ import { MediaGrid } from "./MediaGrid";
 const sampleImages = [
   {
     id: "1",
-    url: "https://images.unsplash.com/photo-1592417817098-8f3d6910985b?w=800&auto=format&fit=crop&q=80",
+    url: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&auto=format&fit=crop&q=80",
     alt: "Vườn rau thủy canh xà lách Romaine"
   },
   {

@@ -24,7 +24,7 @@ export const WithLinkPreview: Story = {
       url: "https://plotfarm.vn/blog/tiet-kiem-nuoc-voi-tuoi-nho-giot",
       title: "Cẩm nang triển khai hệ thống tưới nhỏ giọt tự động chuẩn Israel",
       description: "Hướng dẫn chi tiết từ khâu thiết kế đường ống, béc tưới đến việc cài đặt bộ hẹn giờ thông minh.",
-      image: "https://images.unsplash.com/photo-1592417817098-8f3d6910985b?w=300&auto=format&fit=crop&q=80",
+      image: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=300&auto=format&fit=crop&q=80",
       domain: "plotfarm.vn"
     },
     maxCharacters: 300
