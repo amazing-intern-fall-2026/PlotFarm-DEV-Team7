@@ -17,4 +17,6 @@
  *
  * TODO: Implement sau khi các Zustand store được implement trong shared/stores
  */
-export {};
+import { describe } from 'vitest';
+
+describe.todo('shared/stores — authStore (setUser, clearUser, isAuthenticated), uiStore (toggleSidebar, setTheme)');

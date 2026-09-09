@@ -21,3 +21,6 @@
  *
  * TODO: Implement sau khi exceptions được implement
  */
+import { describe } from 'vitest';
+
+describe.todo('common/exceptions — HttpException subclasses (400, 401, 403, 404, 409, 500) statusCode tests');

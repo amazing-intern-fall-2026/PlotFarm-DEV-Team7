@@ -14,4 +14,6 @@
  *
  * TODO: Implement sau khi axios instance và interceptors được implement
  */
-export {};
+import { describe } from 'vitest';
+
+describe.todo('shared/api — axios base client, interceptors, wrapper methods');

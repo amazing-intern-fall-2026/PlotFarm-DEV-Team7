@@ -23,3 +23,6 @@
  *
  * TODO: Implement sau khi plotsController và plotsRouter được implement
  */
+import { describe } from 'vitest';
+
+describe.todo('plots.controller — CRUD endpoints, authGuard, roleGuard HTTP response tests');

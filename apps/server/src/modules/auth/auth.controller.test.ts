@@ -22,3 +22,6 @@
  *
  * TODO: Implement sau khi authController và authRouter được implement
  */
+import { describe } from 'vitest';
+
+describe.todo('auth.controller — register, login, refresh, logout HTTP response tests');

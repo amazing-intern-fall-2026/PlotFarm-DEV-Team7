@@ -16,4 +16,6 @@
  *
  * TODO: Implement sau khi từng utility function được implement trong shared/lib
  */
-export {};
+import { describe } from 'vitest';
+
+describe.todo('shared/lib — formatDate, formatCurrency, cn, debounce, paginate');

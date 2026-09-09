@@ -21,3 +21,6 @@
  *
  * TODO: Implement sau khi sensorsController và sensorsRouter được implement
  */
+import { describe } from 'vitest';
+
+describe.todo('sensors.controller — ingest, getReadings, getLatest, getStats HTTP response tests');

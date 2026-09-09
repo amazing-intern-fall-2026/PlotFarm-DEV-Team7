@@ -23,3 +23,6 @@
  *
  * TODO: Implement sau khi usersService và Prisma schema User được implement
  */
+import { describe } from 'vitest';
+
+describe.todo('users.service — getMe, updateMe, getAllUsers, updateUserRole business logic tests');

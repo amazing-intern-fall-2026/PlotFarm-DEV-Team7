@@ -23,3 +23,6 @@
  *
  * TODO: Implement sau khi authService được implement
  */
+import { describe } from 'vitest';
+
+describe.todo('auth.service — register, login, refresh, logout business logic tests');

@@ -17,3 +17,6 @@
  *
  * TODO: Implement sau khi errorHandler được implement
  */
+import { describe } from 'vitest';
+
+describe.todo('error-handler middleware — HttpException, Zod, Prisma, JWT, unknown error handling tests');

@@ -22,3 +22,6 @@
  *
  * TODO: Implement sau khi plotsService và Prisma schema Plot/Booking được implement
  */
+import { describe } from 'vitest';
+
+describe.todo('plots.service — getPlots, getPlotById, createPlot, updatePlot, deletePlot business logic tests');

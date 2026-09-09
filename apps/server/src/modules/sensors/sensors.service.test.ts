@@ -22,3 +22,6 @@
  *
  * TODO: Implement sau khi sensorsService và Prisma schema SensorReading được implement
  */
+import { describe } from 'vitest';
+
+describe.todo('sensors.service — ingestReading, getReadings, getLatestReading, getStatsSummary business logic tests');

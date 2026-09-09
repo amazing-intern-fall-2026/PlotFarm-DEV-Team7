@@ -18,3 +18,6 @@
  *
  * TODO: Implement sau khi từng util function được implement
  */
+import { describe } from 'vitest';
+
+describe.todo('common/utils — sendSuccess, sendError, parsePagination, hashPassword, comparePassword, signJwt, verifyJwt');

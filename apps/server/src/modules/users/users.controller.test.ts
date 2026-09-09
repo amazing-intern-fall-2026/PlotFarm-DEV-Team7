@@ -22,3 +22,6 @@
  *
  * TODO: Implement sau khi usersController và usersRouter được implement
  */
+import { describe } from 'vitest';
+
+describe.todo('users.controller — getMe, updateMe, getAllUsers, updateUserRole HTTP response tests');
