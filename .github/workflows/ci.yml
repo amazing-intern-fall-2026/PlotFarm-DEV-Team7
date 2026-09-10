@@ -2,9 +2,9 @@ name: Plot Farm Monorepo CI Pipeline
 
 on:
   push:
-    branches: ["*"]
+    branches: ["**"]
   pull_request:
-    branches: ["*"]
+    branches: ["**"]
 
 jobs:
   lint-and-typecheck:
