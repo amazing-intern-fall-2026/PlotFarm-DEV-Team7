@@ -44,6 +44,7 @@ erDiagram
 
     USERS {
         uuid id PK
+        varchar user_code UK
         varchar email UK
         varchar phone UK
         varchar password_hash
@@ -57,6 +58,7 @@ erDiagram
     USER_BANK_ACCOUNTS {
         uuid id PK
         uuid user_id FK
+        varchar bank_account_ref UK
         varchar bank_code
         varchar bank_name
         varchar account_number
@@ -66,6 +68,7 @@ erDiagram
 
     CROPS {
         uuid id PK
+        varchar crop_code UK
         varchar slug UK
         jsonb name_i18n
         jsonb description_i18n
@@ -77,6 +80,7 @@ erDiagram
 
     FARMS {
         uuid id PK
+        varchar farm_code UK
         varchar slug UK
         jsonb name_i18n
         jsonb address_i18n
@@ -86,6 +90,7 @@ erDiagram
 
     PLOTS {
         uuid id PK
+        varchar plot_code UK
         uuid farm_id FK
         uuid assigned_staff_id FK
         varchar plot_number
@@ -152,6 +157,7 @@ erDiagram
 
     FARMING_LOGS {
         uuid id PK
+        varchar log_code UK
         uuid contract_id FK
         uuid staff_id FK
         jsonb stage_name_i18n
@@ -176,9 +182,32 @@ erDiagram
 
 ---
 
-## 2. PHÂN TÍCH 4 TRỤ CỘT THIẾT KẾ ĐÁP ỨNG YÊU CẦU
+## 2. PHÂN TÍCH 5 TRỤ CỘT THIẾT KẾ ĐÁP ỨNG YÊU CẦU
 
-### 2.1. Trụ cột 1: Scale trích xuất người chuyển khoản & Thiết lập đền bù
+### 2.1. Trụ cột 1: Bảo mật định danh bằng Business Code thay cho Database UUID/ID
+* **Vấn đề an ninh (OWASP API Top 10):** Trả trực tiếp Database ID (như `id: 1` hoặc UUID `id: "9b1deb4d-3b7d..."`) ra client làm tăng nguy cơ tấn công **BOLA (Broken Object Level Authorization)** và làm lộ khóa chính nội bộ.
+* **Giải pháp v2.0:** Mọi thực thể có một `code` hoặc `slug` công khai duy nhất:
+  - Khách hàng: `userCode` (`USR-CUST-001`).
+  - Lô đất: `plotCode` (`PLT-A01`).
+  - Cây trồng: `cropCode` (`CRP-TOMATO-01`) & `cropSlug` (`ca-chua-cherry`).
+  - Hợp đồng: `contractCode` (`PF-2026-0915-A01`).
+  - Lệnh đền bù: `compensationCode` (`CMP-2026-0015`).
+  - Nhật ký chăm sóc: `logCode` (`LOG-2026-0035`).
+
+---
+
+### 2.2. Trụ cột 2: Chuẩn phản hồi Envelope `meta - data - pagination` & Chống Spam
+* **Tách riêng `pagination` ở root level:** Không nhét phân trang vào trong `meta`. Client xử lý dữ liệu rõ ràng:
+  - `meta`: Metadata truy vết (`correlationId`, `traceId`, `userCode`, `timestamp`, `rateLimit`).
+  - `data`: Mảng bản ghi hoặc đối tượng dữ liệu.
+  - `pagination`: Thông số trang (`page`, `pageSize`, `totalItems`, `totalPages`, `hasNextPage`, `hasPreviousPage`).
+* **Đánh dấu phát hiện Spam API (`meta.rateLimit.isSpamWarning`):**
+  - Giám sát quota gọi API theo thời gian thực.
+  - Tự động bật `isSpamWarning = true` khi tần suất gọi vượt ngưỡng an toàn trước khi kích hoạt mã lỗi `429 TOO_MANY_REQUESTS`.
+
+---
+
+### 2.3. Trụ cột 3: Scale trích xuất người chuyển khoản & Thiết lập đền bù
 * **Vấn đề thực tiễn:** Khi khách hàng quét VietQR, số tài khoản thanh toán có thể là tài khoản của người thân hoặc tài khoản phụ. Nếu chỉ có bảng `payments` thô sơ, khi nông sản bị ngập lụt, Admin không có dữ liệu để đối soát và không biết tài khoản nào để chuyển tiền đền bù.
 * **Giải pháp 3 tầng:**
   1. **Lớp Tiếp nhận đơn (`payment_orders`):** Quản lý trạng thái đơn thanh toán, chuỗi EMVCo VietQR, thời gian hết hạn (15 phút).
@@ -194,28 +223,18 @@ erDiagram
 
 ---
 
-### 2.2. Trụ cột 2: Hỗ trợ đa ngôn ngữ trên giao diện (Localization / i18n)
+### 2.4. Trụ cột 4: Hỗ trợ đa ngôn ngữ trên giao diện (Localization / i18n)
 * **Giải pháp tối ưu:** Sử dụng **PostgreSQL JSONB** (`name_i18n`, `description_i18n`, `soil_type_i18n`, `stage_name_i18n`).
 * **Tại sao không dùng bảng dịch riêng (`crop_translations`)?**
   - Không phải thực hiện phép `JOIN` 4 - 5 bảng phức tạp cho mỗi câu truy vấn.
   - Tốc độ đọc O(1) từ chỉ mục nhị phân JSONB của PostgreSQL.
   - Hỗ trợ thêm bất kỳ ngôn ngữ mới nào (`vi`, `en`, `ja`, `ko`) mà **không cần chạy migration sửa cấu trúc bảng**.
 * **Trải nghiệm Frontend (DX & UX):**
-  - Backend trả về toàn bộ object đa ngữ. Frontend lưu vào cache (Zustand/React Query). Khi người dùng chuyển đổi ngôn ngữ trên Header, UI render lại ngay lập tức **trong 0ms** mà không tốn thêm request mạng.
+  - Backend trả về toàn bộ object đa ngữ. Frontend lưu vào cache (Zustand/React Query). Khi người dùng click nút đổi cờ `EN ➔ VI` trên Header, UI render lại ngay lập tức **trong 0ms** mà không tốn thêm request mạng.
 
 ---
 
-### 2.3. Trụ cột 3: Thân thiện với UI & Tối ưu hóa truy cập (UI-First Architecture)
-* **Khớp nối hoàn hảo với các UI Components đã xây dựng ở Frontend:**
-  - **`StepCard` & `TimelineItem`:** Lấy dữ liệu từ trường `progress_percent` (0 - 100%) của `contracts` và danh sách tiến trình từ `farming_logs`.
-  - **`SensorPill` & `LiveStreamMonitor`:** Lấy luồng phát `stream_url` từ `plots` và các chỉ số tức thời `temperature`, `humidity`, `soil_moisture` từ `farming_logs`.
-  - **`QRCodePayment`:** Lấy chuỗi `qr_content` chuẩn hóa từ `payment_orders` kèm `expires_at` phục vụ đồng hồ đếm ngược.
-  - **`PlotCard` & `CropCard`:** Hỗ trợ `slug` duy nhất phục vụ Dynamic Routing sạch sẽ cho SEO (`/plots/da-lat-green-a01`).
-* **Soft Delete (`deleted_at`):** Khi một giống cây hoặc mảnh đất ngưng hoạt động, hệ thống chỉ ẩn đi. Hợp đồng cũ của người dùng khi xem lại lịch sử vẫn hiển thị đầy đủ thông tin, không bao giờ bị gãy giao diện (`404 Error`).
-
----
-
-### 2.4. Trụ cột 4: Phân quyền 3 Role & Tính minh bạch nhật ký chăm sóc
+### 2.5. Trụ cột 5: Phân quyền 3 Role & Tính minh bạch nhật ký chăm sóc
 
 #### A. Ma trận phân quyền 3 Role (Customer - Staff - Admin)
 * **`CUSTOMER` (Khách thuê):**
@@ -244,22 +263,22 @@ Hệ thống thiết lập **4 lớp rào chắn kỹ thuật**:
 
 ## 3. DANH MỤC CÁC BẢNG TRONG CƠ SỞ DỮ LIỆU
 
-| STT | Tên bảng | Chức năng nghiệp vụ | Ràng buộc chính |
-| :---: | :--- | :--- | :--- |
-| 1 | `users` | Tài khoản khách hàng, nhân viên, quản trị viên | `email`, `phone` Unique, Soft Delete |
-| 2 | `user_bank_accounts` | Danh sách tài khoản ngân hàng nhận hoàn tiền/đền bù | Khóa ngoại `user_id` |
-| 3 | `farms` | Danh mục các trang trại thực nghiệm đối tác | `slug` Unique, đa ngữ JSONB |
-| 4 | `crops` | Danh mục giống rau củ, tiêu chuẩn sinh trưởng | `slug` Unique, đa ngữ JSONB |
-| 5 | `plots` | Các lô đất cụ thể, liên kết camera và cảm biến | Khóa ngoại `farm_id`, `assigned_staff_id` |
-| 6 | `vouchers` | Mã khuyến mãi và chính sách giảm giá | `code` Unique |
-| 7 | `contracts` | Hợp đồng thuê đất giữa khách hàng và trang trại | `contract_code` Unique, lưu Snapshot giá |
-| 8 | `contract_extra_fees` | Các khoản phụ phí phát sinh ngoài hợp đồng | Khóa ngoại `contract_id` |
-| 9 | `payment_orders` | Đơn thanh toán và nội dung chuỗi VietQR EMVCo | `order_code` Unique, đếm ngược hết hạn |
-| 10 | `payment_transactions` | Sổ cái đối soát ngân hàng lưu nguồn chuyển tiền | `idempotency_key` Unique, lưu raw payload |
-| 11 | `compensations` | Quy trình thẩm duyệt và giải ngân đền bù sự cố | `compensation_code` Unique, duyệt 2 bước |
-| 12 | `farming_logs` | Nhật ký sinh trưởng bất biến đính kèm snapshot IoT | Append-only, liên kết đính chính |
-| 13 | `farming_log_reviews` | Khách hàng đánh giá chất lượng chăm sóc & báo cờ | Khóa ngoại `farming_log_id`, `customer_id` |
-| 14 | `care_requests` | Yêu cầu chăm sóc đặc biệt theo yêu cầu của khách | Khóa ngoại `contract_id` |
-| 15 | `harvests` | Ghi nhận sản lượng thu hoạch thực tế và ảnh chứng thực | Quan hệ 1-1 với `contracts` |
-| 16 | `shipments` | Vận đơn đóng gói và giao hàng đến tận nhà | `tracking_code` Unique, quan hệ 1-1 với `contracts` |
-| 17 | `audit_logs` | Ghi vết kiểm toán hành vi người dùng và hệ thống | Lưu `old_state`, `new_state`, IP |
+| STT | Tên bảng | Public Business Code | Chức năng nghiệp vụ | Ràng buộc chính |
+| :---: | :--- | :--- | :--- | :--- |
+| 1 | `users` | `user_code` | Tài khoản khách hàng, nhân viên, quản trị viên | `user_code`, `email`, `phone` Unique |
+| 2 | `user_bank_accounts` | `bank_account_ref` | Danh sách tài khoản ngân hàng nhận hoàn tiền/đền bù | `bank_account_ref` Unique |
+| 3 | `farms` | `farm_code`, `slug` | Danh mục các trang trại thực nghiệm đối tác | `farm_code`, `slug` Unique, đa ngữ JSONB |
+| 4 | `crops` | `crop_code`, `slug` | Danh mục giống rau củ, tiêu chuẩn sinh trưởng | `crop_code`, `slug` Unique, đa ngữ JSONB |
+| 5 | `plots` | `plot_code`, `plot_number`| Các lô đất cụ thể, liên kết camera và cảm biến | `plot_code` Unique, Khóa ngoại `farm_id` |
+| 6 | `vouchers` | `code` | Mã khuyến mãi và chính sách giảm giá | `code` Unique |
+| 7 | `contracts` | `contract_code` | Hợp đồng thuê đất giữa khách hàng và trang trại | `contract_code` Unique, Snapshot giá |
+| 8 | `contract_extra_fees` | `id` (nội bộ) | Các khoản phụ phí phát sinh ngoài hợp đồng | Khóa ngoại `contract_id` |
+| 9 | `payment_orders` | `order_code` | Đơn thanh toán và nội dung chuỗi VietQR EMVCo | `order_code` Unique, đếm ngược hết hạn |
+| 10 | `payment_transactions` | `gateway_reference` | Sổ cái đối soát ngân hàng lưu nguồn chuyển tiền | `idempotency_key` Unique, lưu raw payload |
+| 11 | `compensations` | `compensation_code` | Quy trình thẩm duyệt và giải ngân đền bù sự cố | `compensation_code` Unique, duyệt 2 bước |
+| 12 | `farming_logs` | `log_code` | Nhật ký sinh trưởng bất biến đính kèm snapshot IoT | `log_code` Unique, Append-only |
+| 13 | `farming_log_reviews` | `id` (nội bộ) | Khách hàng đánh giá chất lượng chăm sóc & báo cờ | Khóa ngoại `farming_log_id`, `customer_id` |
+| 14 | `care_requests` | `request_code` | Yêu cầu chăm sóc đặc biệt theo yêu cầu của khách | `request_code` Unique, Khóa ngoại `contract_id` |
+| 15 | `harvests` | `harvest_code` | Ghi nhận sản lượng thu hoạch thực tế và ảnh chứng thực | `harvest_code` Unique, Quan hệ 1-1 `contracts` |
+| 16 | `shipments` | `tracking_code` | Vận đơn đóng gói và giao hàng đến tận nhà | `tracking_code` Unique, quan hệ 1-1 `contracts` |
+| 17 | `audit_logs` | `audit_code` | Ghi vết kiểm toán hành vi người dùng và hệ thống | `audit_code` Unique, Lưu `old_state`, `new_state` |
