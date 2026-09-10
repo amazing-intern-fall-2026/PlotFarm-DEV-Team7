@@ -10,11 +10,13 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
+    "@prisma/client": "^5.14.0",
     "@repo/database": "workspace:*",
     "@repo/shared": "workspace:*",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",
