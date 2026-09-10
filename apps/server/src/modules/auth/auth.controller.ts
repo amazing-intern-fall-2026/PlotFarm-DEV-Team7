@@ -1,18 +1,48 @@
-/**
- * @module auth/controller
- * @description Auth Controller — xử lý HTTP request/response cho domain Auth.
- *
- * Trách nhiệm:
- *  - Nhận Request từ Express Router, validate input cơ bản
- *  - Gọi AuthService để xử lý business logic
- *  - Trả Response JSON với status code phù hợp (200, 201, 400, 401, 409...)
- *  - KHÔNG chứa business logic — chỉ là tầng HTTP adapter
- *
- * Các handler sẽ implement:
- *  - register(req, res)  → POST /api/auth/register
- *  - login(req, res)     → POST /api/auth/login
- *  - refresh(req, res)   → POST /api/auth/refresh
- *  - logout(req, res)    → POST /api/auth/logout
- *
- * TODO: Implement các handler sau khi AuthService và Prisma schema sẵn sàng
- */
+import type { Request, Response, NextFunction } from "express";
+import { z } from "zod";
+import { TokenService } from "./token.service";
+
+const RefreshSchema = z.object({
+  refreshToken: z.string().min(1, "Refresh token là bắt buộc"),
+});
+
+export class AuthController {
+  /**
+   * Endpoint: POST /api/auth/refresh
+   * Nhận refreshToken và trả về accessToken mới
+   */
+  static async refresh(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      // Validate input với Zod
+      const validatedBody = RefreshSchema.parse(req.body);
+
+      const result = await TokenService.refreshAccessToken(validatedBody.refreshToken);
+
+      res.status(200).json({
+        success: true,
+        data: {
+          accessToken: result.accessToken,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Endpoint: GET /api/auth/profile
+   * Route được bảo vệ bởi authGuard
+   */
+  static async getProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      res.status(200).json({
+        success: true,
+        data: {
+          user: req.user,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+}

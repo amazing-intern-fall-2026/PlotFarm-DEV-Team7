@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/errorHandler";
+import { authRoutes } from "./modules/auth/auth.routes";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.get("/health", (_req: Request, res: Response) => {
 });
 
 // Register routes here...
+app.use("/api/auth", authRoutes);
 
 // Centralized Global Error Handler Middleware (MUST be placed after all routes)
 app.use(errorHandler);

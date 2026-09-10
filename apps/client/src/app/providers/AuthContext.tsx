@@ -1,17 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { AuthUser, UserRole } from '../../shared/types/auth';
+import { safeGetAuth, safeSetAuth, safeClearAuth, StoredAuthData } from '../../auth/authStorage';
 
 interface AuthContextType {
   user: AuthUser | null;
   role: UserRole | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (user: AuthUser) => void;
+  login: (user: AuthUser, accessToken?: string, refreshToken?: string) => void;
   logout: () => void;
   switchRole: (role: UserRole) => void;
 }
-
-const STORAGE_KEY = 'plotfarm_auth_user';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -19,27 +18,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Khởi tạo an toàn: Bắt lỗi nếu LocalStorage bị can thiệp/hỏng (EH-1)
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setUser(JSON.parse(stored));
+      const storedAuth = safeGetAuth();
+      if (storedAuth && storedAuth.user) {
+        setUser({
+          id: storedAuth.user.id,
+          email: storedAuth.user.email,
+          fullName: storedAuth.user.fullName || storedAuth.user.email,
+          role: storedAuth.user.role as UserRole,
+        });
+      } else {
+        setUser(null);
       }
-    } catch (e) {
-      console.error('Failed to parse stored auth user', e);
+    } catch {
+      safeClearAuth();
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
+
+    // Lắng nghe sự kiện logout phát ra từ axiosClient khi session bị vô hiệu hóa
+    const handleRemoteLogout = () => {
+      setUser(null);
+    };
+
+    window.addEventListener('auth:logout', handleRemoteLogout);
+    return () => {
+      window.removeEventListener('auth:logout', handleRemoteLogout);
+    };
   }, []);
 
-  const login = (newUser: AuthUser) => {
+  const login = (newUser: AuthUser, accessToken: string = "mock_access_token", refreshToken: string = "mock_refresh_token") => {
     setUser(newUser);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
+    const authData: StoredAuthData = {
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        fullName: newUser.fullName,
+        role: newUser.role,
+      },
+      accessToken,
+      refreshToken,
+    };
+    safeSetAuth(authData);
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem(STORAGE_KEY);
+    safeClearAuth();
   };
 
   const switchRole = (role: UserRole) => {
