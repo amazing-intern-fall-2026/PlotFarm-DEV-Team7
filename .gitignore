@@ -6,6 +6,7 @@ dist/
 build/
 .turbo/
 out/
+storybook-static/
 
 # Environment files
 .env
