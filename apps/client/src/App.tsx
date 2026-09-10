@@ -1,9 +1,12 @@
+import { RouterProvider } from 'react-router-dom';
+import { AuthProvider } from './app/providers/AuthContext';
+import { router } from './app/routes/router';
+
 export function App() {
   return (
-    <div style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>Plot Farm - Frontend Client</h1>
-      <p>React + Vite + TypeScript Monorepo Client App</p>
-    </div>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 }
 
