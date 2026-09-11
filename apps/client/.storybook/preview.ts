@@ -20,7 +20,9 @@ const preview: Preview = {
               "Modal",
               "StateView",
               "Skeleton",
-              "Separator"
+              "Separator",
+              "Slider",
+              "Steps"
             ]
           ]
         ]

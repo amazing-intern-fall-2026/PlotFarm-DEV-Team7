@@ -8,4 +8,5 @@ export * from "./Skeleton";
 export * from "./Modal";
 export * from "./StateView";
 export * from "./Logo";
-
+export * from "./Slider";
+export * from "./Steps";
