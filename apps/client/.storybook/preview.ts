@@ -4,6 +4,29 @@ import "../src/shared/config/i18n";
 
 const preview: Preview = {
   parameters: {
+    options: {
+      storySort: {
+        order: [
+          "Giới thiệu",
+          ["Tổng quan hệ thống"],
+          "Shared",
+          [
+            "UI",
+            [
+              "Button",
+              "Input",
+              "Card",
+              "Badge",
+              "Avatar",
+              "Modal",
+              "StateView",
+              "Skeleton",
+              "Separator"
+            ]
+          ]
+        ]
+      }
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
