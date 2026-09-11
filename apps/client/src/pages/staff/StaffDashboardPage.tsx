@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../app/providers/AuthContext';
+import { useAuth } from '@/entities/session';
 
 export const StaffDashboardPage: React.FC = () => {
   const { t } = useTranslation();

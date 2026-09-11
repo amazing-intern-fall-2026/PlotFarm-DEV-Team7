@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PORTAL_NAVIGATION } from '../config/navigation';
-import type { UserRole } from '../../shared/types/auth';
+import type { UserRole } from '@/shared/types/auth';
 
 interface DashboardLayoutProps {
   portalRole: UserRole;
@@ -17,13 +17,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ portalRole }) 
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 font-sans">
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Scalable Dynamic Sidebar */}
         <aside className="w-full lg:w-60 flex-shrink-0">
-          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-800 dark:bg-gray-900 sticky top-24">
-            <div className="mb-3 px-2 py-1.5 rounded-lg border text-xs font-bold uppercase tracking-wider text-center" />
-            <div className={`mb-3 px-2 py-1.5 rounded-lg border text-xs font-bold uppercase tracking-wider text-center ${config.badgeClass}`}>
+          <div className="rounded-xl border border-border bg-card p-3 shadow-xs sticky top-24">
+            <div className={`mb-3 px-2 py-1.5 rounded-lg border border-border text-xs font-bold uppercase tracking-wider text-center ${config.badgeClass}`}>
               {t(config.titleKey)}
             </div>
 
@@ -35,8 +34,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ portalRole }) 
                   className={({ isActive }) =>
                     `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-400 font-semibold'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200'
+                        ? 'bg-primary/10 text-primary font-semibold'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     }`
                   }
                 >

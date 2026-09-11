@@ -1,9 +1,11 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../providers/AuthContext';
-import { PATHS } from '../routes/paths';
-import type { UserRole } from '../../shared/types/auth';
+import { useAuth } from '@/entities/session';
+import { PATHS } from '@/shared/config/paths';
+import type { UserRole } from '@/shared/types/auth';
+
+import { Logo } from '@/shared/ui';
 
 export const MainLayout: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -30,36 +32,36 @@ export const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 font-sans">
+    <div className="min-h-screen flex flex-col bg-background text-foreground font-sans antialiased">
       {/* Global Application Header */}
-      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/95">
+      <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
-            <Link to={PATHS.PUBLIC.HOME} className="flex items-center gap-2 font-bold text-xl text-green-700 dark:text-green-500">
-              🌱 <span>{t('common.appName')}</span>
+            <Link to={PATHS.PUBLIC.HOME} className="flex items-center">
+              <Logo size="sm" showText />
             </Link>
 
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
               <Link
                 to={PATHS.PUBLIC.HOME}
-                className={`transition-colors hover:text-green-600 ${
-                  location.pathname === PATHS.PUBLIC.HOME ? 'text-green-600 font-semibold' : 'text-gray-600 dark:text-gray-300'
+                className={`transition-colors hover:text-primary ${
+                  location.pathname === PATHS.PUBLIC.HOME ? 'text-primary font-semibold' : 'text-muted-foreground'
                 }`}
               >
                 {t('nav.home')}
               </Link>
               <Link
                 to={PATHS.PUBLIC.CROPS}
-                className={`transition-colors hover:text-green-600 ${
-                  location.pathname.startsWith(PATHS.PUBLIC.CROPS) ? 'text-green-600 font-semibold' : 'text-gray-600 dark:text-gray-300'
+                className={`transition-colors hover:text-primary ${
+                  location.pathname.startsWith(PATHS.PUBLIC.CROPS) ? 'text-primary font-semibold' : 'text-muted-foreground'
                 }`}
               >
                 {t('nav.crops')}
               </Link>
               <Link
                 to={PATHS.PUBLIC.FARMS}
-                className={`transition-colors hover:text-green-600 ${
-                  location.pathname.startsWith(PATHS.PUBLIC.FARMS) ? 'text-green-600 font-semibold' : 'text-gray-600 dark:text-gray-300'
+                className={`transition-colors hover:text-primary ${
+                  location.pathname.startsWith(PATHS.PUBLIC.FARMS) ? 'text-primary font-semibold' : 'text-muted-foreground'
                 }`}
               >
                 {t('nav.farms')}
@@ -71,19 +73,19 @@ export const MainLayout: React.FC = () => {
             {/* Language Switcher */}
             <button
               onClick={toggleLanguage}
-              className="flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs font-semibold hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 transition"
+              className="flex items-center gap-1 rounded-lg border border-border bg-muted/50 px-2.5 py-1.5 text-xs font-semibold hover:bg-muted transition"
               title="Chuyển đổi ngôn ngữ / Switch Language"
             >
               🌐 <span className="uppercase">{i18n.language.startsWith('vi') ? 'VI' : 'EN'}</span>
             </button>
 
             {/* Quick Role Simulator (Developer & Testing Tool) */}
-            <div className="hidden sm:flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-xs">
-              <span className="text-gray-500 font-medium">Role:</span>
+            <div className="hidden sm:flex items-center gap-1.5 bg-muted/60 px-2.5 py-1.5 rounded-lg border border-border text-xs">
+              <span className="text-muted-foreground font-medium">Role:</span>
               <select
                 value={role ?? 'GUEST'}
                 onChange={handleRoleChange}
-                className="bg-transparent font-semibold text-green-700 dark:text-green-400 focus:outline-none cursor-pointer"
+                className="bg-transparent font-semibold text-primary focus:outline-none cursor-pointer"
               >
                 <option value="GUEST">{t('roles.guest')}</option>
                 <option value="CUSTOMER">{t('roles.customer')}</option>
@@ -94,12 +96,12 @@ export const MainLayout: React.FC = () => {
 
             {isAuthenticated && user ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold px-2 py-1 rounded bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">
+                <span className="text-xs font-semibold px-2 py-1 rounded-md bg-primary/10 text-primary">
                   {user.role}
                 </span>
                 <button
                   onClick={logout}
-                  className="text-xs font-medium px-2.5 py-1.5 rounded-md border border-gray-300 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 transition"
+                  className="text-xs font-medium px-2.5 py-1.5 rounded-md border border-border hover:bg-muted transition"
                 >
                   {t('common.actions.logout')}
                 </button>
@@ -107,7 +109,7 @@ export const MainLayout: React.FC = () => {
             ) : (
               <Link
                 to={PATHS.AUTH.LOGIN}
-                className="inline-flex items-center justify-center rounded-lg bg-green-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-green-500 transition"
+                className="inline-flex items-center justify-center rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground shadow-xs hover:bg-primary/90 transition"
               >
                 {t('common.actions.login')}
               </Link>
@@ -122,8 +124,8 @@ export const MainLayout: React.FC = () => {
       </main>
 
       {/* Global Footer */}
-      <footer className="border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 py-4 text-center text-xs text-gray-500">
-        {t('common.appName')} &copy; 2026. Enterprise Scalable Architecture.
+      <footer className="border-t border-border bg-card py-4 text-center text-xs text-muted-foreground">
+        {t('common.appName')} &copy; 2026. Nền tảng Nông trại Thực nghiệm Công nghệ cao.
       </footer>
     </div>
   );

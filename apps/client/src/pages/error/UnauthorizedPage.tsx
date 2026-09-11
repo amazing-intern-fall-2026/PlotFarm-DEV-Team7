@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { PATHS } from '../../app/routes/paths';
+import { PATHS } from '@/shared/config/paths';
 
 export const UnauthorizedPage: React.FC = () => {
   const { t } = useTranslation();

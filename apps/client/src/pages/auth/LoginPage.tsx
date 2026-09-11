@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../app/providers/AuthContext';
-import { PATHS } from '../../app/routes/paths';
-import type { UserRole } from '../../shared/types/auth';
+import { useAuth } from '@/entities/session';
+import { PATHS } from '@/shared/config/paths';
+import type { UserRole } from '@/shared/types/auth';
+import { Logo } from '@/shared/ui';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -33,21 +34,25 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-12rem)] items-center justify-center px-4 py-8">
-      <div className="w-full max-w-sm space-y-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <div className="text-center">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t('common.actions.login')}</h1>
+    <div className="flex min-h-[calc(100vh-12rem)] items-center justify-center px-4 py-8 font-sans">
+      <div className="w-full max-w-sm space-y-5 rounded-2xl border border-border bg-card p-6 shadow-xs">
+        <div className="text-center space-y-2">
+          <div className="flex justify-center">
+            <Logo size="lg" />
+          </div>
+          <h1 className="text-xl font-bold text-foreground">{t('common.actions.login')}</h1>
+          <p className="text-sm text-muted-foreground">Đăng nhập vào hệ sinh thái PlotFarm</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
-              {t('roles.customer')} / {t('roles.staff')} / {t('roles.admin')}
+            <label className="block text-xs font-semibold text-muted-foreground uppercase mb-1.5">
+              Chọn vai trò ({t('roles.customer')} / {t('roles.staff')} / {t('roles.admin')})
             </label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as UserRole)}
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-green-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800"
+              className="block w-full rounded-xl border border-input bg-background px-3 py-2 text-sm text-foreground shadow-xs focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition"
             >
               <option value="CUSTOMER">{t('roles.customer')}</option>
               <option value="STAFF">{t('roles.staff')}</option>
@@ -57,11 +62,18 @@ export const LoginPage: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-green-600 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 transition"
+            className="w-full rounded-xl bg-primary py-2.5 text-sm font-semibold text-primary-foreground shadow-xs hover:bg-primary/90 transition"
           >
             {t('common.actions.login')}
           </button>
         </form>
+
+        <div className="text-center text-sm text-muted-foreground">
+          Chưa có tài khoản?{' '}
+          <Link to={PATHS.AUTH.REGISTER} className="font-semibold text-primary hover:underline">
+            Đăng ký ngay
+          </Link>
+        </div>
       </div>
     </div>
   );
