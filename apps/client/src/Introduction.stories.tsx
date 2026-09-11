@@ -170,66 +170,66 @@ export const TongQuan: StoryObj = {
           <table className="w-full text-left text-sm">
             <thead className="bg-muted/50 text-xs font-semibold text-muted-foreground uppercase border-b border-border">
               <tr>
-                <th className="py-3 px-4">Component</th>
+                <th className="py-3 px-4 whitespace-nowrap">Component</th>
                 <th className="py-3 px-4">Mục Đích Sử Dụng</th>
                 <th className="py-3 px-4">Props Trọng Tâm</th>
-                <th className="py-3 px-4 text-right">Trạng Thái</th>
+                <th className="py-3 px-4 text-center whitespace-nowrap w-28">Trạng Thái</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               <tr>
-                <td className="py-3 px-4 font-semibold text-primary">Button</td>
+                <td className="py-3 px-4 font-semibold text-primary whitespace-nowrap">Button</td>
                 <td className="py-3 px-4 text-muted-foreground">Kích hoạt hành động, submit form, mở modal</td>
                 <td className="py-3 px-4 font-mono text-xs">variant, size, isLoading, leftIcon, rightIcon</td>
-                <td className="py-3 px-4 text-right"><Badge variant="success">Chuẩn hóa</Badge></td>
+                <td className="py-3 px-4 text-center whitespace-nowrap"><Badge variant="success">Chuẩn hóa</Badge></td>
               </tr>
               <tr>
-                <td className="py-3 px-4 font-semibold text-primary">Input</td>
+                <td className="py-3 px-4 font-semibold text-primary whitespace-nowrap">Input</td>
                 <td className="py-3 px-4 text-muted-foreground">Ô nhập liệu cho mọi form đăng nhập, tìm kiếm, số liệu</td>
                 <td className="py-3 px-4 font-mono text-xs">label, hint, error, leftIcon, rightIcon</td>
-                <td className="py-3 px-4 text-right"><Badge variant="success">Chuẩn hóa</Badge></td>
+                <td className="py-3 px-4 text-center whitespace-nowrap"><Badge variant="success">Chuẩn hóa</Badge></td>
               </tr>
               <tr>
-                <td className="py-3 px-4 font-semibold text-primary">Card</td>
+                <td className="py-3 px-4 font-semibold text-primary whitespace-nowrap">Card</td>
                 <td className="py-3 px-4 text-muted-foreground">Container đóng gói thông tin (Header, Content, Footer)</td>
                 <td className="py-3 px-4 font-mono text-xs">CardHeader, CardTitle, CardContent, CardFooter</td>
-                <td className="py-3 px-4 text-right"><Badge variant="success">Chuẩn hóa</Badge></td>
+                <td className="py-3 px-4 text-center whitespace-nowrap"><Badge variant="success">Chuẩn hóa</Badge></td>
               </tr>
               <tr>
-                <td className="py-3 px-4 font-semibold text-primary">Badge</td>
+                <td className="py-3 px-4 font-semibold text-primary whitespace-nowrap">Badge</td>
                 <td className="py-3 px-4 text-muted-foreground">Nhãn trạng thái (Đang canh tác, Sắp thu hoạch, VietGAP)</td>
                 <td className="py-3 px-4 font-mono text-xs">variant (default, secondary, success, warning...), icon</td>
-                <td className="py-3 px-4 text-right"><Badge variant="success">Chuẩn hóa</Badge></td>
+                <td className="py-3 px-4 text-center whitespace-nowrap"><Badge variant="success">Chuẩn hóa</Badge></td>
               </tr>
               <tr>
-                <td className="py-3 px-4 font-semibold text-primary">Avatar</td>
+                <td className="py-3 px-4 font-semibold text-primary whitespace-nowrap">Avatar</td>
                 <td className="py-3 px-4 text-muted-foreground">Ảnh đại diện người dùng, nông dân với fallback tên viết tắt</td>
                 <td className="py-3 px-4 font-mono text-xs">src, name, size, status (online, offline...)</td>
-                <td className="py-3 px-4 text-right"><Badge variant="success">Chuẩn hóa</Badge></td>
+                <td className="py-3 px-4 text-center whitespace-nowrap"><Badge variant="success">Chuẩn hóa</Badge></td>
               </tr>
               <tr>
-                <td className="py-3 px-4 font-semibold text-primary">Modal</td>
+                <td className="py-3 px-4 font-semibold text-primary whitespace-nowrap">Modal</td>
                 <td className="py-3 px-4 text-muted-foreground">Hộp thoại nổi (dialog popup overlay) kèm ESC và backdrop</td>
                 <td className="py-3 px-4 font-mono text-xs">isOpen, onClose, title, description, size, footer</td>
-                <td className="py-3 px-4 text-right"><Badge variant="success">Chuẩn hóa</Badge></td>
+                <td className="py-3 px-4 text-center whitespace-nowrap"><Badge variant="success">Chuẩn hóa</Badge></td>
               </tr>
               <tr>
-                <td className="py-3 px-4 font-semibold text-primary">StateView</td>
+                <td className="py-3 px-4 font-semibold text-primary whitespace-nowrap">StateView</td>
                 <td className="py-3 px-4 text-muted-foreground">Hợp nhất 4 trạng thái Loading / Fetching / Empty / Error</td>
                 <td className="py-3 px-4 font-mono text-xs">state, variant, emptyPreset, error, onRetry, action</td>
-                <td className="py-3 px-4 text-right"><Badge variant="success">Chuẩn hóa</Badge></td>
+                <td className="py-3 px-4 text-center whitespace-nowrap"><Badge variant="success">Chuẩn hóa</Badge></td>
               </tr>
               <tr>
-                <td className="py-3 px-4 font-semibold text-primary">Skeleton</td>
+                <td className="py-3 px-4 font-semibold text-primary whitespace-nowrap">Skeleton</td>
                 <td className="py-3 px-4 text-muted-foreground">Khung giả lập nhấp nháy mô phỏng layout đang tải dữ liệu</td>
                 <td className="py-3 px-4 font-mono text-xs">className (h-*, w-*, rounded-*)</td>
-                <td className="py-3 px-4 text-right"><Badge variant="success">Chuẩn hóa</Badge></td>
+                <td className="py-3 px-4 text-center whitespace-nowrap"><Badge variant="success">Chuẩn hóa</Badge></td>
               </tr>
               <tr>
-                <td className="py-3 px-4 font-semibold text-primary">Separator</td>
+                <td className="py-3 px-4 font-semibold text-primary whitespace-nowrap">Separator</td>
                 <td className="py-3 px-4 text-muted-foreground">Đường kẻ phân cách nội dung theo chiều ngang hoặc dọc</td>
                 <td className="py-3 px-4 font-mono text-xs">orientation (horizontal | vertical)</td>
-                <td className="py-3 px-4 text-right"><Badge variant="success">Chuẩn hóa</Badge></td>
+                <td className="py-3 px-4 text-center whitespace-nowrap"><Badge variant="success">Chuẩn hóa</Badge></td>
               </tr>
             </tbody>
           </table>
