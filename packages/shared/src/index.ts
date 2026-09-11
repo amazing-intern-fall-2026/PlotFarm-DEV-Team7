@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { ApiErrorDetailSchema } from "./api-response";
+import { UserRoleSchema } from "./auth";
 
-export * from "zod";
+// Re-export Zod core types and utilities so workspace packages don't need redundant installs
+export { z, ZodError, type AnyZodObject, type ZodTypeAny } from "zod";
 
-// ==========================================
-// 1. PLOT SCHEMAS & TYPES
-// ==========================================
+// Plot schemas
 export const PlotSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -14,24 +15,23 @@ export const PlotSchema = z.object({
 
 export type Plot = z.infer<typeof PlotSchema>;
 
+// Auth & Identity schemas & types
+export * from "./auth";
+
+// API Envelope & Pagination schemas & types
+export * from "./api-response";
+
 // ==========================================
-// 2. AUTH SCHEMAS & TYPES
+// AUTH SCHEMAS & TYPES
 // ==========================================
 export const AuthUserSchema = z.object({
   id: z.string(),
   email: z.string().email(),
-  role: z.string(),
+  role: UserRoleSchema,
   fullName: z.string().optional(),
 });
 
 export type AuthUser = z.infer<typeof AuthUserSchema>;
-
-export const AuthTokensSchema = z.object({
-  accessToken: z.string(),
-  refreshToken: z.string().optional(),
-});
-
-export type AuthTokens = z.infer<typeof AuthTokensSchema>;
 
 export const AuthPayloadSchema = z.object({
   userId: z.string(),
@@ -42,7 +42,7 @@ export const AuthPayloadSchema = z.object({
 export type AuthPayload = z.infer<typeof AuthPayloadSchema>;
 
 // ==========================================
-// 3. STANDARDIZED API RESPONSE & ERROR TYPES
+// STANDARDIZED API RESPONSE & ERROR TYPES
 // ==========================================
 export const ERROR_CODES = {
   // Validation & Request syntax
@@ -73,13 +73,6 @@ export const ERROR_CODES = {
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
 
-export const ApiErrorDetailSchema = z.object({
-  field: z.string().optional(),
-  message: z.string().optional(),
-}).passthrough();
-
-export type ApiErrorDetail = z.infer<typeof ApiErrorDetailSchema>;
-
 export const ApiErrorPayloadSchema = z.object({
   code: z.string(),
   message: z.string(),
@@ -101,3 +94,4 @@ export interface ApiSuccessResponse<T = unknown> {
 }
 
 export type ApiResponse<T = unknown> = ApiSuccessResponse<T> | ApiErrorResponse;
+

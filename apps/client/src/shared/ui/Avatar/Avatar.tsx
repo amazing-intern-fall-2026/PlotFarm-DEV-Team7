@@ -70,7 +70,7 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
           ref={ref}
           className={cn(
             avatarVariants({ size }),
-            "bg-emerald-50 text-emerald-800 border border-emerald-100",
+            "bg-primary/10 text-primary border border-primary/20",
             className
           )}
           {...props}

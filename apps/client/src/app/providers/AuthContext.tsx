@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { AuthUser, UserRole } from '../../shared/types/auth';
+import type { AuthUser, UserRole } from '@repo/shared';
 import { safeGetAuth, safeSetAuth, safeClearAuth, StoredAuthData } from '../../auth/authStorage';
 
 interface AuthContextType {

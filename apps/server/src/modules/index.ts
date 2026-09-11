@@ -1,22 +1,22 @@
 /**
- * @module modules
- * @description Barrel export cho toàn bộ domain modules — BE Feature-Based Architecture.
+ * @layer modules
+ * @description Tầng Modules — Các module nghiệp vụ chính của Backend (RESTful APIs).
  *
- * Trách nhiệm:
- *  - Re-export router của từng module để server.ts mount vào Express app một cách gọn gàng
- *  - Đây là điểm duy nhất server.ts cần import để đăng ký tất cả routes
+ * Hướng dẫn triển khai từng module:
+ * 1. auth/         → Đăng ký, đăng nhập, refresh token, đổi mật khẩu.
+ * 2. users/        → Quản lý tài khoản, phân quyền (RBAC), hồ sơ người dùng.
+ * 3. farms/        → Quản lý danh sách nông trại mẫu, phân khu.
+ * 4. plots/        → Quản lý ô đất, trạng thái thuê, đặt cọc, bản đồ lô đất.
+ * 5. crops/        → Danh mục cây trồng, mùa vụ, hướng dẫn kỹ thuật canh tác.
+ * 6. contracts/    → Hợp đồng thuê đất, thanh toán, gia hạn.
+ * 7. care/         → Phiếu chăm sóc, yêu cầu kỹ thuật viên, nhật ký canh tác.
+ * 8. telemetry/    → Tiếp nhận và phân tích dữ liệu cảm biến IoT (độ ẩm, nhiệt độ).
+ * 9. harvests/     → Lệnh thu hoạch, nghiệm thu sản lượng và điều phối vận chuyển.
  *
- * Cấu trúc:
- *  modules/
- *  ├── auth/      → Authentication & Authorization (login, register, refresh token)
- *  ├── plots/     → Quản lý lô đất (CRUD, tìm kiếm, lọc theo trạng thái)
- *  ├── sensors/   → Dữ liệu cảm biến IoT (telemetry ingestion, query lịch sử)
- *  └── users/     → Quản lý người dùng (profile, roles, permissions)
- *
- * Usage (trong server.ts):
- *  import { modulesRouter } from './modules';
- *  app.use('/api', modulesRouter);
- *
- * TODO: Export modulesRouter sau khi implement từng module
+ * Cấu trúc chuẩn mỗi module:
+ *  - [name].routes.ts     → Định nghĩa endpoints
+ *  - [name].controller.ts → Tiếp nhận request, validation, gọi service
+ *  - [name].service.ts    → Xử lý logic nghiệp vụ và tương tác Prisma database
+ *  - [name].schema.ts     → Zod validation schemas
  */
 export {};

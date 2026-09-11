@@ -7,10 +7,12 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "lint": "eslint . --ext ts --max-warnings 0",
     "test": "vitest run"
   },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",
+    "eslint": "^8.57.0",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },

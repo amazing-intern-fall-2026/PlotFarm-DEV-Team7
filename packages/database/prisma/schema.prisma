@@ -7,13 +7,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  CUSTOMER
+  STAFF
+  ADMIN
+}
+
+enum PlotStatus {
+  AVAILABLE
+  RESERVED
+  OCCUPIED
+  HARVESTING
+  MAINTENANCE
+  INACTIVE
+}
+
+model User {
+  id              String         @id @default(uuid())
+  userCode        String         @unique @map("user_code")
+  email           String         @unique
+  phone           String?        @unique
+  passwordHash    String         @map("password_hash")
+  fullName        String         @map("full_name")
+  avatarUrl       String?        @map("avatar_url")
+  role            UserRole       @default(CUSTOMER)
+  isVerified      Boolean        @default(false) @map("is_verified")
+  preferredLocale String         @default("vi") @map("preferred_locale")
+  lastLoginAt     DateTime?      @map("last_login_at")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  deletedAt       DateTime?      @map("deleted_at")
+
+  refreshTokens   RefreshToken[]
+  assignedPlots   Plot[]         @relation("AssignedStaffPlots")
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  token     String    @unique
+  userId    String    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime  @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  revokedAt DateTime? @map("revoked_at")
+
+  @@map("refresh_tokens")
+}
+
 model Plot {
-  id        String   @id @default(uuid())
-  name      String
-  area      Float
-  status    String   @default("AVAILABLE")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String     @id @default(uuid())
+  plotCode        String?    @unique @map("plot_code")
+  plotNumber      String?    @map("plot_number")
+  name            String
+  area            Float
+  pricePerMonth   Float?     @map("price_per_month")
+  status          PlotStatus @default(AVAILABLE)
+  assignedStaffId String?    @map("assigned_staff_id")
+  assignedStaff   User?      @relation("AssignedStaffPlots", fields: [assignedStaffId], references: [id])
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  @@map("plots")
 }
 
 model User {

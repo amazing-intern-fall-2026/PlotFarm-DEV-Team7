@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express";
+import express, { type Express, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -6,16 +6,21 @@ import { authRoutes } from "./modules/auth/auth.routes";
 
 dotenv.config();
 
-const app: Express = express();
+export const app: Express = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 
+// Health check endpoint
 app.get("/health", (_req: Request, res: Response) => {
   res.json({
     success: true,
-    data: { status: "ok", service: "plot-farm-server" },
+    data: {
+      status: "ok",
+      service: "plot-farm-server",
+      message: "Server ready for module implementations.",
+    },
   });
 });
 
@@ -31,4 +36,3 @@ if (process.env.NODE_ENV !== "test") {
   });
 }
 
-export { app };
