@@ -25,9 +25,7 @@ export const DEFAULT_CUSTOMER_AUTH_NAV: HeaderNavItem[] = [
 export const DEFAULT_NAV_BY_ROLE: Record<'customer' | 'farmer' | 'admin', HeaderNavItem[]> = {
   customer: [
     { label: 'Trang chủ', href: '/' },
-    { label: 'Gói thuê đất', href: '/plots' },
-    { label: 'Cây trồng', href: '/crops' },
-    { label: 'Nông trại mẫu', href: '/farms' },
+    { label: 'Khám phá ô đất', href: '/plots' },
     { label: 'Về chúng tôi', href: '/about' },
   ],
   farmer: [

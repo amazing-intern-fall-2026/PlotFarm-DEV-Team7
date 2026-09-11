@@ -33,10 +33,8 @@ export const MainLayout: React.FC = () => {
       ]
     : [
         { label: t('nav.home'), href: PATHS.PUBLIC.HOME, isActive: location.pathname === PATHS.PUBLIC.HOME },
-        { label: t('nav.plots'), href: PATHS.PUBLIC.PLOTS, isActive: location.pathname.startsWith(PATHS.PUBLIC.PLOTS) },
-        { label: t('nav.crops'), href: PATHS.PUBLIC.CROPS, isActive: location.pathname.startsWith(PATHS.PUBLIC.CROPS) },
-        { label: t('nav.farms'), href: PATHS.PUBLIC.FARMS, isActive: location.pathname.startsWith(PATHS.PUBLIC.FARMS) },
-        { label: t('nav.about'), href: PATHS.PUBLIC.ABOUT, isActive: location.pathname.startsWith(PATHS.PUBLIC.ABOUT) }
+        { label: t('nav.explorePlots'), href: PATHS.PUBLIC.PLOTS, isActive: location.pathname.startsWith(PATHS.PUBLIC.PLOTS) },
+        { label: t('nav.aboutUs', { defaultValue: 'Về chúng tôi' }), href: PATHS.PUBLIC.ABOUT, isActive: location.pathname.startsWith(PATHS.PUBLIC.ABOUT) }
       ];
 
   return (
