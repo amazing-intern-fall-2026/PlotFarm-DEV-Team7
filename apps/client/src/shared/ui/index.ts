@@ -16,3 +16,4 @@ export * from "./TopBar";
 export * from "./MetricCard";
 export * from "./Footer";
 export * from "./Header";
+export * from "./Breadcrumb";

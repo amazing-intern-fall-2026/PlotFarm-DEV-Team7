@@ -12,15 +12,18 @@ export interface TopBarUser {
   role: AppRole;
 }
 
-export interface BreadcrumbItem {
+export interface TopBarBreadcrumbItem {
   label: string;
   onClick?: () => void;
+  href?: string;
 }
+
+export type BreadcrumbItem = TopBarBreadcrumbItem;
 
 export interface TopBarProps {
   user?: TopBarUser;
   /** Breadcrumb trail cho admin/farmer */
-  breadcrumbs?: BreadcrumbItem[];
+  breadcrumbs?: TopBarBreadcrumbItem[];
   /** Số thông báo chưa đọc */
   notificationCount?: number;
   /** i18n strings */

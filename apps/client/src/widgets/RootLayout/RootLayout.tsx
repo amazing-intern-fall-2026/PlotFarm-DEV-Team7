@@ -28,7 +28,7 @@ import {
   type SidebarSection,
   TopBar,
   type AppRole,
-  type BreadcrumbItem,
+  type TopBarBreadcrumbItem,
   Header,
   type HeaderNavItem,
   Footer,
@@ -49,7 +49,7 @@ export interface RootLayoutProps {
   role: AppRole;
   user?: RootLayoutUser;
   activeNavId?: string;
-  breadcrumbs?: BreadcrumbItem[];
+  breadcrumbs?: TopBarBreadcrumbItem[];
   notificationCount?: number;
   onNavChange?: (id: string) => void;
   onNotificationsClick?: () => void;
@@ -402,7 +402,7 @@ export function RootLayout({
     ? t("shell.role_badge_admin")
     : t("shell.role_badge_farmer");
 
-  const defaultBreadcrumbs: BreadcrumbItem[] =
+  const defaultBreadcrumbs: TopBarBreadcrumbItem[] =
     breadcrumbs.length > 0
       ? breadcrumbs
       : [{ label: t("shell.breadcrumb_home") }];
