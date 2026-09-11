@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { db } from "@repo/database";
+import { ERROR_CODES } from "@repo/shared";
 import { AppError } from "../errors/AppError";
 import type { AuthUserPayload } from "../types/express";
 
@@ -25,7 +26,7 @@ export const authGuard = async (
       throw new AppError(
         "Yêu cầu đăng nhập để truy cập tài nguyên",
         401,
-        "ERR_AUTH_REQUIRED"
+        ERROR_CODES.AUTH_REQUIRED
       );
     }
 
@@ -34,7 +35,7 @@ export const authGuard = async (
       throw new AppError(
         "Yêu cầu đăng nhập để truy cập tài nguyên",
         401,
-        "ERR_AUTH_REQUIRED"
+        ERROR_CODES.AUTH_REQUIRED
       );
     }
 
@@ -43,21 +44,21 @@ export const authGuard = async (
       decoded = jwt.verify(token, JWT_ACCESS_SECRET) as DecodedTokenPayload;
     } catch (jwtError) {
       if (jwtError instanceof TokenExpiredError) {
-        throw new AppError("Token đã hết hạn", 401, "ERR_TOKEN_EXPIRED");
+        throw new AppError("Token đã hết hạn", 401, ERROR_CODES.TOKEN_EXPIRED);
       }
 
       if (jwtError instanceof JsonWebTokenError) {
         throw new AppError(
           "Mã xác thực không hợp lệ",
           401,
-          "ERR_INVALID_TOKEN"
+          ERROR_CODES.INVALID_TOKEN
         );
       }
 
       throw new AppError(
         "Mã xác thực không hợp lệ",
         401,
-        "ERR_INVALID_TOKEN"
+        ERROR_CODES.INVALID_TOKEN
       );
     }
 
@@ -65,7 +66,7 @@ export const authGuard = async (
       throw new AppError(
         "Mã xác thực không hợp lệ",
         401,
-        "ERR_INVALID_TOKEN"
+        ERROR_CODES.INVALID_TOKEN
       );
     }
 
@@ -83,7 +84,7 @@ export const authGuard = async (
       throw new AppError(
         "Người dùng không tồn tại",
         401,
-        "ERR_USER_NOT_FOUND"
+        ERROR_CODES.USER_NOT_FOUND
       );
     }
 
@@ -91,7 +92,7 @@ export const authGuard = async (
       throw new AppError(
         "Tài khoản đã bị khóa",
         403,
-        "ERR_ACCOUNT_DISABLED"
+        ERROR_CODES.ACCOUNT_DISABLED
       );
     }
 

@@ -1,3 +1,5 @@
+import { ERROR_CODES } from "@repo/shared";
+
 /**
  * Custom Application Error class for operational errors.
  * Extends standard JavaScript Error to standardize HTTP status code, error code, and detailed validation/context.
@@ -11,7 +13,7 @@ export class AppError extends Error {
   constructor(
     message: string,
     statusCode: number = 500,
-    errorCode: string = "ERR_INTERNAL_SERVER",
+    errorCode: string = ERROR_CODES.INTERNAL_SERVER,
     details: unknown[] = []
   ) {
     super(message);
@@ -31,27 +33,27 @@ export class AppError extends Error {
   }
 
   // Factory methods for clean controller & service code
-  static badRequest(message = "Bad request", errorCode = "ERR_BAD_REQUEST", details: unknown[] = []) {
+  static badRequest(message = "Bad request", errorCode: string = ERROR_CODES.BAD_REQUEST, details: unknown[] = []) {
     return new AppError(message, 400, errorCode, details);
   }
 
-  static unauthorized(message = "Unauthorized", errorCode = "ERR_UNAUTHORIZED", details: unknown[] = []) {
+  static unauthorized(message = "Unauthorized", errorCode: string = ERROR_CODES.UNAUTHORIZED, details: unknown[] = []) {
     return new AppError(message, 401, errorCode, details);
   }
 
-  static forbidden(message = "Forbidden", errorCode = "FORBIDDEN", details: unknown[] = []) {
+  static forbidden(message = "Forbidden", errorCode: string = ERROR_CODES.FORBIDDEN, details: unknown[] = []) {
     return new AppError(message, 403, errorCode, details);
   }
 
-  static notFound(message = "Not found", errorCode = "ERR_NOT_FOUND", details: unknown[] = []) {
+  static notFound(message = "Not found", errorCode: string = ERROR_CODES.NOT_FOUND, details: unknown[] = []) {
     return new AppError(message, 404, errorCode, details);
   }
 
-  static conflict(message = "Conflict", errorCode = "ERR_CONFLICT", details: unknown[] = []) {
+  static conflict(message = "Conflict", errorCode: string = ERROR_CODES.CONFLICT, details: unknown[] = []) {
     return new AppError(message, 409, errorCode, details);
   }
 
-  static internal(message = "Internal server error", errorCode = "ERR_INTERNAL_SERVER", details: unknown[] = []) {
+  static internal(message = "Internal server error", errorCode: string = ERROR_CODES.INTERNAL_SERVER, details: unknown[] = []) {
     return new AppError(message, 500, errorCode, details);
   }
 }

@@ -1,5 +1,6 @@
 import jwt, { TokenExpiredError } from "jsonwebtoken";
 import { db } from "@repo/database";
+import { ERROR_CODES } from "@repo/shared";
 import { AppError } from "../../errors/AppError";
 
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "default-access-secret-key-change-in-prod";
@@ -34,7 +35,7 @@ export class TokenService {
     );
   }
 
-  static async generateRefreshToken(userId: string): Promise<string> {
+  static async createRefreshToken(userId: string): Promise<string> {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_EXPIRY_DAYS);
 
@@ -63,7 +64,7 @@ export class TokenService {
       throw new AppError(
         "Refresh token không hợp lệ",
         401,
-        "ERR_INVALID_REFRESH_TOKEN"
+        ERROR_CODES.INVALID_REFRESH_TOKEN
       );
     }
 
@@ -75,13 +76,13 @@ export class TokenService {
         throw new AppError(
           "Refresh token đã hết hạn",
           401,
-          "ERR_TOKEN_EXPIRED"
+          ERROR_CODES.TOKEN_EXPIRED
         );
       }
       throw new AppError(
         "Refresh token không hợp lệ",
         401,
-        "ERR_INVALID_REFRESH_TOKEN"
+        ERROR_CODES.INVALID_REFRESH_TOKEN
       );
     }
 
@@ -89,7 +90,7 @@ export class TokenService {
       throw new AppError(
         "Refresh token không hợp lệ",
         401,
-        "ERR_INVALID_REFRESH_TOKEN"
+        ERROR_CODES.INVALID_REFRESH_TOKEN
       );
     }
 
@@ -102,7 +103,7 @@ export class TokenService {
       throw new AppError(
         "Refresh token không hợp lệ",
         401,
-        "ERR_INVALID_REFRESH_TOKEN"
+        ERROR_CODES.INVALID_REFRESH_TOKEN
       );
     }
 
@@ -111,7 +112,7 @@ export class TokenService {
       throw new AppError(
         "Người dùng không tồn tại",
         401,
-        "ERR_USER_NOT_FOUND"
+        ERROR_CODES.USER_NOT_FOUND
       );
     }
 
@@ -119,7 +120,7 @@ export class TokenService {
       throw new AppError(
         "Tài khoản đã bị khóa",
         403,
-        "ERR_ACCOUNT_DISABLED"
+        ERROR_CODES.ACCOUNT_DISABLED
       );
     }
 

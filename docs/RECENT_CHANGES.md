@@ -1,86 +1,77 @@
-# Tổng Hợp Toàn Bộ Thay Đổi Vừa Thực Hiện (US-11 & Refactoring)
+# Tổng Hợp Toàn Bộ Thay Đổi (US-11 & Kiến Trúc Xử Lý Lỗi Toàn Diện)
 
 > **Nhánh hiện tại:** `feat/us-11-system-error-auth-error-handling`  
-> **Thời gian:** 10/09/2026  
-> **Nội dung:** Hoàn thành trọn vẹn User Story **US-11: Authentication Exception Handling & Resilient Token Refresh** và tối ưu hóa Codebase (Clean Code & 0 Warning).
+> **Cập nhật mới nhất:** 11/09/2026  
+> **Phạm vi hoàn thiện:** Phản hồi và khắc phục đầy đủ nhận xét review: **Đồng bộ toàn diện kiến trúc Xử lý Lỗi chuẩn hóa qua cả 3 tầng: `packages/shared`, `apps/server` và `apps/client`.**
 
 ---
 
-## 1. Danh Sách File Đã Thêm Mới & Chỉnh Sửa
+## 1. Tóm Tắt Giải Pháp Đáp Ứng Yêu Cầu Review
 
-### 📂 File Tạo Mới (New Files)
-1. **`.eslintignore`**: Bỏ qua các thư mục build (`dist`, `build`, `.turbo`, `coverage`) để linter không quét nhầm file output.
-2. **`apps/server/src/middlewares/authGuard.ts`**: Middleware bảo vệ route, xác thực JWT và kiểm tra trạng thái active trong CSDL.
-3. **`apps/server/src/middlewares/authGuard.test.ts`**: Unit test suite cho `authGuard` (6 test cases).
-4. **`apps/server/src/modules/auth/token.service.ts`**: Service xử lý sinh và xác thực Access Token / Refresh Token.
-5. **`apps/server/src/types/express.d.ts`**: Mở rộng type cho Express `Request` (`req.user`, `req.userId`, `req.userRole`).
-6. **`apps/client/src/auth/authStorage.ts`**: Module quản lý LocalStorage an toàn (bắt lỗi JSON hỏng, chống crash React - EH-1).
-7. **`apps/client/src/api/axiosClient.ts`**: Axios instance với cơ chế Mutex Queue Refresh Token (AC-1) & chống lặp vô hạn.
-8. **`apps/client/src/api/axiosClient.test.ts`**: Unit test suite cho `axiosClient` (6 test cases, kiểm thử 5 request đồng thời).
-9. **`docs/REFACTORING_SUMMARY.md`**: Báo cáo chi tiết tối ưu hóa linter và code sạch.
+Nhận xét review trước đó:
+> *"Sao cái PR nó chỉ đổi trong server mà ko có làm trong client + package/shared dị"*
 
----
-
-### 📝 File Chỉnh Sửa (Modified Files)
-1. **`packages/database/prisma/schema.prisma`**:
-   - Thêm model **`User`** (các trường: `id`, `email`, `password`, `role`, **`active: Boolean`**).
-   - Thêm model **`RefreshToken`** (các trường: `token`, `userId`, `expiresAt`).
-2. **`packages/shared/src/index.ts`**:
-   - Bổ sung các Zod Schemas & TypeScript types: `AuthUserSchema`, `AuthTokensSchema`, `AuthPayloadSchema`.
-3. **`apps/server/package.json`**:
-   - Cài đặt thêm: `jsonwebtoken`, `bcryptjs` và `@types/jsonwebtoken`, `@types/bcryptjs`.
-   - Bổ sung script `"lint": "eslint src --ext ts --report-unused-disable-directives --max-warnings 0"`.
-4. **`apps/server/src/modules/auth/auth.controller.ts`**:
-   - Thêm endpoint `POST /api/auth/refresh` (nhận refreshToken, trả về accessToken mới).
-   - Thêm endpoint `GET /api/auth/profile` (chạy qua `authGuard`).
-5. **`apps/server/src/modules/auth/auth.routes.ts`**:
-   - Khai báo routes cho `/refresh` và `/profile`.
-6. **`apps/server/src/server.ts`**:
-   - Mount router `app.use("/api/auth", authRoutes)`.
-7. **`apps/server/src/middlewares/errorHandler.ts`**:
-   - Dọn dẹp comment `// eslint-disable-next-line` thừa để đạt chuẩn ESLint strict.
-8. **`apps/client/package.json`**:
-   - Cài đặt thêm: `axios`.
-9. **`apps/client/src/app/providers/AuthContext.tsx`**:
-   - Tích hợp `safeGetAuth()`, `safeSetAuth()`, `safeClearAuth()`.
-   - Lắng nghe sự kiện `auth:logout` phát ra từ `axiosClient` để tự động reset state về Guest mà không reload trang.
-10. **`pnpm-lock.yaml`**:
-   - Cập nhật lockfile cho toàn bộ monorepo sau khi thêm các dependencies cần thiết.
+**Giải pháp đã triển khai:**
+1. **`packages/shared`**: Định nghĩa tập trung danh mục hằng số `ERROR_CODES`, các Zod schemas và TypeScript types cho Envelope chuẩn (`ApiErrorResponse`, `ApiSuccessResponse`, `ApiErrorDetail`, `ErrorCode`).
+2. **`apps/server`**: Tích hợp `@repo/shared` vào `errorHandler.ts`, `AppError.ts`, `authGuard.ts`, và `token.service.ts` để đảm bảo 100% response từ server đồng nhất với chuẩn chung.
+3. **`apps/client`**: Xây dựng lớp client error handling độc lập và mạnh mẽ (`apps/client/src/api/errorHandler.ts` và export qua `apps/client/src/shared/api/index.ts`), cung cấp các hàm tiện ích:
+   - `parseApiError()`: Phân tích mọi loại lỗi (Axios, mất mạng `ERR_NETWORK`, timeout `ERR_TIMEOUT`, server envelope) thành cấu trúc chuẩn.
+   - `mapValidationErrors()`: Chuyển đổi danh sách lỗi chi tiết thành dictionary gắn vào Form validation trong React.
+   - `getErrorMessage()`: Trích xuất thông điệp hiển thị Toast / Notification.
 
 ---
 
-## 2. Chi Tiết Các Tính Năng Đã Hoàn Thiện
+## 2. Danh Sách Chi Tiết Các File Thay Đổi Theo Từng Tầng
 
-### A. Backend (`apps/server`)
-- **AC-2 (Tampered JWT)**:
-  - Bắt `JsonWebTokenError`, ném `AppError("Mã xác thực không hợp lệ", 401, "ERR_INVALID_TOKEN")`.
-  - Phân biệt với `TokenExpiredError` (trả `ERR_TOKEN_EXPIRED`).
-- **AC-3 (Account Active Status)**:
-  - Khi token hợp lệ, vẫn bắt buộc query CSDL kiểm tra user:
-  - Nếu `!user`: Trả `401 ERR_USER_NOT_FOUND`.
-  - Nếu `user.active === false`: Trả `403 ERR_ACCOUNT_DISABLED` ("Tài khoản đã bị khóa").
-- **Refresh Token Endpoint**:
-  - `POST /api/auth/refresh`: Validate bằng Zod, kiểm tra token trong bảng `RefreshToken`, cấp phát `accessToken` mới.
+### 🌐 Tầng 1: `packages/shared`
+- **`packages/shared/src/index.ts`**:
+  - Thêm `ERROR_CODES` bao gồm các mã lỗi chuẩn: `VALIDATION`, `INVALID_JSON`, `BAD_REQUEST`, `DUPLICATE`, `NOT_FOUND`, `AUTH_REQUIRED`, `INVALID_TOKEN`, `TOKEN_EXPIRED`, `INVALID_REFRESH_TOKEN`, `ACCOUNT_DISABLED`, `USER_NOT_FOUND`, `INTERNAL_SERVER`.
+  - Khai báo các Zod schemas & inferred types: `ApiErrorDetail`, `ApiErrorPayload`, `ApiErrorResponse`, `ApiSuccessResponse`, `ApiResponse`.
+  - Re-export toàn bộ `zod` để client và server sử dụng chung phiên bản.
 
-### B. Frontend (`apps/client`)
-- **AC-1 (Token Refresh Mutex / Queue)**:
-  - Biến cờ chia sẻ: `let refreshPromise: Promise<string> | null = null`.
-  - Khi 5 request đồng thời bị `401`, request đầu tiên khởi tạo lệnh gọi `/auth/refresh`, 4 request còn lại xếp hàng await chung promise đó.
-  - **Đảm bảo chỉ có DUY NHẤT 1 request refresh được gửi lên server**, sau khi có token mới thì cả 5 request tự động retry.
-- **Infinite Loop Protection**:
-  - Request có cờ `_isRetry` hoặc URL chứa `/auth/refresh` nếu bị 401 sẽ dừng ngay, xóa auth và chuyển về Guest.
-- **Account Disabled / Tampered Protection**:
-  - Nếu nhận `ERR_ACCOUNT_DISABLED` (403) hoặc `ERR_INVALID_TOKEN`, client lập tức `safeClearAuth()` và không cố gắng refresh token.
-- **EH-1 (Corrupted LocalStorage)**:
-  - Hàm `safeGetAuth()` bọc `JSON.parse` trong `try/catch`. Nếu dữ liệu bị lỗi cú pháp, tự động xóa key bị hỏng, trả về `null` (Guest state) mà KHÔNG làm crash hay trắng màn hình React.
+### 🖥️ Tầng 2: `apps/server`
+- **`apps/server/src/errors/AppError.ts`**:
+  - Nhận `ERROR_CODES` từ `@repo/shared`, chuẩn hóa các factory method `badRequest()`, `unauthorized()`, `forbidden()`, `notFound()`, `conflict()`, `internal()`.
+- **`apps/server/src/middlewares/errorHandler.ts`**:
+  - Trả về đúng định dạng `ApiErrorResponse` từ `@repo/shared`.
+  - Mapping tự động các mã `ERROR_CODES.VALIDATION`, `ERROR_CODES.INVALID_JSON`, `ERROR_CODES.DUPLICATE`, `ERROR_CODES.INTERNAL_SERVER`.
+- **`apps/server/src/middlewares/authGuard.ts`**:
+  - Sử dụng `ERROR_CODES.AUTH_REQUIRED`, `ERROR_CODES.INVALID_TOKEN`, `ERROR_CODES.TOKEN_EXPIRED`, `ERROR_CODES.USER_NOT_FOUND`, `ERROR_CODES.ACCOUNT_DISABLED`.
+- **`apps/server/src/modules/auth/token.service.ts`**:
+  - Sử dụng `ERROR_CODES.INVALID_REFRESH_TOKEN`, `ERROR_CODES.TOKEN_EXPIRED`, `ERROR_CODES.USER_NOT_FOUND`, `ERROR_CODES.ACCOUNT_DISABLED`.
+
+### 💻 Tầng 3: `apps/client`
+- **`apps/client/src/api/errorHandler.ts`** *(Mới tạo)*:
+  - Hàm `isApiErrorResponse()`: Type guard kiểm tra an toàn định dạng response.
+  - Hàm `parseApiError()`: Bóc tách lỗi server hoặc chuyển hóa lỗi network / timeout.
+  - Hàm `mapValidationErrors()`: Biến đổi mảng lỗi chi tiết thành object key-value cho Form React.
+  - Hàm `getErrorMessage()`: Helper lấy nhanh nội dung lỗi dạng chuỗi cho Toast notification.
+- **`apps/client/src/api/errorHandler.test.ts`** *(Mới tạo)*:
+  - 6 unit test cases bao phủ toàn diện: type guard, parsing AxiosError có envelope, network error, timeout error, form mapping, fallback message.
+- **`apps/client/src/shared/api/index.ts`**:
+  - Export public API layer theo chuẩn FSD (Feature-Sliced Design), xuất cả `axiosClient`, `errorHandler`, và `@repo/shared`.
+- **`apps/client/src/auth/authStorage.ts`**:
+  - Cơ chế bọc try/catch chống sập ứng dụng khi localStorage bị lỗi cú pháp JSON.
+- **`apps/client/src/api/axiosClient.ts`**:
+  - Cơ chế Refresh Token Mutex Queue và chống vòng lặp vô hạn khi token hết hạn / tài khoản bị vô hiệu hóa.
+
+### 📚 Tài Liệu Hướng Dẫn
+- **`docs/ERROR_HANDLING_GUIDE.md`**: Cập nhật hướng dẫn chi tiết toàn bộ kiến trúc 3 lớp, bảng mã lỗi và ví dụ code mẫu cho cả Server và Client.
+- **`docs/RECENT_CHANGES.md`**: Cập nhật bản tổng hợp tiến độ và giải pháp kỹ thuật.
 
 ---
 
-## 3. Kết Quả Kiểm Tra Tự Động (Verification)
+## 3. Bảng Kiểm Tra Chất Lượng Toàn Bộ Monorepo
 
-| Quy trình kiểm tra | Lệnh chạy | Kết quả |
+| Bước kiểm tra | Lệnh thực thi | Trạng thái |
 | :--- | :--- | :---: |
-| **ESLint Toàn Bộ Monorepo** | `pnpm lint` | **PASSED (0 errors, 0 warnings)** |
-| **Unit Tests Client (Axios & Storage)** | `pnpm --filter client test` | **7/7 PASSED (100%)** |
-| **Unit Tests Server (AuthGuard & ErrorHandler)** | `pnpm --filter server test` | **14/14 PASSED (100%)** |
-| **Build Toàn Bộ Dự Án** | `pnpm build` | **FULL TURBO PASSED** |
+| **Linting (ESLint - Strict 0 warning)** | `pnpm lint` | **100% PASSED** (0 warning, 0 error) |
+| **Unit Tests Shared (`@repo/shared`)** | `pnpm --filter @repo/shared test` | **2/2 PASSED** (100%) |
+| **Unit Tests Server (`apps/server`)** | `pnpm --filter server test` | **14/14 PASSED** (100%) |
+| **Unit Tests Client (`apps/client`)** | `pnpm --filter client test` | **13/13 PASSED** (100%) |
+| **Toàn bộ Test Suite Monorepo** | `pnpm test` | **29/29 PASSED** (100%) |
+| **Typecheck & Production Build** | `pnpm build` | **FULL BUILD SUCCESS** |
+
+---
+
+> ⚠️ **Lưu ý theo yêu cầu của bạn:** Chưa thực hiện lệnh pull request hay push lên GitHub lúc này. Toàn bộ mã nguồn đã sẵn sàng và được kiểm thử toàn diện tại local branch.
