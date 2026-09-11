@@ -1,4 +1,4 @@
-cable payment_orders {
+Table payment_orders {
   id uuid [pk]
   order_code varchar(100) [unique, not null] // PAY-PF2026-0915-A01
   contract_id uuid [not null]

@@ -1,17 +1,90 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Search, Mail, Eye, MapPin } from "lucide-react";
+import * as React from "react";
+import { Search, Mail, Lock, Eye, EyeOff, MapPin, Hash } from "lucide-react";
 import { Input } from "./Input";
 
 const meta: Meta<typeof Input> = {
   title: "Shared/UI/Input",
   component: Input,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### 📌 Giới thiệu Component
+**Input** là thành phần nhập liệu chuẩn hóa duy nhất của PlotFarm, tích hợp sẵn \`label\`, chú thích (\`hint\`), thông báo lỗi (\`error\`), và các vị trí gắn icon trước/sau (\`leftIcon\`, \`rightIcon\`).
+
+#### Mục đích sử dụng:
+- Các trường nhập liệu trong form đăng nhập, đăng ký, quên mật khẩu.
+- Ô tìm kiếm thửa đất, nông sản, bài viết (sử dụng kết hợp \`leftIcon={<Search />}\`).
+- Nhập các thông số diện tích, giá thuê, mã định danh thửa đất.
+
+#### Cách truyền biến (Props & Usage):
+\`\`\`tsx
+import { Input } from "@/shared/ui";
+import { Search, Mail } from "lucide-react";
+
+// Input có icon tìm kiếm
+<Input
+  placeholder="Tìm kiếm mảnh đất theo vị trí..."
+  leftIcon={<Search className="h-4 w-4" />}
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+/>
+
+// Input có label, hint và validation error
+<Input
+  label="Email liên hệ"
+  placeholder="farmer@plotfarm.vn"
+  leftIcon={<Mail className="h-4 w-4" />}
+  error={errors.email?.message}
+  hint="Chúng tôi sẽ gửi hợp đồng qua email này"
+/>
+\`\`\`
+        `
+      }
+    }
+  },
   argTypes: {
-    label: { control: "text" },
-    placeholder: { control: "text" },
-    hint: { control: "text" },
-    error: { control: "text" },
-    disabled: { control: "boolean" }
+    label: {
+      control: "text",
+      description: "Nhãn tiêu đề hiển thị phía trên ô nhập liệu (tự động liên kết id và htmlFor)"
+    },
+    placeholder: {
+      control: "text",
+      description: "Đoạn văn bản gợi ý hiển thị mờ khi ô nhập liệu chưa có giá trị"
+    },
+    hint: {
+      control: "text",
+      description: "Đoạn văn bản giải thích hoặc hướng dẫn ngắn phía dưới ô input"
+    },
+    error: {
+      control: "text",
+      description: "Thông báo lỗi validation; khi có giá trị sẽ đổi viền input sang màu đỏ cảnh báo"
+    },
+    disabled: {
+      control: "boolean",
+      description: "Vô hiệu hóa ô nhập liệu, ngăn người dùng thao tác",
+      table: {
+        defaultValue: { summary: "false" }
+      }
+    },
+    leftIcon: {
+      control: false,
+      description: "Icon hoặc element hiển thị bên trái trong ô nhập liệu (ReactNode)"
+    },
+    rightIcon: {
+      control: false,
+      description: "Icon hoặc element hiển thị bên phải trong ô nhập liệu (ReactNode)"
+    },
+    type: {
+      control: "select",
+      options: ["text", "password", "email", "number", "tel"],
+      description: "Kiểu dữ liệu nhập HTML",
+      table: {
+        defaultValue: { summary: "text" }
+      }
+    }
   }
 };
 
@@ -19,50 +92,75 @@ export default meta;
 type Story = StoryObj<typeof Input>;
 
 export const Default: Story = {
+  name: "1. Mặc định (Có Label & Hint)",
   args: {
-    label: "Tên nông trại",
-    placeholder: "Nhập tên trang trại (ví dụ: Nông Trại Xanh Đà Lạt)",
-    hint: "Tên hiển thị công khai cho khách thuê"
+    label: "Tên trang trại nông nghiệp",
+    placeholder: "Ví dụ: Nông Trại Xanh Cầu Đất",
+    hint: "Tên này sẽ hiển thị công khai trên danh sách tìm kiếm"
   }
 };
 
-export const SearchInput: Story = {
+export const SearchField: Story = {
+  name: "2. Ô Tìm Kiếm (Search)",
   args: {
-    placeholder: "Tìm kiếm mảnh đất theo vị trí, diện tích...",
+    placeholder: "Tìm kiếm mảnh đất theo khu vực, diện tích, cây trồng...",
     leftIcon: <Search className="h-4 w-4" />
   }
 };
 
-export const WithIcons: Story = {
+export const EmailInput: Story = {
+  name: "3. Nhập Email (Left Icon)",
   args: {
-    label: "Email liên hệ",
-    placeholder: "farmer@plotfarm.vn",
+    label: "Địa chỉ Email",
+    type: "email",
+    placeholder: "nguyenvanan@plotfarm.vn",
     leftIcon: <Mail className="h-4 w-4" />
   }
 };
 
-export const Password: Story = {
-  args: {
-    label: "Mật khẩu",
-    type: "password",
-    placeholder: "••••••••",
-    rightIcon: <Eye className="h-4 w-4 cursor-pointer hover:text-foreground" />
+export const PasswordWithToggle: Story = {
+  name: "4. Mật Khẩu (Right Icon tương tác)",
+  render: function PasswordStory() {
+    const [showPassword, setShowPassword] = React.useState(false);
+    return (
+      <div className="max-w-sm">
+        <Input
+          label="Mật khẩu tài khoản"
+          type={showPassword ? "text" : "password"}
+          placeholder="••••••••"
+          leftIcon={<Lock className="h-4 w-4" />}
+          rightIcon={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="p-1 hover:text-foreground text-muted-foreground transition-colors"
+              aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          }
+        />
+      </div>
+    );
   }
 };
 
-export const WithError: Story = {
+export const WithValidationError: Story = {
+  name: "5. Trạng thái Báo Lỗi (Error State)",
   args: {
     label: "Diện tích thửa đất (m²)",
-    placeholder: "Nhập số diện tích",
-    defaultValue: "-50",
-    error: "Diện tích đất phải lớn hơn 0"
+    type: "number",
+    defaultValue: "-20",
+    error: "Diện tích đất canh tác phải lớn hơn 0",
+    leftIcon: <Hash className="h-4 w-4" />
   }
 };
 
-export const Disabled: Story = {
+export const DisabledField: Story = {
+  name: "6. Trạng thái Disabled (Khóa)",
   args: {
-    label: "Mã định danh thửa đất",
-    defaultValue: "PLOT-DALAT-042",
+    label: "Mã định danh thửa đất (Không thể sửa)",
+    defaultValue: "PLOT-DALAT-0824",
     disabled: true,
     leftIcon: <MapPin className="h-4 w-4" />
   }

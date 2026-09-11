@@ -1,27 +1,17 @@
 /**
  * @layer entities
- * @description Tầng Entities — FSD Layer 5.
+ * @description Tầng Entities (Thực thể nghiệp vụ cốt lõi) — FSD Layer 4.
  *
- * Trách nhiệm:
- *  - Chứa các domain model UI: component + type + mock data của từng entity nghiệp vụ
- *  - Entities phản ánh trực tiếp các model trong database (Plot, User, Sensor, Booking...)
- *  - Ví dụ theo domain Plot Farm:
- *    - plot/    → PlotCard component, PlotBadge, Plot type, plot mock
- *    - user/    → UserAvatar, UserTag, User type, user mock
- *    - sensor/  → SensorReadingRow, SensorStatus, Sensor type
+ * Hướng dẫn triển khai:
+ * 1. user/       → Thực thể người dùng, thông tin tài khoản, vai trò.
+ * 2. plot/       → Thực thể mảnh đất / ô đất canh tác thực nghiệm.
+ * 3. crop/       → Thực thể cây trồng, giống rau củ, mùa vụ.
+ * 4. farm/       → Thực thể nông trại mẫu, phân khu.
+ * 5. contract/   → Thực thể hợp đồng thuê đất, thanh toán.
  *
- * Cấu trúc mỗi entity (sub-folder):
- *  entities/
- *  └── plot/
- *      ├── ui/         → UI components thể hiện entity (PlotCard, PlotBadge...)
- *      ├── model/      → TypeScript types + mock data của entity
- *      └── index.ts    → public API của entity
- *
- * Quy tắc FSD:
- *  - Được phép import từ: shared/
- *  - KHÔNG import từ features/, widgets/, pages/, app/
- *  - KHÔNG import chéo giữa các entities với nhau
- *
- * TODO: Tạo từng entity sub-folder khi có schema từ @repo/shared
+ * Mỗi thực thể bao gồm:
+ *  - model/      → Types, schemas, state quản lý
+ *  - api/        → API request hooks/services
+ *  - ui/         → Component đại diện cơ bản (PlotCard, UserAvatar, CropBadge)
  */
 export {};
