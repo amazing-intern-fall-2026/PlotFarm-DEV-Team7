@@ -11,31 +11,19 @@ const meta: Meta<typeof State> = {
     docs: {
       description: {
         component: `
-### 📌 Giới thiệu Component
-**State** là component trung tâm **hợp nhất 4 trạng thái cốt lõi** (\`loading\`, \`fetching\`, \`empty\`, \`error\`) của toàn bộ hệ thống PlotFarm. Component này thay thế hoàn toàn các component rời rạc (EmptyState, ErrorBoundary riêng lẻ) để bảo đảm giao diện nhất quán 100%.
+### 📌 Giới thiệu Component State
+**State** là component trung tâm **hợp nhất toàn bộ các trạng thái UI** (\`loading\`, \`fetching\`, \`empty\`, \`error\`, và **\`skeleton\`**) của hệ thống PlotFarm.
 
-#### Các trạng thái hỗ trợ:
-1. \`loading\`: Tải lần đầu tiên (hiển thị spinner lớn toàn trang, khung card hoặc skeleton).
-2. \`fetching\`: Làm mới dữ liệu nền (background refetch) — vẫn hiển thị dữ liệu cũ kèm indicator nhỏ ở góc.
-3. \`empty\`: Dữ liệu rỗng (kèm preset icon theo ngữ cảnh như plots, contracts, notifications).
-4. \`error\`: Báo lỗi mạng/API kèm nút 'Thử lại' (\`onRetry\`).
-5. \`idle\` / \`success\`: Render \`children\` bình thường.
-
-#### Cách truyền biến (Props & Usage):
-\`\`\`tsx
-import { State, Button } from "@/shared/ui";
-
-<State
-  state={isLoading ? "loading" : isError ? "error" : data.length === 0 ? "empty" : "idle"}
-  variant="card"
-  emptyPreset="plots"
-  error={error?.message}
-  onRetry={refetch}
-  action={<Button>Đăng ký thuê đất ngay</Button>}
->
-  <PlotListView plots={data} />
-</State>
-\`\`\`
+#### 🌟 Điểm nổi bật về Skeleton tái sử dụng (Reusable Skeleton):
+- **Tập trung hóa**: Không tạo các file/component skeleton rời rạc lặp code (như CardSkeleton, ProfileSkeleton, TableSkeleton).
+- **Bộ Preset chuẩn hóa**:
+  - \`skeletonPreset="lines"\`: Đoạn văn bản mô phỏng.
+  - \`skeletonPreset="card"\`: Thẻ nông sản / thửa đất với avatar, badge, hình ảnh và nút bấm.
+  - \`skeletonPreset="profile"\`: Khung hồ sơ cá nhân với ảnh bìa, avatar tròn và thông số.
+  - \`skeletonPreset="grid"\`: Lưới nhiều thẻ hiển thị danh sách ô đất/nông trại đang tải.
+  - \`skeletonPreset="table"\`: Bảng dữ liệu quản trị với tiêu đề cột và các dòng dữ liệu.
+- **Tùy biến linh hoạt**: Hỗ trợ truyền slot \`skeleton={<CustomSkeleton />}\` hoặc tinh chỉnh \`skeletonCount\`.
+- **Subcomponent**: Cho phép gọi \`<State.Skeleton className="..." />\` trực tiếp khi cần vẽ nguyên tử.
         `
       }
     }
@@ -57,6 +45,18 @@ import { State, Button } from "@/shared/ui";
         defaultValue: { summary: "card" }
       }
     },
+    skeletonPreset: {
+      control: "select",
+      options: ["lines", "card", "profile", "grid", "table"],
+      description: "Bộ preset khung xương skeleton có tính tái sử dụng cao cho fetching/loading state",
+      table: {
+        defaultValue: { summary: "lines" }
+      }
+    },
+    skeletonCount: {
+      control: "number",
+      description: "Số lượng phần tử lặp lại trong skeleton (dòng, thẻ, hàng bảng)",
+    },
     emptyPreset: {
       control: "select",
       options: ["general", "search", "notification", "feed", "plots", "contracts"],
@@ -65,13 +65,6 @@ import { State, Button } from "@/shared/ui";
         defaultValue: { summary: "general" }
       }
     },
-    skeletonLines: {
-      control: "number",
-      description: "Số dòng skeleton khi variant='skeleton'",
-      table: {
-        defaultValue: { summary: "3" }
-      }
-    }
   }
 };
 
@@ -79,7 +72,7 @@ export default meta;
 type Story = StoryObj<typeof State>;
 
 export const LoadingFullPage: Story = {
-  name: "1. Loading Toàn Trang (Full-Page)",
+  name: "1. Loading Toàn Trang (Spinner)",
   args: {
     state: "loading",
     variant: "full-page",
@@ -98,17 +91,69 @@ export const LoadingCard: Story = {
   }
 };
 
-export const LoadingSkeleton: Story = {
-  name: "3. Loading Dạng Skeleton (Shimmer)",
+/**
+ * 3. Skeleton Dạng Thẻ Nông Nghiệp / Thửa Đất (Card Preset)
+ */
+export const SkeletonCardPreset: Story = {
+  name: "3. Skeleton: Thẻ Canh Tác (Card Preset)",
   args: {
-    state: "loading",
     variant: "skeleton",
-    skeletonLines: 4
+    skeletonPreset: "card",
   }
 };
 
+/**
+ * 4. Skeleton Dạng Lưới Nhiều Thẻ (Grid Preset - Dùng cho Danh sách Ô đất)
+ */
+export const SkeletonGridPreset: Story = {
+  name: "4. Skeleton: Lưới Danh Sách Ô Đất (Grid Preset)",
+  args: {
+    variant: "skeleton",
+    skeletonPreset: "grid",
+    skeletonCount: 4,
+  }
+};
+
+/**
+ * 5. Skeleton Dạng Bảng Dữ Liệu (Table Preset - Dùng cho Admin / Quản lý vụ mùa)
+ */
+export const SkeletonTablePreset: Story = {
+  name: "5. Skeleton: Bảng Dữ Liệu Quản Trị (Table Preset)",
+  args: {
+    variant: "skeleton",
+    skeletonPreset: "table",
+    skeletonCount: 3,
+  }
+};
+
+/**
+ * 6. Skeleton Dạng Hồ Sơ Tài Khoản (Profile Preset)
+ */
+export const SkeletonProfilePreset: Story = {
+  name: "6. Skeleton: Hồ Sơ Tài Khoản (Profile Preset)",
+  args: {
+    variant: "skeleton",
+    skeletonPreset: "profile",
+  }
+};
+
+/**
+ * 7. Skeleton Dạng Dòng Văn Bản Cơ Bản (Lines Preset)
+ */
+export const SkeletonLinesPreset: Story = {
+  name: "7. Skeleton: Dòng Văn Bản (Lines Preset)",
+  args: {
+    variant: "skeleton",
+    skeletonPreset: "lines",
+    skeletonCount: 4,
+  }
+};
+
+/**
+ * 8. Trạng thái Fetching ngầm (Background Sync)
+ */
 export const BackgroundFetching: Story = {
-  name: "4. Fetching Ngầm (Background Refresh)",
+  name: "8. Fetching Ngầm (Background Refresh)",
   args: {
     state: "fetching",
     children: (
@@ -123,7 +168,7 @@ export const BackgroundFetching: Story = {
 };
 
 export const EmptyPlotsPreset: Story = {
-  name: "5. Empty State (Preset Thửa Đất)",
+  name: "9. Empty State (Preset Thửa Đất)",
   args: {
     state: "empty",
     emptyPreset: "plots",
@@ -136,7 +181,7 @@ export const EmptyPlotsPreset: Story = {
 };
 
 export const EmptySearchPreset: Story = {
-  name: "6. Empty State (Preset Tìm Kiếm)",
+  name: "10. Empty State (Preset Tìm Kiếm)",
   args: {
     state: "empty",
     emptyPreset: "search",
@@ -146,7 +191,7 @@ export const EmptySearchPreset: Story = {
 };
 
 export const ErrorWithRetry: Story = {
-  name: "7. Error State (Kèm Nút Thử Lại)",
+  name: "11. Error State (Kèm Nút Thử Lại)",
   args: {
     state: "error",
     title: "Không Thể Kết Nối Đến Cảm Biến IoT",

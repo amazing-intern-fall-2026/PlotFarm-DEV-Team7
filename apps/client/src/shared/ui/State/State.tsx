@@ -16,6 +16,7 @@ export type AsyncStateType = "idle" | "loading" | "fetching" | "empty" | "error"
 export type StateVariant = "full-page" | "card" | "inline" | "skeleton";
 export type StateViewVariant = StateVariant;
 export type EmptyPreset = "general" | "search" | "notification" | "feed" | "plots" | "contracts";
+export type SkeletonPreset = "lines" | "card" | "profile" | "table" | "grid";
 
 export interface StateProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Trạng thái hiện tại của UI */
@@ -42,8 +43,14 @@ export interface StateProps extends React.HTMLAttributes<HTMLDivElement> {
   action?: React.ReactNode;
   /** Kiểu hiển thị (toàn trang, trong card, inline, hoặc skeleton) */
   variant?: StateVariant;
-  /** Số dòng skeleton hiển thị khi ở chế độ skeleton */
+  /** Kiểu mẫu skeleton tái sử dụng: lines (mặc định), card, profile, table, grid */
+  skeletonPreset?: SkeletonPreset;
+  /** Số dòng hoặc số phần tử skeleton lặp lại */
+  skeletonCount?: number;
+  /** Số dòng skeleton hiển thị khi ở chế độ skeleton (tương thích ngược) */
   skeletonLines?: number;
+  /** Slot truyền skeleton tùy biến hoàn toàn nếu không muốn dùng preset */
+  skeleton?: React.ReactNode;
   /** Preset mẫu cho trạng thái rỗng */
   emptyPreset?: EmptyPreset;
   /** Nội dung component chính khi thành công */
@@ -85,7 +92,128 @@ const emptyPresets: Record<EmptyPreset, { icon: React.ReactNode; title: string; 
   }
 };
 
-export const State: React.FC<StateProps> = ({
+/**
+ * Render bộ khung skeleton tái sử dụng chuẩn hóa theo preset
+ */
+function renderSkeletonPreset(preset: SkeletonPreset, count: number): React.ReactNode {
+  switch (preset) {
+    case "card":
+      return (
+        <div className="w-full rounded-2xl border border-border bg-card p-5 shadow-xs space-y-4">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="space-y-1.5 flex-1">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+            <Skeleton className="h-5 w-16 rounded-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-3.5 w-full" />
+            <Skeleton className="h-3.5 w-4/5" />
+          </div>
+          <Skeleton className="h-40 w-full rounded-xl" />
+          <div className="flex items-center justify-between pt-2 border-t border-border/60">
+            <div className="flex gap-2">
+              <Skeleton className="h-7 w-20 rounded-lg" />
+              <Skeleton className="h-7 w-20 rounded-lg" />
+            </div>
+            <Skeleton className="h-7 w-24 rounded-lg" />
+          </div>
+        </div>
+      );
+
+    case "profile":
+      return (
+        <div className="w-full rounded-2xl border border-border bg-card overflow-hidden shadow-xs">
+          <Skeleton className="h-28 w-full rounded-none" />
+          <div className="p-5 space-y-4">
+            <div className="flex justify-between items-end -mt-10">
+              <Skeleton className="h-18 w-18 rounded-full ring-4 ring-card" />
+              <Skeleton className="h-8 w-24 rounded-lg" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-3.5 w-28" />
+              <Skeleton className="h-3.5 w-full max-w-sm" />
+            </div>
+            <div className="flex gap-4 pt-2 border-t border-border/50">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-20" />
+            </div>
+          </div>
+        </div>
+      );
+
+    case "grid":
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
+          {Array.from({ length: count || 4 }).map((_, i) => (
+            <div key={i} className="rounded-2xl border border-border bg-card p-4 space-y-3">
+              <Skeleton className="h-32 w-full rounded-xl" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-3 w-1/2" />
+              <div className="flex justify-between items-center pt-2">
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-7 w-20 rounded-lg" />
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+
+    case "table":
+      return (
+        <div className="w-full rounded-2xl border border-border bg-card overflow-hidden">
+          {/* Header row */}
+          <div className="flex items-center gap-4 px-5 py-3.5 bg-muted/40 border-b border-border">
+            <Skeleton className="h-4 w-1/4" />
+            <Skeleton className="h-4 w-1/4" />
+            <Skeleton className="h-4 w-1/4" />
+            <Skeleton className="h-4 w-1/4" />
+          </div>
+          {/* Data rows */}
+          <div className="divide-y divide-border">
+            {Array.from({ length: count || 4 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-5 py-4">
+                <div className="flex items-center gap-3 w-1/4">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="h-3.5 w-24" />
+                </div>
+                <Skeleton className="h-3.5 w-1/4" />
+                <Skeleton className="h-3.5 w-1/4" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+    case "lines":
+    default:
+      return (
+        <div className="space-y-3 w-full">
+          <Skeleton className="h-6 w-1/3 rounded-lg" />
+          {Array.from({ length: count || 3 }).map((_, i) => (
+            <Skeleton
+              key={i}
+              className={cn(
+                "h-4 rounded-md",
+                i === (count || 3) - 1 ? "w-2/3" : "w-full"
+              )}
+            />
+          ))}
+        </div>
+      );
+  }
+}
+
+interface StateComponent extends React.FC<StateProps> {
+  Skeleton: typeof Skeleton;
+}
+
+export const State: StateComponent = (({
   state,
   isLoading = false,
   isFetching = false,
@@ -98,12 +226,15 @@ export const State: React.FC<StateProps> = ({
   icon,
   action,
   variant = "card",
-  skeletonLines = 3,
+  skeletonPreset = "lines",
+  skeletonCount,
+  skeletonLines,
+  skeleton,
   emptyPreset = "general",
   className,
   children,
   ...props
-}) => {
+}: StateProps) => {
   // 1. Phân giải trạng thái hoạt động thực tế
   let resolvedState: AsyncStateType = "success";
 
@@ -128,20 +259,13 @@ export const State: React.FC<StateProps> = ({
     className
   );
 
-  // 3. Trạng thái SKELETON
-  if (variant === "skeleton" && (resolvedState === "loading" || isLoading)) {
+  // 3. Trạng thái SKELETON (Fetching / Loading State)
+  if (variant === "skeleton" && (resolvedState === "loading" || isLoading || state === undefined)) {
+    const effectiveCount = skeletonCount ?? skeletonLines ?? 3;
+
     return (
-      <div className={cn("space-y-3 w-full py-4", className)} {...props}>
-        <Skeleton className="h-8 w-1/3 rounded-lg" />
-        {Array.from({ length: skeletonLines }).map((_, i) => (
-          <Skeleton
-            key={i}
-            className={cn(
-              "h-4 rounded-md",
-              i === skeletonLines - 1 ? "w-2/3" : "w-full"
-            )}
-          />
-        ))}
+      <div className={cn("w-full py-4", className)} {...props}>
+        {skeleton ? skeleton : renderSkeletonPreset(skeletonPreset, effectiveCount)}
       </div>
     );
   }
@@ -239,8 +363,9 @@ export const State: React.FC<StateProps> = ({
 
   // 8. Trạng thái SUCCESS / IDLE: Hiển thị nội dung chính
   return <>{children}</>;
-};
+}) as StateComponent;
 
 State.displayName = "State";
+State.Skeleton = Skeleton;
 
 export { State as StateView };

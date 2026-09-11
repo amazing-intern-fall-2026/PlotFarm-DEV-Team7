@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { Footer, FooterSkeleton } from "./Footer";
+import { Footer } from "./Footer";
 import { Button } from "@/shared/ui/Button";
 
 const meta: Meta<typeof Footer> = {
@@ -20,19 +20,17 @@ const meta: Meta<typeof Footer> = {
 3. **Tài Khoản & Pháp Lý**: Cài đặt tài khoản, Hợp đồng thuê đất số, Cam kết tiêu chuẩn, Bảo hiểm rủi ro.
 4. **Trang Trại Đà Lạt**: Địa chỉ Đạ Sar (Lạc Dương, Đà Lạt), Hotline kỹ sư nông học 1900 6868, Email kỹ thuật.
 5. **Thanh bản quyền (Sub-footer)**: Bản quyền 2025 & liên kết Bảo mật dữ liệu IoT, Tiêu chuẩn nông sản sạch.
-6. **Skeleton Loading**: Hỗ trợ prop \`isLoading={true}\` hoặc component \`<FooterSkeleton />\` khi đang tải cấu hình.
+6. **Skeleton Loading Tái Sử Dụng**: Tích hợp trực tiếp qua component \`State\` (\`variant="skeleton"\`, \`skeletonPreset="grid"\`), loại bỏ code trùng lặp.
 
 #### 💡 Cách sử dụng:
 \`\`\`tsx
-import { Footer, FooterSkeleton } from "@/shared/ui/Footer";
+import { Footer } from "@/shared/ui/Footer";
 
 // Hiển thị bình thường
 <Footer brandName="BioCloud Farming" />
 
-// Hiển thị trạng thái Skeleton Loading
+// Hiển thị trạng thái Skeleton Loading (tái sử dụng qua State)
 <Footer isLoading />
-// hoặc:
-<FooterSkeleton />
 \`\`\`
         `,
       },
@@ -47,7 +45,7 @@ import { Footer, FooterSkeleton } from "@/shared/ui/Footer";
     },
     isLoading: {
       control: "boolean",
-      description: "Bật/tắt trạng thái Skeleton loading",
+      description: "Bật/tắt trạng thái Skeleton loading qua State",
       defaultValue: false,
     },
     className: {
@@ -96,7 +94,7 @@ export const InteractiveToggle: Story = {
             Kiểm thử chuyển đổi Skeleton Loading
           </h2>
           <p className="text-sm text-muted-foreground">
-            Bấm nút dưới đây để kiểm tra hiệu ứng chuyển đổi mượt mà giữa trạng thái đang tải (Skeleton) và đã tải xong:
+            Bấm nút dưới đây để kiểm tra hiệu ứng chuyển đổi mượt mà giữa trạng thái đang tải (Skeleton tái sử dụng qua State) và đã tải xong:
           </p>
           <Button
             onClick={() => setLoading((prev) => !prev)}
@@ -133,12 +131,4 @@ export const DarkTheme: Story = {
       <Footer />
     </div>
   ),
-};
-
-/**
- * 6. Sử dụng trực tiếp component <FooterSkeleton />
- */
-export const DedicatedSkeletonComponent: Story = {
-  name: "6. Component <FooterSkeleton /> trực tiếp",
-  render: () => <FooterSkeleton />,
 };

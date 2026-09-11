@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Skeleton, PostCardSkeleton, ProfileSkeleton } from "./Skeleton";
+import { Skeleton } from "./Skeleton";
 
 const meta: Meta<typeof Skeleton> = {
   title: "Shared/UI/Skeleton",
@@ -9,25 +9,12 @@ const meta: Meta<typeof Skeleton> = {
     docs: {
       description: {
         component: `
-### 📌 Giới thiệu Component
-**Skeleton** là khối placeholder tạo hiệu ứng nhấp nháy chuyển màu (shimmer pulse), mô phỏng hình khối bố cục của dữ liệu đang chờ nạp từ server.
+### 📌 Giới thiệu Component Skeleton
+**Skeleton** là khối placeholder nguyên tử tạo hiệu ứng nhấp nháy chuyển màu (shimmer pulse), mô phỏng hình khối của dữ liệu đang chờ nạp từ server.
 
-#### Mục đích sử dụng:
-- Giảm cảm giác chờ đợi của người dùng khi gọi API dữ liệu lớn.
-- Tránh hiện tượng giật cục giao diện (Cumulative Layout Shift - CLS) khi dữ liệu xuất hiện.
-- Kết hợp hoàn hảo trong component \`State\` với \`variant="skeleton"\`.
-
-#### Cách truyền biến (Props & Usage):
-\`\`\`tsx
-import { Skeleton } from "@/shared/ui";
-
-// Giả lập 1 dòng tiêu đề và 1 đoạn mô tả
-<div className="space-y-2">
-  <Skeleton className="h-6 w-48 rounded" />
-  <Skeleton className="h-4 w-full rounded" />
-  <Skeleton className="h-4 w-3/4 rounded" />
-</div>
-\`\`\`
+#### 💡 Khuyến nghị kiến trúc (Best Practice):
+- Sử dụng **\`<Skeleton className="..." />\`** khi cần tự dựng các placeholder nhỏ tùy biến tại chỗ.
+- Đối với các màn hình hoặc thẻ dữ liệu có trạng thái fetching/loading (Card, Profile, Table, Grid, Lines), hãy dùng trực tiếp **\`<State variant="skeleton" skeletonPreset="card | grid | table | profile | lines" />\`** để đảm bảo tính tái sử dụng và tránh lặp code.
         `
       }
     }
@@ -43,37 +30,67 @@ import { Skeleton } from "@/shared/ui";
 export default meta;
 type Story = StoryObj<typeof Skeleton>;
 
-export const BasePrimitives: Story = {
-  name: "1. Các Khối Cơ Bản (Primitives)",
+/**
+ * 1. Các khối hình học nguyên tử cơ bản
+ */
+export const Primitives: Story = {
+  name: "1. Các Khối Nguyên Tử (Primitives)",
   render: () => (
-    <div className="space-y-3 max-w-sm">
-      <div className="flex items-center space-x-3">
-        <Skeleton className="h-12 w-12 rounded-full" />
+    <div className="space-y-6 max-w-md p-4 bg-card rounded-2xl border border-border">
+      {/* Avatar & text line */}
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-12 w-12 rounded-full shrink-0" />
         <div className="space-y-2 flex-1">
           <Skeleton className="h-4 w-3/4" />
           <Skeleton className="h-3 w-1/2" />
         </div>
       </div>
-      <Skeleton className="h-32 w-full rounded-xl" />
+
+      {/* Paragraph lines */}
+      <div className="space-y-2">
+        <Skeleton className="h-3.5 w-full" />
+        <Skeleton className="h-3.5 w-5/6" />
+        <Skeleton className="h-3.5 w-2/3" />
+      </div>
+
+      {/* Image / Banner block */}
+      <Skeleton className="h-36 w-full rounded-xl" />
+
+      {/* Action buttons */}
+      <div className="flex justify-end gap-2 pt-2">
+        <Skeleton className="h-8 w-20 rounded-lg" />
+        <Skeleton className="h-8 w-24 rounded-lg" />
+      </div>
     </div>
   )
 };
 
-export const PlotCardSkeletonExample: Story = {
-  name: "2. Skeleton Thẻ Thửa Đất Nông Nghiệp",
+/**
+ * 2. Khối tròn (Avatar / Badge Icon)
+ */
+export const CircularAvatars: Story = {
+  name: "2. Khối Tròn (Avatars & Badges)",
   render: () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
-      <PostCardSkeleton />
-      <PostCardSkeleton />
+    <div className="flex items-center gap-4 p-4">
+      <Skeleton className="h-8 w-8 rounded-full" />
+      <Skeleton className="h-10 w-10 rounded-full" />
+      <Skeleton className="h-14 w-14 rounded-full" />
+      <Skeleton className="h-18 w-18 rounded-full" />
     </div>
   )
 };
 
-export const ProfileSkeletonExample: Story = {
-  name: "3. Skeleton Hồ Sơ Tài Khoản",
+/**
+ * 3. Hàng dữ liệu ngắn (Badges & Tags)
+ */
+export const TagsAndPills: Story = {
+  name: "3. Thẻ Nhãn & Huy Hiệu (Badges & Pills)",
   render: () => (
-    <div className="max-w-md">
-      <ProfileSkeleton />
+    <div className="flex flex-wrap gap-2 p-4">
+      <Skeleton className="h-6 w-16 rounded-full" />
+      <Skeleton className="h-6 w-24 rounded-full" />
+      <Skeleton className="h-6 w-20 rounded-full" />
+      <Skeleton className="h-6 w-28 rounded-full" />
     </div>
   )
 };

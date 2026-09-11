@@ -1,107 +1,12 @@
 import * as React from "react";
 import { Sprout, MapPin, Phone, Mail } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
-import { Skeleton } from "@/shared/ui/Skeleton";
+import { State } from "../State";
 
 export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
   brandName?: string;
   /** Trạng thái skeleton loading khi đang tải cấu hình hoặc dữ liệu trang trại */
   isLoading?: boolean;
-}
-
-/**
- * FooterSkeleton — Trạng thái Skeleton Loading cho Footer
- * Áp dụng hiệu ứng pulse trên toàn bộ 4 cột và thanh bản quyền theo đúng theme token.
- */
-export function FooterSkeleton({ className }: { className?: string }) {
-  return (
-    <footer
-      aria-label="Đang tải chân trang"
-      className={cn(
-        "border-t border-border bg-muted/40 text-foreground font-sans mt-auto",
-        className,
-      )}
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 pb-8">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
-          {/* Cột 1: Brand & Badges Skeleton */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <Skeleton className="h-8 w-8 rounded-full" />
-              <Skeleton className="h-6 w-36" />
-            </div>
-
-            <div className="space-y-2 max-w-xs">
-              <Skeleton className="h-3.5 w-full" />
-              <Skeleton className="h-3.5 w-4/5" />
-              <Skeleton className="h-3.5 w-2/3" />
-            </div>
-
-            <div className="space-y-2 pt-1">
-              <div className="flex gap-2">
-                <Skeleton className="h-6 w-28 rounded-full" />
-                <Skeleton className="h-6 w-24 rounded-full" />
-              </div>
-              <Skeleton className="h-6 w-24 rounded-full" />
-            </div>
-          </div>
-
-          {/* Cột 2: Phân Hệ Canh Tác Skeleton */}
-          <div className="space-y-3.5">
-            <Skeleton className="h-5 w-36" />
-            <div className="space-y-3">
-              <Skeleton className="h-3.5 w-36" />
-              <Skeleton className="h-3.5 w-32" />
-              <Skeleton className="h-3.5 w-40" />
-              <Skeleton className="h-3.5 w-36" />
-            </div>
-          </div>
-
-          {/* Cột 3: Tài Khoản & Pháp Lý Skeleton */}
-          <div className="space-y-3.5">
-            <Skeleton className="h-5 w-40" />
-            <div className="space-y-3">
-              <Skeleton className="h-3.5 w-40" />
-              <Skeleton className="h-3.5 w-32" />
-              <Skeleton className="h-3.5 w-36" />
-              <Skeleton className="h-3.5 w-44" />
-            </div>
-          </div>
-
-          {/* Cột 4: Trang Trại Đà Lạt Skeleton */}
-          <div className="space-y-3.5">
-            <Skeleton className="h-5 w-36" />
-            <div className="space-y-3.5">
-              <div className="flex items-start gap-2.5">
-                <Skeleton className="h-4 w-4 rounded-full shrink-0" />
-                <div className="space-y-1.5 flex-1">
-                  <Skeleton className="h-3.5 w-full" />
-                  <Skeleton className="h-3.5 w-4/5" />
-                </div>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Skeleton className="h-4 w-4 rounded-full shrink-0" />
-                <Skeleton className="h-3.5 w-48" />
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Skeleton className="h-4 w-4 rounded-full shrink-0" />
-                <Skeleton className="h-3.5 w-40" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Thanh bản quyền Skeleton */}
-        <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Skeleton className="h-3.5 w-80" />
-          <div className="flex gap-6">
-            <Skeleton className="h-3.5 w-28" />
-            <Skeleton className="h-3.5 w-32" />
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
 }
 
 /**
@@ -113,7 +18,7 @@ export function FooterSkeleton({ className }: { className?: string }) {
  * 4. Cột "Tài Khoản & Pháp Lý"
  * 5. Cột "Trang Trại Đà Lạt" (Địa chỉ, Hotline kỹ sư nông học, Email kỹ thuật)
  * 6. Bottom bar: Bản quyền © 2025 BioCloud Farming & liên kết Bảo mật dữ liệu IoT, Tiêu chuẩn nông sản sạch
- * 7. Tích hợp Skeleton Loading State khi isLoading = true
+ * 7. Tích hợp Skeleton Loading State có tính tái sử dụng cao thông qua component State
  */
 export function Footer({
   className,
@@ -122,7 +27,19 @@ export function Footer({
   ...props
 }: FooterProps) {
   if (isLoading) {
-    return <FooterSkeleton className={className} />;
+    return (
+      <footer
+        aria-label="Đang tải chân trang"
+        className={cn(
+          "border-t border-border bg-muted/40 text-foreground font-sans mt-auto py-10 px-4 sm:px-6",
+          className,
+        )}
+      >
+        <div className="mx-auto max-w-7xl">
+          <State variant="skeleton" skeletonPreset="grid" skeletonCount={4} />
+        </div>
+      </footer>
+    );
   }
 
   return (
@@ -311,5 +228,3 @@ export function Footer({
     </footer>
   );
 }
-
-Footer.Skeleton = FooterSkeleton;
