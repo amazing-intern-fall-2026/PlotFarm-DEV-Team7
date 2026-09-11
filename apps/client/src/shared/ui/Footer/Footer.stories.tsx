@@ -90,12 +90,12 @@ export const InteractiveToggle: Story = {
     const [loading, setLoading] = React.useState(false);
 
     return (
-      <div className="flex flex-col min-h-screen justify-between bg-slate-50">
+      <div className="flex flex-col min-h-screen justify-between bg-background">
         <div className="p-6 max-w-xl mx-auto text-center space-y-3">
-          <h2 className="text-xl font-bold text-slate-800">
+          <h2 className="text-xl font-bold text-foreground">
             Kiểm thử chuyển đổi Skeleton Loading
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-muted-foreground">
             Bấm nút dưới đây để kiểm tra hiệu ứng chuyển đổi mượt mà giữa trạng thái đang tải (Skeleton) và đã tải xong:
           </p>
           <Button
@@ -129,7 +129,7 @@ export const CustomBrand: Story = {
 export const DarkTheme: Story = {
   name: "5. Chế độ Tối (Dark Mode)",
   render: () => (
-    <div className="dark bg-slate-950 min-h-[400px]">
+    <div className="dark bg-background min-h-[400px]">
       <Footer />
     </div>
   ),

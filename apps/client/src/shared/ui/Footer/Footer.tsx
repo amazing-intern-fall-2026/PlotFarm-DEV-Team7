@@ -11,14 +11,14 @@ export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
 
 /**
  * FooterSkeleton — Trạng thái Skeleton Loading cho Footer
- * Áp dụng hiệu ứng pulse trên toàn bộ 4 cột và thanh bản quyền.
+ * Áp dụng hiệu ứng pulse trên toàn bộ 4 cột và thanh bản quyền theo đúng theme token.
  */
 export function FooterSkeleton({ className }: { className?: string }) {
   return (
     <footer
       aria-label="Đang tải chân trang"
       className={cn(
-        "border-t border-slate-200/80 bg-[#f0f5fb] dark:bg-slate-950 dark:border-slate-800 text-slate-800 dark:text-slate-200 mt-auto",
+        "border-t border-border bg-muted/40 text-foreground font-sans mt-auto",
         className,
       )}
     >
@@ -27,76 +27,76 @@ export function FooterSkeleton({ className }: { className?: string }) {
           {/* Cột 1: Brand & Badges Skeleton */}
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">
-              <Skeleton className="h-8 w-8 rounded-full bg-slate-300/80 dark:bg-slate-800" />
-              <Skeleton className="h-6 w-36 bg-slate-300/80 dark:bg-slate-800" />
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <Skeleton className="h-6 w-36" />
             </div>
 
             <div className="space-y-2 max-w-xs">
-              <Skeleton className="h-3.5 w-full bg-slate-200 dark:bg-slate-800" />
-              <Skeleton className="h-3.5 w-4/5 bg-slate-200 dark:bg-slate-800" />
-              <Skeleton className="h-3.5 w-2/3 bg-slate-200 dark:bg-slate-800" />
+              <Skeleton className="h-3.5 w-full" />
+              <Skeleton className="h-3.5 w-4/5" />
+              <Skeleton className="h-3.5 w-2/3" />
             </div>
 
             <div className="space-y-2 pt-1">
               <div className="flex gap-2">
-                <Skeleton className="h-6 w-28 rounded-full bg-slate-200 dark:bg-slate-800" />
-                <Skeleton className="h-6 w-24 rounded-full bg-slate-200 dark:bg-slate-800" />
+                <Skeleton className="h-6 w-28 rounded-full" />
+                <Skeleton className="h-6 w-24 rounded-full" />
               </div>
-              <Skeleton className="h-6 w-24 rounded-full bg-slate-200 dark:bg-slate-800" />
+              <Skeleton className="h-6 w-24 rounded-full" />
             </div>
           </div>
 
           {/* Cột 2: Phân Hệ Canh Tác Skeleton */}
           <div className="space-y-3.5">
-            <Skeleton className="h-5 w-36 bg-slate-300/80 dark:bg-slate-800" />
+            <Skeleton className="h-5 w-36" />
             <div className="space-y-3">
-              <Skeleton className="h-3.5 w-36 bg-slate-200 dark:bg-slate-800" />
-              <Skeleton className="h-3.5 w-32 bg-slate-200 dark:bg-slate-800" />
-              <Skeleton className="h-3.5 w-40 bg-slate-200 dark:bg-slate-800" />
-              <Skeleton className="h-3.5 w-36 bg-slate-200 dark:bg-slate-800" />
+              <Skeleton className="h-3.5 w-36" />
+              <Skeleton className="h-3.5 w-32" />
+              <Skeleton className="h-3.5 w-40" />
+              <Skeleton className="h-3.5 w-36" />
             </div>
           </div>
 
           {/* Cột 3: Tài Khoản & Pháp Lý Skeleton */}
           <div className="space-y-3.5">
-            <Skeleton className="h-5 w-40 bg-slate-300/80 dark:bg-slate-800" />
+            <Skeleton className="h-5 w-40" />
             <div className="space-y-3">
-              <Skeleton className="h-3.5 w-40 bg-slate-200 dark:bg-slate-800" />
-              <Skeleton className="h-3.5 w-32 bg-slate-200 dark:bg-slate-800" />
-              <Skeleton className="h-3.5 w-36 bg-slate-200 dark:bg-slate-800" />
-              <Skeleton className="h-3.5 w-44 bg-slate-200 dark:bg-slate-800" />
+              <Skeleton className="h-3.5 w-40" />
+              <Skeleton className="h-3.5 w-32" />
+              <Skeleton className="h-3.5 w-36" />
+              <Skeleton className="h-3.5 w-44" />
             </div>
           </div>
 
           {/* Cột 4: Trang Trại Đà Lạt Skeleton */}
           <div className="space-y-3.5">
-            <Skeleton className="h-5 w-36 bg-slate-300/80 dark:bg-slate-800" />
+            <Skeleton className="h-5 w-36" />
             <div className="space-y-3.5">
               <div className="flex items-start gap-2.5">
-                <Skeleton className="h-4 w-4 rounded-full bg-slate-300/80 dark:bg-slate-800 shrink-0" />
+                <Skeleton className="h-4 w-4 rounded-full shrink-0" />
                 <div className="space-y-1.5 flex-1">
-                  <Skeleton className="h-3.5 w-full bg-slate-200 dark:bg-slate-800" />
-                  <Skeleton className="h-3.5 w-4/5 bg-slate-200 dark:bg-slate-800" />
+                  <Skeleton className="h-3.5 w-full" />
+                  <Skeleton className="h-3.5 w-4/5" />
                 </div>
               </div>
               <div className="flex items-center gap-2.5">
-                <Skeleton className="h-4 w-4 rounded-full bg-slate-300/80 dark:bg-slate-800 shrink-0" />
-                <Skeleton className="h-3.5 w-48 bg-slate-200 dark:bg-slate-800" />
+                <Skeleton className="h-4 w-4 rounded-full shrink-0" />
+                <Skeleton className="h-3.5 w-48" />
               </div>
               <div className="flex items-center gap-2.5">
-                <Skeleton className="h-4 w-4 rounded-full bg-slate-300/80 dark:bg-slate-800 shrink-0" />
-                <Skeleton className="h-3.5 w-40 bg-slate-200 dark:bg-slate-800" />
+                <Skeleton className="h-4 w-4 rounded-full shrink-0" />
+                <Skeleton className="h-3.5 w-40" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Thanh bản quyền Skeleton */}
-        <div className="mt-12 pt-6 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Skeleton className="h-3.5 w-80 bg-slate-200 dark:bg-slate-800" />
+        <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+          <Skeleton className="h-3.5 w-80" />
           <div className="flex gap-6">
-            <Skeleton className="h-3.5 w-28 bg-slate-200 dark:bg-slate-800" />
-            <Skeleton className="h-3.5 w-32 bg-slate-200 dark:bg-slate-800" />
+            <Skeleton className="h-3.5 w-28" />
+            <Skeleton className="h-3.5 w-32" />
           </div>
         </div>
       </div>
@@ -106,8 +106,8 @@ export function FooterSkeleton({ className }: { className?: string }) {
 
 /**
  * Footer component — Chuẩn giao diện BioCloud Farming
- * Tái hiện chính xác theo mẫu thiết kế thực tế:
- * 1. BioCloud Farming (Logo tròn xanh lá đậm, mô tả kết nối cư dân đô thị đồng canh tác)
+ * Tuân thủ nghiêm ngặt Design Tokens và Theme của Global CSS (font Plus Jakarta Sans, màu Bio Green & Harvest Amber):
+ * 1. BioCloud Farming (Logo tròn mầm cây Bio Green, mô tả kết nối cư dân đô thị đồng canh tác)
  * 2. 3 huy hiệu tiêu chuẩn: VietGAP Certified, GlobalGAP 100%, Organic Bio
  * 3. Cột "Phân Hệ Canh Tác"
  * 4. Cột "Tài Khoản & Pháp Lý"
@@ -128,7 +128,7 @@ export function Footer({
   return (
     <footer
       className={cn(
-        "border-t border-slate-200/80 bg-[#f0f5fb] dark:bg-slate-950 dark:border-slate-800 text-slate-800 dark:text-slate-200 mt-auto",
+        "border-t border-border bg-muted/40 text-foreground font-sans mt-auto",
         className,
       )}
       {...props}
@@ -138,30 +138,30 @@ export function Footer({
           {/* Cột 1: BioCloud Farming & Tiêu chuẩn */}
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1b4d2e] text-white shrink-0 shadow-xs">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shrink-0 shadow-xs">
                 <Sprout className="h-4 w-4" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-[#1b4d2e] dark:text-emerald-400">
+              <span className="text-xl font-bold tracking-tight text-primary">
                 {brandName}
               </span>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed max-w-xs">
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-xs">
               Nền tảng nông nghiệp số thông minh kết nối cư dân đô thị sở hữu và đồng canh tác vườn rau củ hữu cơ công nghệ cao tại Đà Lạt.
             </p>
 
             {/* Badges: Row 1 & Row 2 */}
             <div className="space-y-1.5 pt-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-white/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700 px-3 py-1 text-[11px] font-medium text-slate-700 dark:text-slate-300 shadow-2xs">
+                <span className="rounded-full bg-background border border-border px-3 py-1 text-[11px] font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
                   VietGAP Certified
                 </span>
-                <span className="rounded-full bg-white/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700 px-3 py-1 text-[11px] font-medium text-slate-700 dark:text-slate-300 shadow-2xs">
+                <span className="rounded-full bg-background border border-border px-3 py-1 text-[11px] font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
                   GlobalGAP 100%
                 </span>
               </div>
               <div>
-                <span className="inline-block rounded-full bg-white/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700 px-3 py-1 text-[11px] font-medium text-slate-700 dark:text-slate-300 shadow-2xs">
+                <span className="inline-block rounded-full bg-background border border-border px-3 py-1 text-[11px] font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
                   Organic Bio
                 </span>
               </div>
@@ -170,14 +170,14 @@ export function Footer({
 
           {/* Cột 2: Phân Hệ Canh Tác */}
           <div className="space-y-3.5">
-            <h4 className="text-base font-bold text-slate-900 dark:text-slate-100">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-foreground">
               Phân Hệ Canh Tác
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-400">
+            <ul className="space-y-2.5 text-xs text-muted-foreground">
               <li>
                 <a
                   href="/plots"
-                  className="hover:text-[#1b4d2e] dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   Khám phá & Chọn ô đất
                 </a>
@@ -185,7 +185,7 @@ export function Footer({
               <li>
                 <a
                   href="/my-farm"
-                  className="hover:text-[#1b4d2e] dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   Quản lý vườn của tôi
                 </a>
@@ -193,7 +193,7 @@ export function Footer({
               <li>
                 <a
                   href="/journal"
-                  className="hover:text-[#1b4d2e] dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   Nhật ký nông vụ thông minh
                 </a>
@@ -201,7 +201,7 @@ export function Footer({
               <li>
                 <a
                   href="/journal"
-                  className="hover:text-[#1b4d2e] dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   Thư viện ảnh & Time-lapse
                 </a>
@@ -211,14 +211,14 @@ export function Footer({
 
           {/* Cột 3: Tài Khoản & Pháp Lý */}
           <div className="space-y-3.5">
-            <h4 className="text-base font-bold text-slate-900 dark:text-slate-100">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-foreground">
               Tài Khoản & Pháp Lý
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-400">
+            <ul className="space-y-2.5 text-xs text-muted-foreground">
               <li>
                 <a
                   href="/my-farm"
-                  className="hover:text-[#1b4d2e] dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   Hồ sơ & Cài đặt tài khoản
                 </a>
@@ -226,7 +226,7 @@ export function Footer({
               <li>
                 <a
                   href="/about"
-                  className="hover:text-[#1b4d2e] dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   Hợp đồng thuê đất số
                 </a>
@@ -234,7 +234,7 @@ export function Footer({
               <li>
                 <a
                   href="/about"
-                  className="hover:text-[#1b4d2e] dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   Cam kết tiêu chuẩn hữu cơ
                 </a>
@@ -242,7 +242,7 @@ export function Footer({
               <li>
                 <a
                   href="/about"
-                  className="hover:text-[#1b4d2e] dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   Chính sách bảo hiểm rủi ro mùa vụ
                 </a>
@@ -252,33 +252,33 @@ export function Footer({
 
           {/* Cột 4: Trang Trại Đà Lạt */}
           <div className="space-y-3.5">
-            <h4 className="text-base font-bold text-slate-900 dark:text-slate-100">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-foreground">
               Trang Trại Đà Lạt
             </h4>
-            <ul className="space-y-3 text-xs text-slate-600 dark:text-slate-400">
+            <ul className="space-y-3 text-xs text-muted-foreground">
               <li className="flex items-start gap-2.5">
-                <MapPin className="h-4 w-4 text-[#1b4d2e] dark:text-emerald-400 shrink-0 mt-0.5" />
-                <span className="leading-relaxed">
+                <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                <span className="leading-relaxed text-muted-foreground">
                   Tiểu khu 158, Đạ Sar, Huyện Lạc Dương, TP. Đà Lạt, Lâm Đồng
                 </span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Phone className="h-4 w-4 text-amber-700 dark:text-amber-500 shrink-0" />
+                <Phone className="h-4 w-4 text-secondary shrink-0" />
                 <span>
                   Hotline kỹ sư nông học:{" "}
                   <a
                     href="tel:19006868"
-                    className="font-bold text-slate-800 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-400 transition-colors"
+                    className="font-bold text-foreground hover:text-secondary transition-colors"
                   >
                     1900 6868
                   </a>
                 </span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Mail className="h-4 w-4 text-[#1b4d2e] dark:text-emerald-400 shrink-0" />
+                <Mail className="h-4 w-4 text-primary shrink-0" />
                 <a
                   href="mailto:kythuat@biocloud.dalat.vn"
-                  className="hover:text-[#1b4d2e] dark:hover:text-emerald-400 transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   kythuat@biocloud.dalat.vn
                 </a>
@@ -288,20 +288,20 @@ export function Footer({
         </div>
 
         {/* Thanh bản quyền & pháp lý dưới đáy */}
-        <div className="mt-12 pt-6 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+        <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
           <p className="text-center sm:text-left">
             © 2025 BioCloud Farming Đà Lạt. Bản quyền thuộc Công ty CP Nông nghiệp Công nghệ cao Đà Lạt.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6 font-medium">
             <a
               href="/about"
-              className="hover:text-[#1b4d2e] dark:hover:text-emerald-400 transition-colors"
+              className="hover:text-primary transition-colors"
             >
               Bảo mật dữ liệu IoT
             </a>
             <a
               href="/about"
-              className="hover:text-[#1b4d2e] dark:hover:text-emerald-400 transition-colors"
+              className="hover:text-primary transition-colors"
             >
               Tiêu chuẩn nông sản sạch
             </a>
