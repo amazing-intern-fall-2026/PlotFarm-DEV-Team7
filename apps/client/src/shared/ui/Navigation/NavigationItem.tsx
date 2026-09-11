@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/shared/lib/utils";
 
-export interface BottomNavItemProps {
+export interface NavigationItemProps {
   icon: React.ReactNode;
   label: string;
   isActive?: boolean;
@@ -9,17 +9,19 @@ export interface BottomNavItemProps {
   id?: string;
 }
 
+export type BottomNavItemProps = NavigationItemProps;
+
 /**
- * BottomNavItem — một tab duy nhất trong thanh Bottom Navigation.
+ * NavigationItem — một tab điều hướng nhỏ trong thanh Navigation.
  * Hiển thị icon + label nhỏ, có hiệu ứng active màu xanh lá brand.
  */
-export function BottomNavItem({
+export function NavigationItem({
   icon,
   label,
   isActive = false,
   onClick,
-  id
-}: BottomNavItemProps) {
+  id,
+}: NavigationItemProps) {
   return (
     <button
       id={id}
@@ -49,4 +51,6 @@ export function BottomNavItem({
   );
 }
 
-BottomNavItem.displayName = "BottomNavItem";
+NavigationItem.displayName = "NavigationItem";
+
+export { NavigationItem as BottomNavItem };

@@ -7,7 +7,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { RootLayout } from "@/widgets/RootLayout";
-import type { AppRole, TopBarBreadcrumbItem } from "@/shared/ui";
+import type { AppRole, TopbarBreadcrumbItem } from "@/shared/ui";
 import {
   HomePage,
   PlotsPage,
@@ -62,7 +62,7 @@ export function ShellRouteLayout() {
   }
 
   // 3. Xác định Breadcrumbs linh hoạt
-  const breadcrumbs: TopBarBreadcrumbItem[] = React.useMemo(() => {
+  const breadcrumbs: TopbarBreadcrumbItem[] = React.useMemo(() => {
     if (role === "admin") {
       if (pathname.includes("/config")) {
         return [

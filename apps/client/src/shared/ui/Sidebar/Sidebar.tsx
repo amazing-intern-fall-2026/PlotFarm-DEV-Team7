@@ -10,7 +10,7 @@ export type SidebarSection = {
   items: SidebarItemProps[];
 };
 
-export interface SidebarNavProps {
+export interface SidebarProps {
   /** Danh sách nhóm menu */
   sections: SidebarSection[];
   /** Index item đang active (global flat index) */
@@ -23,23 +23,25 @@ export interface SidebarNavProps {
   className?: string;
 }
 
+export type SidebarNavProps = SidebarProps;
+
 const SIDEBAR_WIDTH_EXPANDED = "w-64";
 const SIDEBAR_WIDTH_COLLAPSED = "w-[72px]";
 
 /**
- * SidebarNav — sidebar cố định bên trái cho Admin / Farmer trên Desktop.
+ * Sidebar — sidebar cố định bên trái cho Admin / Farmer trên Desktop.
  * - Expanded: 256px, hiển thị Logo + text + sections + user card.
  * - Collapsed: 72px, chỉ hiển thị icon.
  * - Toggle bằng nút ChevronLeft / ChevronRight ở đáy.
  */
-export function SidebarNav({
+export function Sidebar({
   sections,
   activeItemId,
   collapseLabel = "Thu gọn",
   expandLabel = "Mở rộng",
   footer,
   className,
-}: SidebarNavProps) {
+}: SidebarProps) {
   const [collapsed, setCollapsed] = React.useState(false);
 
   return (
@@ -122,4 +124,6 @@ export function SidebarNav({
   );
 }
 
-SidebarNav.displayName = "SidebarNav";
+Sidebar.displayName = "Sidebar";
+
+export { Sidebar as SidebarNav };

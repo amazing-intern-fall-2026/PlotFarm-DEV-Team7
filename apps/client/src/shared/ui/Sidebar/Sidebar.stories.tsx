@@ -11,19 +11,19 @@ import {
   User,
   LogOut
 } from "lucide-react";
-import { SidebarNav, type SidebarSection } from "./SidebarNav";
+import { Sidebar, type SidebarSection } from "./Sidebar";
 import { Avatar } from "@/shared/ui/Avatar";
 
-const meta: Meta<typeof SidebarNav> = {
+const meta: Meta<typeof Sidebar> = {
   title: "Shared/UI/Sidebar",
-  component: SidebarNav,
+  component: Sidebar,
   tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component: `
-### 🧭 Giới thiệu Component SidebarNav
-**SidebarNav** là thanh điều hướng bên trái cố định dành cho **Admin** và **Farmer** trên màn hình máy tính để bàn (Desktop).
+### 🧭 Giới thiệu Component Sidebar
+**Sidebar** là thanh điều hướng bên trái cố định dành cho **Admin** và **Farmer** trên màn hình máy tính để bàn (Desktop).
 
 #### 🌟 Đặc điểm nổi bật:
 - **Hai trạng thái thu gọn linh hoạt**:
@@ -53,29 +53,23 @@ const meta: Meta<typeof SidebarNav> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SidebarNav>;
+type Story = StoryObj<typeof Sidebar>;
 
 const FARMER_SECTIONS: SidebarSection[] = [
   {
     title: "VẬN HÀNH",
     items: [
-      { id: "tasks", label: "Nhiệm vụ hôm nay", icon: <CalendarCheck className="h-5 w-5" />, badge: "4" },
+      { id: "tasks", label: "Nhiệm vụ hôm nay", icon: <CalendarCheck className="h-5 w-5" />, badge: "5" },
       { id: "plots", label: "Quản lý ô đất", icon: <Sprout className="h-5 w-5" /> },
-      { id: "qr", label: "Quét mã QR lô", icon: <QrCode className="h-5 w-5" /> },
-    ],
-  },
-  {
-    title: "NHẬT KÝ & BÁO CÁO",
-    items: [
+      { id: "qr", label: "Quét QR thiết bị", icon: <QrCode className="h-5 w-5" /> },
       { id: "logs", label: "Nhật ký canh tác", icon: <FileText className="h-5 w-5" /> },
-      { id: "alerts", label: "Cảnh báo vi khí hậu", icon: <AlertTriangle className="h-5 w-5" />, badge: "2" },
     ],
   },
   {
-    title: "CÁ NHÂN",
+    title: "HỆ THỐNG",
     items: [
+      { id: "alerts", label: "Cảnh báo vi khí hậu", icon: <AlertTriangle className="h-5 w-5" />, badge: "2" },
       { id: "profile", label: "Hồ sơ kỹ thuật viên", icon: <User className="h-5 w-5" /> },
-      { id: "settings", label: "Cài đặt thiết bị", icon: <Settings className="h-5 w-5" /> },
     ],
   },
 ];
@@ -85,24 +79,24 @@ const ADMIN_SECTIONS: SidebarSection[] = [
     title: "TỔNG QUAN",
     items: [
       { id: "dashboard", label: "Bảng điều khiển", icon: <LayoutDashboard className="h-5 w-5" /> },
-      { id: "plots_admin", label: "Bản đồ nông trại", icon: <Sprout className="h-5 w-5" /> },
+      { id: "all_plots", label: "Hệ thống ô đất", icon: <Sprout className="h-5 w-5" />, badge: "48" },
+      { id: "work_orders", label: "Lệnh sản xuất", icon: <CalendarCheck className="h-5 w-5" />, badge: "12" },
     ],
   },
   {
     title: "QUẢN TRỊ",
     items: [
-      { id: "contracts", label: "Hợp đồng thuê đất", icon: <FileText className="h-5 w-5" />, badge: "12" },
-      { id: "alerts_admin", label: "Cảnh báo hệ thống", icon: <AlertTriangle className="h-5 w-5" />, badge: "5" },
-      { id: "settings_admin", label: "Cấu hình nông trại", icon: <Settings className="h-5 w-5" /> },
+      { id: "all_alerts", label: "Cảnh báo & Rủi ro", icon: <AlertTriangle className="h-5 w-5" />, badge: "3" },
+      { id: "settings", label: "Cài đặt nền tảng", icon: <Settings className="h-5 w-5" /> },
     ],
   },
 ];
 
 /**
- * 1. Thanh Sidebar cho Nông dân (Farmer)
+ * 1. Thanh Sidebar cho Nông dân / Kỹ thuật viên (Farmer)
  */
 export const FarmerSidebar: Story = {
-  name: "1. Vận hành Nông dân (Farmer)",
+  name: "1. Nông dân / Kỹ thuật viên (Farmer)",
   args: {
     sections: FARMER_SECTIONS,
     activeItemId: "tasks",
@@ -110,13 +104,14 @@ export const FarmerSidebar: Story = {
     expandLabel: "Mở rộng",
     footer: (
       <div className="flex items-center gap-3 w-full">
-        <Avatar name="Nguyễn Văn Nông" size="md" status="online" />
+        <Avatar name="Nguyễn Nông" size="md" status="online" />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-foreground truncate">Nguyễn Văn Nông</p>
           <p className="text-xs text-muted-foreground truncate">Kỹ thuật viên Lô A</p>
         </div>
         <button
           type="button"
+          title="Đăng xuất"
           aria-label="Đăng xuất"
           className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-lg hover:bg-accent shrink-0 ml-auto"
         >
@@ -127,7 +122,7 @@ export const FarmerSidebar: Story = {
   },
   render: (args) => (
     <div className="flex h-[680px] bg-slate-100 dark:bg-slate-900 p-4">
-      <SidebarNav {...args} className="!flex h-full static shadow-lg rounded-2xl overflow-hidden" />
+      <Sidebar {...args} className="!flex h-full static shadow-lg rounded-2xl overflow-hidden" />
       <div className="flex-1 p-6 text-sm text-slate-500">
         Khu vực nội dung chính của màn hình Farmer (Main Content Area)
       </div>
@@ -157,7 +152,7 @@ export const AdminSidebar: Story = {
   },
   render: (args) => (
     <div className="flex h-[680px] bg-slate-100 dark:bg-slate-900 p-4">
-      <SidebarNav {...args} className="!flex h-full static shadow-lg rounded-2xl overflow-hidden" />
+      <Sidebar {...args} className="!flex h-full static shadow-lg rounded-2xl overflow-hidden" />
       <div className="flex-1 p-6 text-sm text-slate-500">
         Khu vực nội dung chính của màn hình Admin (Main Content Area)
       </div>
@@ -183,7 +178,7 @@ export const InteractiveSidebar: Story = {
 
     return (
       <div className="flex h-[680px] bg-slate-100 dark:bg-slate-900 p-4">
-        <SidebarNav
+        <Sidebar
           sections={interactiveSections}
           activeItemId={activeId}
           className="!flex h-full static shadow-lg rounded-2xl overflow-hidden"

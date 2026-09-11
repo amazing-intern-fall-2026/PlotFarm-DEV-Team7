@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { TrendingUp, AlertTriangle, CheckCircle, Leaf } from "lucide-react";
-import { MetricCard } from "./MetricCard";
+import { Metric } from "./Metric";
 
-const meta: Meta<typeof MetricCard> = {
+const meta: Meta<typeof Metric> = {
   title: "Shared/UI/Metric",
-  component: MetricCard,
+  component: Metric,
   tags: ["autodocs"],
   parameters: {
     layout: "padded",
@@ -12,7 +12,7 @@ const meta: Meta<typeof MetricCard> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof MetricCard>;
+type Story = StoryObj<typeof Metric>;
 
 export const Default: Story = {
   name: "1. Thẻ Doanh thu (Mặc định)",

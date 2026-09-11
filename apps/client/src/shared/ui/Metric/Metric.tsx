@@ -2,7 +2,7 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/shared/lib/utils";
 
-const metricCardVariants = cva(
+const metricVariants = cva(
   "relative overflow-hidden rounded-2xl border bg-card p-5 text-card-foreground shadow-sm transition-all duration-200",
   {
     variants: {
@@ -38,9 +38,9 @@ const iconWrapperVariants = cva(
   },
 );
 
-export interface MetricCardProps
+export interface MetricProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof metricCardVariants> {
+    VariantProps<typeof metricVariants> {
   title: string;
   value: React.ReactNode;
   subtitle?: React.ReactNode;
@@ -59,7 +59,9 @@ export interface MetricCardProps
   onActionClick?: () => void;
 }
 
-export const MetricCard = React.forwardRef<HTMLDivElement, MetricCardProps>(
+export type MetricCardProps = MetricProps;
+
+export const Metric = React.forwardRef<HTMLDivElement, MetricProps>(
   (
     {
       className,
@@ -83,7 +85,7 @@ export const MetricCard = React.forwardRef<HTMLDivElement, MetricCardProps>(
       <div
         ref={ref}
         className={cn(
-          metricCardVariants({ variant }),
+          metricVariants({ variant }),
           isInteractive && "cursor-pointer active:scale-[0.99]",
           className,
         )}
@@ -169,4 +171,6 @@ export const MetricCard = React.forwardRef<HTMLDivElement, MetricCardProps>(
   },
 );
 
-MetricCard.displayName = "MetricCard";
+Metric.displayName = "Metric";
+
+export { Metric as MetricCard };

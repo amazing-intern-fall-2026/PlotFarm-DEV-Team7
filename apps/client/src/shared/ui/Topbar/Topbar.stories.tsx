@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { TopBar } from "./TopBar";
+import { Topbar } from "./Topbar";
 
-const meta: Meta<typeof TopBar> = {
+const meta: Meta<typeof Topbar> = {
   title: "Shared/UI/Topbar",
-  component: TopBar,
+  component: Topbar,
   tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component: `
-### 🖥️ Giới thiệu Component TopBar
-**TopBar** là thanh điều hướng trên cùng dạng Dashboard bar dành cho **Admin** và **Farmer**.
+### 🖥️ Giới thiệu Component Topbar
+**Topbar** là thanh điều hướng trên cùng dạng Dashboard bar dành cho **Admin** và **Farmer**.
 
 #### 🌟 Đặc điểm nổi bật:
 - **Ô tìm kiếm bên trái**: Tích hợp shortcut \`Ctrl+K\` và hiệu ứng focus viền xanh thương hiệu BioCloud.
@@ -39,12 +39,12 @@ const meta: Meta<typeof TopBar> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof TopBar>;
+type Story = StoryObj<typeof Topbar>;
 
 /**
- * 1. TopBar cho Nông dân (Farmer)
+ * 1. Topbar cho Nông dân (Farmer)
  */
-export const FarmerTopBar: Story = {
+export const FarmerTopbar: Story = {
   name: "1. Kỹ thuật viên (Farmer)",
   args: {
     user: {
@@ -59,17 +59,17 @@ export const FarmerTopBar: Story = {
   render: (args) => (
     <div className="bg-slate-100 dark:bg-slate-900 p-4">
       <div className="rounded-xl overflow-hidden shadow-sm">
-        <TopBar {...args} />
+        <Topbar {...args} />
       </div>
     </div>
   ),
 };
 
 /**
- * 2. TopBar cho Quản trị viên (Admin)
+ * 2. Topbar cho Quản trị viên (Admin)
  */
-export const AdminTopBar: Story = {
-  name: "2. Quản trị viên (Admin)",
+export const AdminTopbar: Story = {
+  name: "2. Quản trị hệ thống (Admin)",
   args: {
     user: {
       name: "Trần Quản Trị",
@@ -83,7 +83,7 @@ export const AdminTopBar: Story = {
   render: (args) => (
     <div className="bg-slate-100 dark:bg-slate-900 p-4">
       <div className="rounded-xl overflow-hidden shadow-sm">
-        <TopBar {...args} />
+        <Topbar {...args} />
       </div>
     </div>
   ),
@@ -92,7 +92,7 @@ export const AdminTopBar: Story = {
 /**
  * 3. Trạng thái không có thông báo & Chưa đăng nhập
  */
-export const MinimalTopBar: Story = {
+export const MinimalTopbar: Story = {
   name: "3. Tối giản (Không thông báo)",
   args: {
     notificationCount: 0,
@@ -101,7 +101,7 @@ export const MinimalTopBar: Story = {
   render: (args) => (
     <div className="bg-slate-100 dark:bg-slate-900 p-4">
       <div className="rounded-xl overflow-hidden shadow-sm">
-        <TopBar {...args} />
+        <Topbar {...args} />
       </div>
     </div>
   ),

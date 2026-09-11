@@ -15,7 +15,7 @@ const meta: Meta<typeof Skeleton> = {
 #### Mục đích sử dụng:
 - Giảm cảm giác chờ đợi của người dùng khi gọi API dữ liệu lớn.
 - Tránh hiện tượng giật cục giao diện (Cumulative Layout Shift - CLS) khi dữ liệu xuất hiện.
-- Kết hợp hoàn hảo trong component \`StateView\` với \`variant="skeleton"\`.
+- Kết hợp hoàn hảo trong component \`State\` với \`variant="skeleton"\`.
 
 #### Cách truyền biến (Props & Usage):
 \`\`\`tsx

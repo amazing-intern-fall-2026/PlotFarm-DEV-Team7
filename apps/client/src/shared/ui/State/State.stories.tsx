@@ -1,18 +1,18 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { StateView } from "./StateView";
+import { State } from "./State";
 import { Button } from "../Button";
 import { Plus } from "lucide-react";
 
-const meta: Meta<typeof StateView> = {
+const meta: Meta<typeof State> = {
   title: "Shared/UI/State",
-  component: StateView,
+  component: State,
   tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component: `
 ### 📌 Giới thiệu Component
-**StateView** là component trung tâm **hợp nhất 4 trạng thái cốt lõi** (\`loading\`, \`fetching\`, \`empty\`, \`error\`) của toàn bộ hệ thống PlotFarm. Component này thay thế hoàn toàn các component rời rạc (EmptyState, ErrorBoundary riêng lẻ) để bảo đảm giao diện nhất quán 100%.
+**State** là component trung tâm **hợp nhất 4 trạng thái cốt lõi** (\`loading\`, \`fetching\`, \`empty\`, \`error\`) của toàn bộ hệ thống PlotFarm. Component này thay thế hoàn toàn các component rời rạc (EmptyState, ErrorBoundary riêng lẻ) để bảo đảm giao diện nhất quán 100%.
 
 #### Các trạng thái hỗ trợ:
 1. \`loading\`: Tải lần đầu tiên (hiển thị spinner lớn toàn trang, khung card hoặc skeleton).
@@ -23,9 +23,9 @@ const meta: Meta<typeof StateView> = {
 
 #### Cách truyền biến (Props & Usage):
 \`\`\`tsx
-import { StateView, Button } from "@/shared/ui";
+import { State, Button } from "@/shared/ui";
 
-<StateView
+<State
   state={isLoading ? "loading" : isError ? "error" : data.length === 0 ? "empty" : "idle"}
   variant="card"
   emptyPreset="plots"
@@ -34,7 +34,7 @@ import { StateView, Button } from "@/shared/ui";
   action={<Button>Đăng ký thuê đất ngay</Button>}
 >
   <PlotListView plots={data} />
-</StateView>
+</State>
 \`\`\`
         `
       }
@@ -60,33 +60,14 @@ import { StateView, Button } from "@/shared/ui";
     emptyPreset: {
       control: "select",
       options: ["general", "search", "notification", "feed", "plots", "contracts"],
-      description: "Bộ icon và thông điệp dựng sẵn khi state='empty'",
+      description: "Bộ preset icon và văn bản mặc định cho trạng thái rỗng",
       table: {
         defaultValue: { summary: "general" }
       }
     },
-    title: {
-      control: "text",
-      description: "Tùy biến tiêu đề chính của trạng thái"
-    },
-    description: {
-      control: "text",
-      description: "Tùy biến đoạn mô tả chi tiết của trạng thái"
-    },
-    error: {
-      control: "text",
-      description: "Chi tiết thông điệp lỗi kỹ thuật khi state='error'"
-    },
-    onRetry: {
-      description: "Hàm callback kích hoạt khi người dùng click nút 'Thử lại'"
-    },
-    action: {
-      control: false,
-      description: "Nút hành động tùy biến thêm (ReactNode, ví dụ nút 'Tạo thửa đất mới')"
-    },
     skeletonLines: {
       control: "number",
-      description: "Số dòng giả lập khi variant='skeleton'",
+      description: "Số dòng skeleton khi variant='skeleton'",
       table: {
         defaultValue: { summary: "3" }
       }
@@ -95,7 +76,7 @@ import { StateView, Button } from "@/shared/ui";
 };
 
 export default meta;
-type Story = StoryObj<typeof StateView>;
+type Story = StoryObj<typeof State>;
 
 export const LoadingFullPage: Story = {
   name: "1. Loading Toàn Trang (Full-Page)",

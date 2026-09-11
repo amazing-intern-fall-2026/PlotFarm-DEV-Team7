@@ -23,12 +23,12 @@ import {
 
 import { useT } from "@/shared/lib/i18n";
 import {
-  BottomNavigation,
-  SidebarNav,
+  Navigation,
+  Sidebar,
   type SidebarSection,
-  TopBar,
+  Topbar,
   type AppRole,
-  type TopBarBreadcrumbItem,
+  type TopbarBreadcrumbItem,
   Header,
   type HeaderNavItem,
   Footer,
@@ -49,7 +49,7 @@ export interface RootLayoutProps {
   role: AppRole;
   user?: RootLayoutUser;
   activeNavId?: string;
-  breadcrumbs?: TopBarBreadcrumbItem[];
+  breadcrumbs?: TopbarBreadcrumbItem[];
   notificationCount?: number;
   onNavChange?: (id: string) => void;
   onNotificationsClick?: () => void;
@@ -378,7 +378,7 @@ export function RootLayout({
 
         {/* Bottom Nav — mobile only */}
         <div className="lg:hidden">
-          <BottomNavigation
+          <Navigation
             items={customerBottomItems}
             activeIndex={bottomIndex >= 0 ? bottomIndex : 0}
             onTabChange={(i) => handleMobileTabChange(i, customerBottomItems)}
@@ -402,7 +402,7 @@ export function RootLayout({
     ? t("shell.role_badge_admin")
     : t("shell.role_badge_farmer");
 
-  const defaultBreadcrumbs: TopBarBreadcrumbItem[] =
+  const defaultBreadcrumbs: TopbarBreadcrumbItem[] =
     breadcrumbs.length > 0
       ? breadcrumbs
       : [{ label: t("shell.breadcrumb_home") }];
@@ -436,7 +436,7 @@ export function RootLayout({
   return (
     <div className={cn("flex h-screen overflow-hidden bg-muted/30", className)}>
       {/* ── Sidebar (desktop only) ─────────────────────────────────── */}
-      <SidebarNav
+      <Sidebar
         sections={sidebarSections}
         activeItemId={activeId}
         collapseLabel={t("shell.collapse")}
@@ -444,9 +444,9 @@ export function RootLayout({
         footer={sidebarFooter}
       />
 
-      {/* ── Right column: TopBar + main ─────────────────────────────── */}
+      {/* ── Right column: Topbar + main ─────────────────────────────── */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <TopBar
+        <Topbar
           user={user ? { ...user, role } : undefined}
           breadcrumbs={defaultBreadcrumbs}
           notificationCount={notificationCount}
@@ -469,7 +469,7 @@ export function RootLayout({
 
         {/* Bottom Nav — mobile only */}
         <div className="lg:hidden">
-          <BottomNavigation
+          <Navigation
             items={bottomItems}
             activeIndex={bottomIndex >= 0 ? bottomIndex : 0}
             onTabChange={(i) => handleMobileTabChange(i, bottomItems)}

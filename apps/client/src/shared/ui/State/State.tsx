@@ -13,10 +13,11 @@ import { Button } from "../Button";
 import { Skeleton } from "../Skeleton";
 
 export type AsyncStateType = "idle" | "loading" | "fetching" | "empty" | "error" | "success";
-export type StateViewVariant = "full-page" | "card" | "inline" | "skeleton";
+export type StateVariant = "full-page" | "card" | "inline" | "skeleton";
+export type StateViewVariant = StateVariant;
 export type EmptyPreset = "general" | "search" | "notification" | "feed" | "plots" | "contracts";
 
-export interface StateViewProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface StateProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Trạng thái hiện tại của UI */
   state?: AsyncStateType;
   /** Cờ loading trực tiếp (nếu dùng chung với boolean) */
@@ -40,7 +41,7 @@ export interface StateViewProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Nút hành động CTA tùy biến */
   action?: React.ReactNode;
   /** Kiểu hiển thị (toàn trang, trong card, inline, hoặc skeleton) */
-  variant?: StateViewVariant;
+  variant?: StateVariant;
   /** Số dòng skeleton hiển thị khi ở chế độ skeleton */
   skeletonLines?: number;
   /** Preset mẫu cho trạng thái rỗng */
@@ -48,6 +49,8 @@ export interface StateViewProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Nội dung component chính khi thành công */
   children?: React.ReactNode;
 }
+
+export type StateViewProps = StateProps;
 
 const emptyPresets: Record<EmptyPreset, { icon: React.ReactNode; title: string; description: string }> = {
   general: {
@@ -82,7 +85,7 @@ const emptyPresets: Record<EmptyPreset, { icon: React.ReactNode; title: string; 
   }
 };
 
-export const StateView: React.FC<StateViewProps> = ({
+export const State: React.FC<StateProps> = ({
   state,
   isLoading = false,
   isFetching = false,
@@ -112,84 +115,85 @@ export const StateView: React.FC<StateViewProps> = ({
     resolvedState = "empty";
   } else if (isFetching || state === "fetching") {
     resolvedState = "fetching";
-  } else if (state) {
-    resolvedState = state;
+  } else if (state === "idle") {
+    resolvedState = "idle";
   }
 
-  // 2. Xử lý trạng thái LOADING (1 phần hoặc Full Page)
-  if (resolvedState === "loading") {
-    if (variant === "skeleton") {
-      return (
-        <div className={cn("space-y-3 p-4", className)} {...props}>
-          <Skeleton className="h-6 w-1/3 rounded-lg" />
-          {Array.from({ length: skeletonLines }).map((_, i) => (
-            <Skeleton key={i} className="h-12 w-full rounded-xl" />
-          ))}
-        </div>
-      );
-    }
+  // 2. Class bọc theo variant
+  const containerClasses = cn(
+    "flex flex-col items-center justify-center text-center transition-all duration-200",
+    variant === "full-page" && "min-h-[60vh] w-full p-8",
+    variant === "card" && "rounded-2xl border border-dashed border-border bg-card/50 p-8 my-4",
+    variant === "inline" && "py-6 px-4",
+    className
+  );
 
-    const isFullPage = variant === "full-page";
-
+  // 3. Trạng thái SKELETON
+  if (variant === "skeleton" && (resolvedState === "loading" || isLoading)) {
     return (
-      <div
-        className={cn(
-          "flex flex-col items-center justify-center p-8 text-center transition-all animate-in fade-in duration-300",
-          isFullPage ? "min-h-[calc(100vh-12rem)] w-full" : "rounded-xl border border-dashed border-border py-12",
-          className
-        )}
-        {...props}
-      >
-        <div className="relative flex items-center justify-center">
-          <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center">
-            <Loader2 className="h-7 w-7 text-primary animate-spin" />
-          </div>
+      <div className={cn("space-y-3 w-full py-4", className)} {...props}>
+        <Skeleton className="h-8 w-1/3 rounded-lg" />
+        {Array.from({ length: skeletonLines }).map((_, i) => (
+          <Skeleton
+            key={i}
+            className={cn(
+              "h-4 rounded-md",
+              i === skeletonLines - 1 ? "w-2/3" : "w-full"
+            )}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // 4. Trạng thái LOADING (Spinner)
+  if (resolvedState === "loading") {
+    return (
+      <div className={containerClasses} {...props}>
+        <div className="relative flex items-center justify-center mb-4">
+          <div className="h-12 w-12 rounded-full border-2 border-primary/20 animate-ping opacity-25" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary absolute" />
         </div>
-        <h4 className="mt-4 text-base font-semibold text-foreground">
+        <h4 className="text-base font-semibold text-foreground">
           {title || "Đang tải dữ liệu..."}
         </h4>
-        <p className="mt-1 text-sm text-muted-foreground max-w-sm">
-          {description || "Hệ thống đang đồng bộ và cập nhật thông tin mới nhất."}
+        <p className="text-sm text-muted-foreground mt-1 max-w-sm">
+          {description || "Hệ thống đang đồng bộ thông tin nông vụ thời gian thực."}
         </p>
       </div>
     );
   }
 
-  // 3. Xử lý trạng thái ERROR
+  // 5. Trạng thái ERROR
   if (resolvedState === "error") {
     const errorMessage =
-      typeof error === "string" ? error : error?.message || description || "Đã xảy ra lỗi khi tải dữ liệu.";
-
-    const isFullPage = variant === "full-page";
+      typeof error === "string"
+        ? error
+        : error instanceof Error
+        ? error.message
+        : "Không thể kết nối đến máy chủ IoT";
 
     return (
-      <div
-        className={cn(
-          "flex flex-col items-center justify-center p-8 text-center transition-all animate-in fade-in duration-300",
-          isFullPage ? "min-h-[calc(100vh-12rem)] w-full" : "rounded-xl border border-dashed border-red-200 bg-red-50/40 dark:border-red-900/50 dark:bg-red-950/20 py-10",
-          className
-        )}
-        {...props}
-      >
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/40 text-destructive mb-3">
-          {icon || <AlertCircle className="h-7 w-7 text-red-600 dark:text-red-400" />}
+      <div className={cn(containerClasses, "border-destructive/30 bg-destructive/5")} {...props}>
+        <div className="h-12 w-12 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center mb-4">
+          {icon || <AlertCircle className="h-6 w-6" />}
         </div>
         <h4 className="text-base font-semibold text-foreground">
-          {title || "Không thể tải dữ liệu"}
+          {title || "Đã xảy ra sự cố"}
         </h4>
-        <p className="mt-1 max-w-md text-sm text-muted-foreground leading-relaxed">
-          {errorMessage}
+        <p className="text-sm text-muted-foreground mt-1 max-w-sm">
+          {description || errorMessage}
         </p>
-
         {(onRetry || action) && (
-          <div className="mt-5 flex items-center gap-3">
+          <div className="mt-5 flex gap-2">
             {onRetry && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={onRetry}
-                leftIcon={<RefreshCw className="h-4 w-4" />}
+                className="gap-2 border-destructive/30 hover:bg-destructive/10 text-destructive hover:text-destructive"
               >
+                <RefreshCw className="h-3.5 w-3.5" />
                 {retryLabel}
               </Button>
             )}
@@ -200,43 +204,32 @@ export const StateView: React.FC<StateViewProps> = ({
     );
   }
 
-  // 4. Xử lý trạng thái EMPTY
+  // 6. Trạng thái EMPTY
   if (resolvedState === "empty") {
     const preset = emptyPresets[emptyPreset] || emptyPresets.general;
-    const resolvedIcon = icon || preset.icon;
-    const resolvedTitle = title || preset.title;
-    const resolvedDesc = description || preset.description;
-    const isFullPage = variant === "full-page";
 
     return (
-      <div
-        className={cn(
-          "flex flex-col items-center justify-center p-8 text-center transition-all animate-in fade-in duration-300",
-          isFullPage ? "min-h-[calc(100vh-12rem)] w-full" : "rounded-xl border border-dashed border-border py-12",
-          className
-        )}
-        {...props}
-      >
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted/70 mb-4">
-          {resolvedIcon}
+      <div className={containerClasses} {...props}>
+        <div className="h-14 w-14 rounded-2xl bg-muted/60 flex items-center justify-center mb-4 border border-border/50">
+          {icon || preset.icon}
         </div>
-        <h3 className="text-base font-semibold text-foreground">{resolvedTitle}</h3>
-        <p className="mt-1 max-w-sm text-sm text-muted-foreground leading-relaxed">
-          {resolvedDesc}
+        <h4 className="text-base font-semibold text-foreground">
+          {title || preset.title}
+        </h4>
+        <p className="text-sm text-muted-foreground mt-1 max-w-sm">
+          {description || preset.description}
         </p>
-
         {action && <div className="mt-5">{action}</div>}
       </div>
     );
   }
 
-  // 5. Xử lý trạng thái FETCHING (Background Refresh mà KHÔNG giật UI)
+  // 7. Trạng thái FETCHING (Background sync)
   if (resolvedState === "fetching") {
     return (
-      <div className={cn("relative", className)} {...props}>
-        {/* Subtle background fetching badge */}
-        <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-xs border border-primary/20 px-2.5 py-1 text-xs font-medium text-primary shadow-xs animate-in fade-in">
-          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+      <div className="relative w-full" {...props}>
+        <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/90 backdrop-blur border border-border text-xs text-muted-foreground shadow-sm">
+          <RefreshCw className="h-3 w-3 animate-spin text-primary" />
           <span>Đang làm mới...</span>
         </div>
         <div className="opacity-80 transition-opacity duration-200">{children}</div>
@@ -244,8 +237,10 @@ export const StateView: React.FC<StateViewProps> = ({
     );
   }
 
-  // 6. Trạng thái SUCCESS / IDLE: Hiển thị nội dung chính
+  // 8. Trạng thái SUCCESS / IDLE: Hiển thị nội dung chính
   return <>{children}</>;
 };
 
-StateView.displayName = "StateView";
+State.displayName = "State";
+
+export { State as StateView };

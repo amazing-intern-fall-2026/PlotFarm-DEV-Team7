@@ -14,54 +14,85 @@ import {
   Bell,
   ShieldCheck,
 } from "lucide-react";
-import { BottomNavItem, type BottomNavItemProps } from "./BottomNavItem";
+import { NavigationItem, type NavigationItemProps } from "./NavigationItem";
 import { cn } from "@/shared/lib/utils";
 
-export type BottomNavRole = "customer" | "farmer" | "admin";
+export type NavigationRole = "customer" | "farmer" | "admin";
+export type BottomNavRole = NavigationRole;
 
-export interface BottomNavigationProps {
+export interface NavigationProps {
   /** Vai trò ứng dụng: "customer" | "farmer" | "admin" — Tự động áp dụng bộ tabs chuẩn theo role */
-  role?: BottomNavRole;
+  role?: NavigationRole;
   /** Danh sách các tab hiển thị tùy biến (ghi đè bộ tabs của role nếu truyền vào) */
-  items?: BottomNavItemProps[];
+  items?: NavigationItemProps[];
   /** Index của tab đang active */
   activeIndex?: number;
   /** ID của tab đang active (tự động tính activeIndex dựa theo item.id) */
   activeId?: string;
   /** Callback khi chọn tab (trả về index và item) */
-  onTabChange?: (index: number, item?: BottomNavItemProps) => void;
+  onTabChange?: (index: number, item?: NavigationItemProps) => void;
   className?: string;
 }
 
+export type BottomNavigationProps = NavigationProps;
+
 /** Bộ tab chuẩn cho vai trò Customer (Marketplace / Khách hàng) */
-export const DEFAULT_CUSTOMER_BOTTOM_ITEMS: BottomNavItemProps[] = [
+export const DEFAULT_CUSTOMER_NAV_ITEMS: NavigationItemProps[] = [
   { id: "home", icon: <Home className="h-5 w-5" />, label: "Trang chủ" },
   { id: "explore", icon: <Search className="h-5 w-5" />, label: "Khám phá" },
   { id: "camera", icon: <Camera className="h-5 w-5" />, label: "Camera 24/7" },
-  { id: "orders", icon: <ShoppingBag className="h-5 w-5" />, label: "Vườn của tôi" },
+  {
+    id: "orders",
+    icon: <ShoppingBag className="h-5 w-5" />,
+    label: "Vườn của tôi",
+  },
   { id: "profile", icon: <User className="h-5 w-5" />, label: "Tài khoản" },
 ];
 
 /** Bộ tab chuẩn cho vai trò Farmer (Kỹ thuật viên / Nông dân thực địa) */
-export const DEFAULT_FARMER_BOTTOM_ITEMS: BottomNavItemProps[] = [
-  { id: "tasks_today", icon: <CheckSquare className="h-5 w-5" />, label: "Nhiệm vụ" },
+export const DEFAULT_FARMER_NAV_ITEMS: NavigationItemProps[] = [
+  {
+    id: "tasks_today",
+    icon: <CheckSquare className="h-5 w-5" />,
+    label: "Nhiệm vụ",
+  },
   { id: "my_plots", icon: <MapPin className="h-5 w-5" />, label: "Ô đất" },
   { id: "scan_qr", icon: <QrCode className="h-5 w-5" />, label: "Quét QR" },
-  { id: "task_journal", icon: <BookOpen className="h-5 w-5" />, label: "Nhật ký" },
+  {
+    id: "task_journal",
+    icon: <BookOpen className="h-5 w-5" />,
+    label: "Nhật ký",
+  },
   { id: "profile", icon: <User className="h-5 w-5" />, label: "Hồ sơ" },
 ];
 
 /** Bộ tab chuẩn cho vai trò Admin (Quản trị hệ thống) */
-export const DEFAULT_ADMIN_BOTTOM_ITEMS: BottomNavItemProps[] = [
-  { id: "overview", icon: <LayoutDashboard className="h-5 w-5" />, label: "Tổng quan" },
+export const DEFAULT_ADMIN_NAV_ITEMS: NavigationItemProps[] = [
+  {
+    id: "overview",
+    icon: <LayoutDashboard className="h-5 w-5" />,
+    label: "Tổng quan",
+  },
   { id: "plots", icon: <MapPin className="h-5 w-5" />, label: "Ô đất" },
-  { id: "work_orders", icon: <ClipboardList className="h-5 w-5" />, label: "Công việc" },
+  {
+    id: "work_orders",
+    icon: <ClipboardList className="h-5 w-5" />,
+    label: "Công việc",
+  },
   { id: "alerts", icon: <Bell className="h-5 w-5" />, label: "Cảnh báo" },
-  { id: "settings", icon: <ShieldCheck className="h-5 w-5" />, label: "Cài đặt" },
+  {
+    id: "settings",
+    icon: <ShieldCheck className="h-5 w-5" />,
+    label: "Cài đặt",
+  },
 ];
 
+export const DEFAULT_CUSTOMER_BOTTOM_ITEMS = DEFAULT_CUSTOMER_NAV_ITEMS;
+export const DEFAULT_FARMER_BOTTOM_ITEMS = DEFAULT_FARMER_NAV_ITEMS;
+export const DEFAULT_ADMIN_BOTTOM_ITEMS = DEFAULT_ADMIN_NAV_ITEMS;
+
 /**
- * BottomNavigation — thanh điều hướng đáy màn hình linh hoạt cho mọi vai trò (Multi-role).
+ * Navigation — thanh điều hướng linh hoạt cho mọi vai trò (Multi-role).
  *
  * Hỗ trợ tự động cấu hình theo `role`:
  * - `role="customer"`: Trang chủ • Khám phá • Camera 24/7 • Vườn của tôi • Tài khoản
@@ -70,25 +101,25 @@ export const DEFAULT_ADMIN_BOTTOM_ITEMS: BottomNavItemProps[] = [
  *
  * Hoặc truyền `items` tùy biến theo nhu cầu bất kỳ.
  */
-export function BottomNavigation({
+export function Navigation({
   role = "customer",
   items,
   activeIndex,
   activeId,
   onTabChange,
   className,
-}: BottomNavigationProps) {
+}: NavigationProps) {
   // Xác định danh sách tabs theo items truyền vào hoặc role mặc định
   const resolvedItems = React.useMemo(() => {
     if (items && items.length > 0) return items;
     switch (role) {
       case "farmer":
-        return DEFAULT_FARMER_BOTTOM_ITEMS;
+        return DEFAULT_FARMER_NAV_ITEMS;
       case "admin":
-        return DEFAULT_ADMIN_BOTTOM_ITEMS;
+        return DEFAULT_ADMIN_NAV_ITEMS;
       case "customer":
       default:
-        return DEFAULT_CUSTOMER_BOTTOM_ITEMS;
+        return DEFAULT_CUSTOMER_NAV_ITEMS;
     }
   }, [items, role]);
 
@@ -113,7 +144,7 @@ export function BottomNavigation({
       )}
     >
       {resolvedItems.map((item, index) => (
-        <BottomNavItem
+        <NavigationItem
           key={item.id ?? index}
           {...item}
           isActive={index === currentActiveIndex}
@@ -127,4 +158,6 @@ export function BottomNavigation({
   );
 }
 
-BottomNavigation.displayName = "BottomNavigation";
+Navigation.displayName = "Navigation";
+
+export { Navigation as BottomNavigation };

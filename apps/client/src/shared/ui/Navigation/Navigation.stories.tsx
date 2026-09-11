@@ -1,17 +1,17 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { BottomNavigation } from "./BottomNavigation";
+import { Navigation } from "./Navigation";
 
-const meta: Meta<typeof BottomNavigation> = {
+const meta: Meta<typeof Navigation> = {
   title: "Shared/UI/Navigation",
-  component: BottomNavigation,
+  component: Navigation,
   tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component: `
-### 📱 Giới thiệu Component BottomNavigation Đa Vai Trò (Multi-Role)
-**BottomNavigation** là thanh điều hướng cố định dưới đáy màn hình trên thiết bị di động (< 1024px).
+### 📱 Giới thiệu Component Navigation Đa Vai Trò (Multi-Role)
+**Navigation** là thanh điều hướng cố định dưới đáy màn hình trên thiết bị di động (< 1024px).
 
 #### 🌟 Điểm nổi bật:
 - **Hỗ trợ đa vai trò qua prop \`role\`**: Tự động áp dụng bộ tabs tối ưu cho từng vai trò:
@@ -44,7 +44,7 @@ const meta: Meta<typeof BottomNavigation> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof BottomNavigation>;
+type Story = StoryObj<typeof Navigation>;
 
 /**
  * 1. Thanh điều hướng cho Khách hàng (Marketplace / Customer)
@@ -60,7 +60,7 @@ export const CustomerRole: Story = {
       <div className="p-4 text-center text-sm text-slate-500">
         Giao diện Khách hàng trên thiết bị di động (Mobile Customer)
       </div>
-      <BottomNavigation {...args} className="absolute" />
+      <Navigation {...args} className="absolute" />
     </div>
   ),
 };
@@ -79,7 +79,7 @@ export const FarmerRole: Story = {
       <div className="p-4 text-center text-sm text-emerald-800 dark:text-emerald-300 font-medium">
         Giao diện Kỹ thuật viên thực địa (Mobile Farmer)
       </div>
-      <BottomNavigation {...args} className="absolute" />
+      <Navigation {...args} className="absolute" />
     </div>
   ),
 };
@@ -98,7 +98,7 @@ export const AdminRole: Story = {
       <div className="p-4 text-center text-sm text-slate-700 dark:text-slate-300 font-medium">
         Giao diện Quản trị viên (Mobile Admin)
       </div>
-      <BottomNavigation {...args} className="absolute" />
+      <Navigation {...args} className="absolute" />
     </div>
   ),
 };
@@ -165,7 +165,7 @@ export const InteractiveRoleSwitcher: Story = {
           </div>
         </div>
 
-        <BottomNavigation
+        <Navigation
           role={selectedRole}
           activeId={activeTabId}
           onTabChange={(_idx, item) => {
