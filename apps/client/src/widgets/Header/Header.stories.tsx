@@ -75,10 +75,9 @@ export const CustomerAuthenticated: Story = {
     notificationCount: 3,
     navigation: [
       { label: 'Trang chủ', href: '/', isActive: true },
-      { label: 'Gói thuê đất', href: '/plots' },
-      { label: 'Mảnh vườn của tôi', href: '/customer/my-plots', badge: '1 ô' },
-      { label: 'Cây trồng', href: '/crops' },
-      { label: 'Về PlotFarm', href: '/about' }
+      { label: 'Khám phá ô đất', href: '/plots' },
+      { label: 'Vườn của tôi', href: '/customer/my-plots' },
+      { label: 'Nhật ký nông vụ', href: '/customer/care-requests' }
     ]
   }
 };

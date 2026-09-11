@@ -15,6 +15,13 @@ export const DEFAULT_HEADER_LABELS: Required<HeaderLabels> = {
   customerRole: 'Khách hàng',
 };
 
+export const DEFAULT_CUSTOMER_AUTH_NAV: HeaderNavItem[] = [
+  { label: 'Trang chủ', href: '/' },
+  { label: 'Khám phá ô đất', href: '/plots' },
+  { label: 'Vườn của tôi', href: '/customer/my-plots' },
+  { label: 'Nhật ký nông vụ', href: '/customer/care-requests' },
+];
+
 export const DEFAULT_NAV_BY_ROLE: Record<'customer' | 'farmer' | 'admin', HeaderNavItem[]> = {
   customer: [
     { label: 'Trang chủ', href: '/' },

@@ -3,7 +3,7 @@ import { Bell, Menu, X, ArrowLeft } from 'lucide-react';
 import { Button } from '@/shared/ui';
 import { cn } from '@/shared/lib/utils';
 import type { HeaderProps } from './types';
-import { DEFAULT_HEADER_LABELS, DEFAULT_NAV_BY_ROLE } from './constants';
+import { DEFAULT_HEADER_LABELS, DEFAULT_NAV_BY_ROLE, DEFAULT_CUSTOMER_AUTH_NAV } from './constants';
 import { HeaderBranding } from './HeaderBranding';
 import { HeaderNav } from './HeaderNav';
 import { HeaderUserMenu } from './HeaderUserMenu';
@@ -31,7 +31,13 @@ export const Header: React.FC<HeaderProps> = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const t = { ...DEFAULT_HEADER_LABELS, ...labels };
 
-  const navItems = navigation ?? DEFAULT_NAV_BY_ROLE[variant];
+  const navItems =
+    navigation ??
+    (variant === 'customer'
+      ? user
+        ? DEFAULT_CUSTOMER_AUTH_NAV
+        : DEFAULT_NAV_BY_ROLE.customer
+      : DEFAULT_NAV_BY_ROLE[variant]);
 
   return (
     <header
