@@ -16,63 +16,102 @@ import {
   CheckSquare,
   QrCode,
   FileText,
-  Bell
+  Bell,
 } from "lucide-react";
 
 import { useT } from "@/shared/lib/i18n";
 import { BottomNavigation } from "@/shared/ui/BottomNavigation";
 import { SidebarNav, type SidebarSection } from "@/shared/ui/SidebarNav";
 import { TopBar, type AppRole, type BreadcrumbItem } from "@/shared/ui/TopBar";
-import { CustomerHeader, type CustomerNavItem } from "@/shared/ui/CustomerHeader";
+import {
+  CustomerHeader,
+  type CustomerNavItem,
+} from "@/shared/ui/CustomerHeader";
 import { cn } from "@/shared/lib/utils";
 
 // ─── User shape ─────────────────────────────────────────────────────────────
-export interface AppShellUser {
+export interface RootLayoutUser {
   name: string;
   avatarSrc?: string;
 }
 
+export type AppShellUser = RootLayoutUser;
+
 // ─── Props ───────────────────────────────────────────────────────────────────
-export interface AppShellProps {
+export interface RootLayoutProps {
   role: AppRole;
-  user?: AppShellUser;
-  /** Active nav item id (dùng cho sidebar & bottom nav) */
+  user?: RootLayoutUser;
   activeNavId?: string;
-  /** Breadcrumb trail (Admin/Farmer desktop only) */
   breadcrumbs?: BreadcrumbItem[];
-  /** Số thông báo chưa đọc */
   notificationCount?: number;
-  /** Callbacks */
   onNavChange?: (id: string) => void;
   onNotificationsClick?: () => void;
   onLoginClick?: () => void;
   onLogoutClick?: () => void;
-  /** Nội dung trang */
   children: React.ReactNode;
   className?: string;
 }
+
+export type AppShellProps = RootLayoutProps;
 
 // ─── Build nav configs ───────────────────────────────────────────────────────
 
 function useCustomerNavItems(
   t: (key: string) => string,
   activeNavId: string,
-  onNavChange: (id: string) => void
+  onNavChange: (id: string) => void,
 ): CustomerNavItem[] {
   return [
-    { id: "home", label: t("nav.home"), isActive: activeNavId === "home", onClick: () => onNavChange("home") },
-    { id: "explore", label: t("nav.explore"), isActive: activeNavId === "explore", onClick: () => onNavChange("explore") },
-    { id: "about", label: t("nav.about"), isActive: activeNavId === "about", onClick: () => onNavChange("about") }
+    {
+      id: "home",
+      label: t("nav.home"),
+      isActive: activeNavId === "home",
+      onClick: () => onNavChange("home"),
+    },
+    {
+      id: "explore",
+      label: t("nav.explore"),
+      isActive: activeNavId === "explore",
+      onClick: () => onNavChange("explore"),
+    },
+    {
+      id: "journal",
+      label: t("nav.journal"),
+      isActive: activeNavId === "journal",
+      onClick: () => onNavChange("journal"),
+    },
+    {
+      id: "about",
+      label: t("nav.about"),
+      isActive: activeNavId === "about",
+      onClick: () => onNavChange("about"),
+    },
   ];
 }
 
 function useCustomerBottomItems(t: (key: string) => string) {
   return [
     { id: "home", icon: <Home className="h-5 w-5" />, label: t("nav.home") },
-    { id: "explore", icon: <Search className="h-5 w-5" />, label: t("nav.explore") },
-    { id: "camera", icon: <Camera className="h-5 w-5" />, label: t("nav.camera") },
-    { id: "orders", icon: <ShoppingBag className="h-5 w-5" />, label: t("nav.orders") },
-    { id: "profile", icon: <User className="h-5 w-5" />, label: t("nav.profile") }
+    {
+      id: "explore",
+      icon: <Search className="h-5 w-5" />,
+      label: t("nav.explore"),
+    },
+    {
+      id: "camera",
+      icon: <Camera className="h-5 w-5" />,
+      label: t("nav.camera"),
+    },
+    {
+      id: "orders",
+      icon: <ShoppingBag className="h-5 w-5" />,
+      label: t("nav.orders"),
+    },
+    {
+      id: "profile",
+      icon: <User className="h-5 w-5" />,
+      label: t("nav.profile"),
+    },
   ];
 }
 
@@ -80,30 +119,78 @@ function useAdminSections(t: (key: string) => string): SidebarSection[] {
   return [
     {
       items: [
-        { id: "overview", icon: <LayoutDashboard className="h-4 w-4" />, label: t("admin.overview") },
-        { id: "plots", icon: <MapPin className="h-4 w-4" />, label: t("admin.plots") },
-        { id: "tech_config", icon: <Wrench className="h-4 w-4" />, label: t("admin.tech_config") },
-        { id: "seeds_supply", icon: <Leaf className="h-4 w-4" />, label: t("admin.seeds_supply") }
-      ]
+        {
+          id: "overview",
+          icon: <LayoutDashboard className="h-4 w-4" />,
+          label: t("admin.overview"),
+        },
+        {
+          id: "plots",
+          icon: <MapPin className="h-4 w-4" />,
+          label: t("admin.plots"),
+        },
+        {
+          id: "tech_config",
+          icon: <Wrench className="h-4 w-4" />,
+          label: t("admin.tech_config"),
+        },
+        {
+          id: "seeds_supply",
+          icon: <Leaf className="h-4 w-4" />,
+          label: t("admin.seeds_supply"),
+        },
+      ],
     },
     {
       title: "Vận hành",
       items: [
-        { id: "work_orders", icon: <ClipboardList className="h-4 w-4" />, label: t("admin.work_orders") },
-        { id: "harvest", icon: <Truck className="h-4 w-4" />, label: t("admin.harvest") },
-        { id: "rbac", icon: <ShieldCheck className="h-4 w-4" />, label: t("admin.rbac") }
-      ]
-    }
+        {
+          id: "work_orders",
+          icon: <ClipboardList className="h-4 w-4" />,
+          label: t("admin.work_orders"),
+        },
+        {
+          id: "harvest",
+          icon: <Truck className="h-4 w-4" />,
+          label: t("admin.harvest"),
+        },
+        {
+          id: "rbac",
+          icon: <ShieldCheck className="h-4 w-4" />,
+          label: t("admin.rbac"),
+        },
+      ],
+    },
   ];
 }
 
 function useAdminBottomItems(t: (key: string) => string) {
   return [
-    { id: "overview", icon: <LayoutDashboard className="h-5 w-5" />, label: t("admin.overview") },
-    { id: "plots", icon: <MapPin className="h-5 w-5" />, label: t("admin.plots") },
-    { id: "work_orders", icon: <ClipboardList className="h-5 w-5" />, label: t("admin.work_orders") },
-    { id: "alerts", icon: <Bell className="h-5 w-5" />, label: t("admin.alerts") },
-    { id: "settings", icon: <ShieldCheck className="h-5 w-5" />, label: t("admin.settings") }
+    {
+      id: "overview",
+      icon: <LayoutDashboard className="h-5 w-5" />,
+      label: t("admin.overview"),
+    },
+    {
+      id: "plots",
+      icon: <MapPin className="h-5 w-5" />,
+      label: t("admin.plots"),
+    },
+    {
+      id: "work_orders",
+      icon: <ClipboardList className="h-5 w-5" />,
+      label: t("admin.work_orders"),
+    },
+    {
+      id: "alerts",
+      icon: <Bell className="h-5 w-5" />,
+      label: t("admin.alerts"),
+    },
+    {
+      id: "settings",
+      icon: <ShieldCheck className="h-5 w-5" />,
+      label: t("admin.settings"),
+    },
   ];
 }
 
@@ -111,29 +198,65 @@ function useFarmerSections(t: (key: string) => string): SidebarSection[] {
   return [
     {
       items: [
-        { id: "tasks_today", icon: <CheckSquare className="h-4 w-4" />, label: t("farmer.tasks_today") },
-        { id: "my_plots", icon: <MapPin className="h-4 w-4" />, label: t("farmer.my_plots") },
-        { id: "iot_camera", icon: <Camera className="h-4 w-4" />, label: t("farmer.iot_camera") },
-        { id: "task_journal", icon: <FileText className="h-4 w-4" />, label: t("farmer.task_journal") }
-      ]
-    }
+        {
+          id: "tasks_today",
+          icon: <CheckSquare className="h-4 w-4" />,
+          label: t("farmer.tasks_today"),
+        },
+        {
+          id: "my_plots",
+          icon: <MapPin className="h-4 w-4" />,
+          label: t("farmer.my_plots"),
+        },
+        {
+          id: "iot_camera",
+          icon: <Camera className="h-4 w-4" />,
+          label: t("farmer.iot_camera"),
+        },
+        {
+          id: "task_journal",
+          icon: <FileText className="h-4 w-4" />,
+          label: t("farmer.task_journal"),
+        },
+      ],
+    },
   ];
 }
 
 function useFarmerBottomItems(t: (key: string) => string) {
   return [
-    { id: "tasks_today", icon: <CheckSquare className="h-5 w-5" />, label: t("farmer.tasks_today") },
-    { id: "my_plots", icon: <MapPin className="h-5 w-5" />, label: t("farmer.my_plots") },
-    { id: "scan_qr", icon: <QrCode className="h-5 w-5" />, label: t("farmer.scan_qr") },
-    { id: "task_journal", icon: <BookOpen className="h-5 w-5" />, label: t("farmer.task_journal") },
-    { id: "profile", icon: <User className="h-5 w-5" />, label: t("farmer.my_profile") }
+    {
+      id: "tasks_today",
+      icon: <CheckSquare className="h-5 w-5" />,
+      label: t("farmer.tasks_today"),
+    },
+    {
+      id: "my_plots",
+      icon: <MapPin className="h-5 w-5" />,
+      label: t("farmer.my_plots"),
+    },
+    {
+      id: "scan_qr",
+      icon: <QrCode className="h-5 w-5" />,
+      label: t("farmer.scan_qr"),
+    },
+    {
+      id: "task_journal",
+      icon: <BookOpen className="h-5 w-5" />,
+      label: t("farmer.task_journal"),
+    },
+    {
+      id: "profile",
+      icon: <User className="h-5 w-5" />,
+      label: t("farmer.my_profile"),
+    },
   ];
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
 /**
- * AppShell — Root layout shell nhận `role` và render đúng layout theo role × breakpoint.
+ * RootLayout — Root layout shell nhận `role` và render đúng layout theo role × breakpoint.
  *
  * | Role     | Desktop (≥1024px)                      | Mobile (<1024px)               |
  * |----------|----------------------------------------|-------------------------------|
@@ -141,7 +264,7 @@ function useFarmerBottomItems(t: (key: string) => string) {
  * | admin    | SidebarNav (collapsible) + TopBar + main | TopBar (hamburger) + BottomNav |
  * | farmer   | SidebarNav (collapsible) + TopBar + main | TopBar (hamburger) + BottomNav |
  */
-export function AppShell({
+export function RootLayout({
   role,
   user,
   activeNavId = "home",
@@ -152,8 +275,8 @@ export function AppShell({
   onLoginClick,
   onLogoutClick,
   children,
-  className
-}: AppShellProps) {
+  className,
+}: RootLayoutProps) {
   const { t } = useT();
   const [activeId, setActiveId] = React.useState(activeNavId);
 
@@ -162,7 +285,7 @@ export function AppShell({
       setActiveId(id);
       onNavChange?.(id);
     },
-    [onNavChange]
+    [onNavChange],
   );
 
   const handleMobileTabChange = React.useCallback(
@@ -170,9 +293,8 @@ export function AppShell({
       const item = items[index];
       if (item) handleNavChange(item.id);
     },
-    [handleNavChange]
+    [handleNavChange],
   );
-
 
   // ─── CUSTOMER ─────────────────────────────────────────────────────────────
   if (role === "customer") {
@@ -198,7 +320,7 @@ export function AppShell({
         <main
           className={cn(
             "flex-1 w-full mx-auto max-w-7xl px-4 sm:px-6 py-6",
-            "lg:pb-6 pb-20"
+            "lg:pb-6 pb-20",
           )}
         >
           {children}
@@ -219,7 +341,9 @@ export function AppShell({
   // ─── ADMIN / FARMER ───────────────────────────────────────────────────────
   const isAdmin = role === "admin";
   const sidebarSections = isAdmin ? useAdminSections(t) : useFarmerSections(t);
-  const bottomItems = isAdmin ? useAdminBottomItems(t) : useFarmerBottomItems(t);
+  const bottomItems = isAdmin
+    ? useAdminBottomItems(t)
+    : useFarmerBottomItems(t);
   const bottomIndex = bottomItems.findIndex((i) => i.id === activeId);
 
   const roleBadgeLabel = isAdmin
@@ -258,7 +382,7 @@ export function AppShell({
         <main
           className={cn(
             "flex-1 overflow-y-auto px-4 py-4 sm:px-6",
-            "lg:pb-4 pb-20"
+            "lg:pb-4 pb-20",
           )}
         >
           {children}
@@ -277,4 +401,6 @@ export function AppShell({
   );
 }
 
-AppShell.displayName = "AppShell";
+RootLayout.displayName = "RootLayout";
+
+export { RootLayout as AppShell };

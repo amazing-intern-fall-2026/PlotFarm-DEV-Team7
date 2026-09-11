@@ -1,6 +1,6 @@
 import * as React from "react";
 import { I18nProvider } from "@/shared/lib/i18n";
-import { AppShell } from "@/widgets/AppShell";
+import { RootLayout } from "@/widgets/RootLayout";
 import type { AppRole } from "@/shared/ui/TopBar";
 
 /**
@@ -9,7 +9,7 @@ import type { AppRole } from "@/shared/ui/TopBar";
  * Hướng dẫn:
  * - Thay đổi `demoRole` để xem layout theo từng role.
  * - Khi tích hợp Router, bọc RouterProvider bên trong I18nProvider.
- * - Khi tích hợp Auth, đọc role từ AuthContext và truyền vào AppShell.
+ * - Khi tích hợp Auth, đọc role từ AuthContext và truyền vào RootLayout.
  */
 
 const DEMO_ROLE: AppRole = "customer"; // ← đổi thành "admin" | "farmer" để test
@@ -24,7 +24,7 @@ export function App() {
 
   return (
     <I18nProvider defaultLocale="vi">
-      <AppShell
+      <RootLayout
         role={DEMO_ROLE}
         user={DEMO_USER}
         activeNavId={activeNavId}
@@ -52,7 +52,7 @@ export function App() {
             <code className="font-mono">App.tsx</code> để kiểm tra layout của từng role.
           </p>
         </div>
-      </AppShell>
+      </RootLayout>
     </I18nProvider>
   );
 }

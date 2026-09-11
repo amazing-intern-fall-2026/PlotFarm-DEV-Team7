@@ -8,5 +8,5 @@
  * 3. Navigation/ → Thanh điều hướng dưới đáy màn hình (Bottom Navigation cuộn ngang) trên Mobile.
  * 4. Footer/     → Chân trang thông tin chung (chỉ dành riêng cho Khách hàng & Công cộng, ẩn ở Admin/Staff).
  */
-export * from "./AppShell";
+export * from "./RootLayout";
 
