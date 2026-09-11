@@ -22,3 +22,6 @@
  */
 export { Header } from './Header';
 export type { HeaderProps, HeaderNavItem, HeaderUser, HeaderLabels } from './Header';
+
+export { Footer } from './Footer';
+export type { FooterProps, FooterConfig, FooterColumn, FooterLink, FooterContact } from './Footer';

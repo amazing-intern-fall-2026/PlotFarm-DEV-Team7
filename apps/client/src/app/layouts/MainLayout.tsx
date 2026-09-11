@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/entities/session';
 import { PATHS } from '@/shared/config/paths';
-import { Header, type HeaderUser, type HeaderNavItem } from '@/widgets';
+import { Header, Footer, type HeaderUser, type HeaderNavItem } from '@/widgets';
 
 export const MainLayout: React.FC = () => {
   const { t } = useTranslation();
@@ -53,10 +53,8 @@ export const MainLayout: React.FC = () => {
         <Outlet />
       </main>
 
-      {/* Global Footer */}
-      <footer className="border-t border-border bg-card py-4 text-center text-xs text-muted-foreground">
-        {t('common.appName')} &copy; 2026. Nền tảng Nông trại Thực nghiệm Công nghệ cao.
-      </footer>
+      {/* Reusable Global Footer */}
+      <Footer />
     </div>
   );
 };

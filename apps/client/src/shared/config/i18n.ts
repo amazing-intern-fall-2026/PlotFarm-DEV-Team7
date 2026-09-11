@@ -69,6 +69,32 @@ export const resources = {
         unauthorizedDesc: "Bạn không có thẩm quyền truy cập vào đường dẫn này.",
         notFoundTitle: "404 - Không tìm thấy trang",
         notFoundDesc: "Trang bạn yêu cầu không tồn tại hoặc đã bị gỡ bỏ."
+      },
+      footer: {
+        description: "Nền tảng nông nghiệp thông minh giúp gia đình bạn sở hữu lô đất canh tác nông sản hữu cơ chuẩn VietGAP tại Đà Lạt từ xa qua camera IoT.",
+        badges: ["VietGAP Certified", "GlobalG.A.P Farm", "Organic Bio"],
+        processTitle: "Quy Trình & Canh Tác",
+        processLinks: [
+          "Chọn lô đất canh tác",
+          "Lập kế hoạch trồng & chọn rau",
+          "Giám sát qua camera IoT 24/7",
+          "Thu hoạch & Giao hàng tận nhà"
+        ],
+        supportTitle: "Hỗ Trợ & Chính Sách",
+        supportLinks: [
+          "Chính sách bảo hiểm mùa vụ",
+          "Tiêu chuẩn kiểm nghiệm đất & nước",
+          "Trải nghiệm tham quan nông trại",
+          "Điều khoản thuê đất canh tác"
+        ],
+        contactTitle: "Trang Trại Đà Lạt",
+        address: "Địa chỉ: Thôn Lạc Dương, Huyện Lạc Dương, TP. Đà Lạt, Lâm Đồng",
+        hotline: "Hotline hỗ trợ: 1900 6868",
+        email: "Email: hotro@plotfarm.vn",
+        copyright: "© 2026 PlotFarm Da Lat. Đơn vị tiên phong Farm-to-Home Nông nghiệp Công nghệ cao Đà Lạt.",
+        privacyPolicy: "Bảo mật thông tin",
+        termsOfService: "Cam kết dịch vụ",
+        iotRegulations: "Quy định IoT"
       }
     }
   },
@@ -138,6 +164,32 @@ export const resources = {
         unauthorizedDesc: "You do not have permission to access this resource.",
         notFoundTitle: "404 - Page Not Found",
         notFoundDesc: "The requested page does not exist or has been removed."
+      },
+      footer: {
+        description: "Smart agriculture platform helping families own and cultivate organic VietGAP farmland in Da Lat remotely via IoT cameras.",
+        badges: ["VietGAP Certified", "GlobalG.A.P Farm", "Organic Bio"],
+        processTitle: "Process & Cultivation",
+        processLinks: [
+          "Select farming plot",
+          "Crop planning & seed selection",
+          "24/7 IoT Camera monitoring",
+          "Harvest & Home delivery"
+        ],
+        supportTitle: "Support & Policies",
+        supportLinks: [
+          "Harvest guarantee insurance",
+          "Soil & Water testing standards",
+          "Farm visit experience",
+          "Farmland leasing terms"
+        ],
+        contactTitle: "Da Lat Farm",
+        address: "Address: Lac Duong Commune, Da Lat, Lam Dong",
+        hotline: "Support Hotline: 1900 6868",
+        email: "Email: support@plotfarm.vn",
+        copyright: "© 2026 PlotFarm Da Lat. Pioneer in High-Tech Farm-to-Home Agriculture in Da Lat.",
+        privacyPolicy: "Privacy Policy",
+        termsOfService: "Service Commitment",
+        iotRegulations: "IoT Regulations"
       }
     }
   }
