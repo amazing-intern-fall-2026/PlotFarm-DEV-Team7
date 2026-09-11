@@ -154,6 +154,53 @@ export async function decryptPayload<T>(jweString: string): Promise<T> {
 
 ---
 
+### 4.3. PHÂN BIỆT RÕ RÀNG: MÃ HÓA PAYLOAD (JWE) VS XÁC THỰC NGUỒN GỐC CLIENT (CLIENT IDENTITY / APP SIGNATURE)
+
+> [!IMPORTANT]
+> Đây là hai khái niệm bảo mật hoàn toàn độc lập, giải quyết 2 bài toán khác nhau và **bắt buộc phải kết hợp đồng thời**:
+
+```mermaid
+flowchart LR
+    subgraph K1 [Khái niệm 1: JWE Payload Encryption]
+        A1["Nội dung Payload (JSON)"] -->|Mã hóa Asymmetric với Public Key| B1["Chuỗi mã hóa vô nghĩa: eyJhbG..."]
+        B1 -.->|Mục đích| C1["Bảo mật dữ liệu (Data Privacy) - Kẻ nghe lén F12 không đọc được dữ liệu nhạy cảm"]
+    end
+
+    subgraph K2 [Khái niệm 2: Client Origin Verification / App Signature]
+        A2["Request Headers: X-App-Id, Nonce, Timestamp, Body"] -->|Ký HMAC-SHA256 hoặc App Check Token| B2["Chữ ký số: X-App-Signature"]
+        B2 -.->|Mục đích| C2["Nhận diện Client (Client Authenticity) - BE kiểm tra xem request có đúng do FE chính chủ gửi không hay Postman/Bot"]
+    end
+```
+
+#### Bảng so sánh đối chiếu chi tiết:
+
+| Tiêu chí | 1. Mã hóa Payload (JWE) | 2. Nhận diện Client (App Signature / Origin Verification) |
+| :--- | :--- | :--- |
+| **Mục đích cốt lõi** | **Tính bí mật (Confidentiality):** Dữ liệu gửi đi không bị đọc trộm trên đường truyền hoặc trong tab F12. | **Tính xác thực nguồn gốc (Authenticity):** BE biết chính xác request được gửi từ FE chính chủ của PlotFarm, không phải từ Postman/Tool cURL/Bot scraper. |
+| **Câu hỏi cần trả lời** | *"Dữ liệu bên trong gói tin này là gì? Có ai nhìn trộm được mật khẩu/CCCD không?"* | *"Ai gửi gói tin này? Có phải ứng dụng Frontend chính chủ không hay Hacker dùng script?"* |
+| **Khóa sử dụng** | Cặp khóa bất đối xứng RSA/ECDH (FE giữ Public Key, BE giữ Private Key). | App Secret / Dynamic Salt / HMAC Signing Key / Turnstile Attestation Token. |
+| **Kẻ xấu có thể làm gì nếu chỉ có 1 trong 2?** | **Nếu chỉ có JWE mà không có Client Verification:** Hacker lấy Public Key từ web, dùng Postman tự đóng gói JWE gửi 10.000 request/phút để spam đăng ký tài khoản hoặc vét đơn hàng! | **Nếu chỉ có Client Verification mà không có JWE:** Hacker không spam từ Postman được, nhưng mở tab F12 Network sẽ đọc rõ mồn một toàn bộ dữ liệu JSON thô gửi đi. |
+
+#### Cơ chế triển khai Nhận diện Nguồn gốc Client (Client Verification ở BE & FE):
+1. **Request Signing với HMAC-SHA256 (Dành cho mọi API Endpoint):**
+   - FE tính toán chữ ký số dựa trên payload + thời gian + chuỗi ngẫu nhiên nonce:
+     $$\text{Signature} = \text{HMAC-SHA256}(\text{Action} + \text{Timestamp} + \text{Nonce} + \text{BodyHash},\ \text{AppSecret})$$
+   - Gửi kèm qua header:
+     - `X-App-Id: plotfarm-web-client`
+     - `X-App-Timestamp: 1757600000000`
+     - `X-App-Nonce: <random-uuid>`
+     - `X-App-Signature: <hex-signature>`
+   - BE tính lại chữ ký tương tự; nếu chữ ký không khớp -> Từ chối ngay với mã lỗi `403 FORBIDDEN (ERR_INVALID_CLIENT_SIGNATURE)`.
+2. **Kiểm tra Header Trình Duyệt Bắt Buộc (Browser Metadata Check):**
+   - BE kiểm tra các header chỉ trình duyệt hợp lệ mới tự động gắn (Postman/script giả mạo rất dễ sót):
+     - `Sec-Fetch-Site: same-origin` (hoặc `same-site`)
+     - `Sec-Fetch-Mode: cors`
+     - `Origin`: Phải trùng khớp với `https://plotfarm.vn` (hoặc `http://localhost:5173` khi dev).
+3. **App Check / Proof-of-Work Token (Chống Tool tự động & Bot triệt để):**
+   - Với các action rủi ro cao (Đăng ký, Đăng nhập, Thanh toán): Gắn thêm token sinh từ Cloudflare Turnstile / reCAPTCHA. Token này chỉ có thể được sinh ra khi trang web chạy trên một trình duyệt người thật có DOM và môi trường JavaScript hoàn chỉnh, Postman hay cURL hoàn toàn không vượt qua được.
+
+---
+
 ## 5. HƯỚNG DẪN TRIỂN KHAI STEP-BY-STEP
 
 ### 5.1. PHÍA FRONTEND (CLIENT)
