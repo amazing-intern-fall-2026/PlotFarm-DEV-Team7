@@ -1,0 +1,45 @@
+{
+  "nav": {
+    "home": "Trang chủ",
+    "explore": "Khám phá ô đất",
+    "camera": "Camera 24/7",
+    "journal": "Nhật ký canh tác",
+    "orders": "Đơn hàng",
+    "profile": "Cá nhân",
+    "hotline": "Hotline",
+    "cart": "Giỏ hàng",
+    "notifications": "Thông báo",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "logout": "Đăng xuất"
+  },
+  "admin": {
+    "overview": "Tổng quan",
+    "plots": "Quản lý Ô đất",
+    "tech_config": "Cấu hình Kỹ thuật",
+    "seeds_supply": "Giống & Trạm vật tư",
+    "work_orders": "Phiếu Chăm sóc",
+    "harvest": "Thu hoạch & Giao hàng",
+    "rbac": "Phân quyền RBAC",
+    "alerts": "Cảnh báo",
+    "settings": "Cài đặt"
+  },
+  "farmer": {
+    "tasks_today": "Tác vụ hôm nay",
+    "my_plots": "Ô đất phụ trách",
+    "iot_camera": "Camera / IoT",
+    "task_journal": "Nhật ký tác vụ",
+    "scan_qr": "Quét QR / IoT",
+    "my_profile": "Hồ sơ"
+  },
+  "shell": {
+    "menu": "Menu",
+    "collapse": "Thu gọn sidebar",
+    "expand": "Mở rộng sidebar",
+    "search_placeholder": "Tìm kiếm...",
+    "breadcrumb_home": "Hệ thống",
+    "role_badge_admin": "Quản trị viên",
+    "role_badge_farmer": "Kỹ thuật viên",
+    "role_badge_customer": "Khách hàng"
+  }
+}

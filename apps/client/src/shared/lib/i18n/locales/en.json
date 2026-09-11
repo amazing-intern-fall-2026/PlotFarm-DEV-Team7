@@ -1,0 +1,45 @@
+{
+  "nav": {
+    "home": "Home",
+    "explore": "Explore Plots",
+    "camera": "Live Camera 24/7",
+    "journal": "Farm Journal",
+    "orders": "Orders",
+    "profile": "Profile",
+    "hotline": "Hotline",
+    "cart": "Cart",
+    "notifications": "Notifications",
+    "login": "Login",
+    "register": "Sign Up",
+    "logout": "Logout"
+  },
+  "admin": {
+    "overview": "Overview",
+    "plots": "Plot Management",
+    "tech_config": "Technical Config",
+    "seeds_supply": "Seeds & Supply",
+    "work_orders": "Work Orders",
+    "harvest": "Harvest & Delivery",
+    "rbac": "RBAC Permissions",
+    "alerts": "Alerts",
+    "settings": "Settings"
+  },
+  "farmer": {
+    "tasks_today": "Today's Tasks",
+    "my_plots": "My Plots",
+    "iot_camera": "Camera / IoT",
+    "task_journal": "Task Journal",
+    "scan_qr": "Scan QR / IoT",
+    "my_profile": "My Profile"
+  },
+  "shell": {
+    "menu": "Menu",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
+    "search_placeholder": "Search...",
+    "breadcrumb_home": "System",
+    "role_badge_admin": "Super Admin",
+    "role_badge_farmer": "Field Technician",
+    "role_badge_customer": "Customer"
+  }
+}
