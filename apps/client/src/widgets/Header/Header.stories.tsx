@@ -14,9 +14,9 @@ const meta: Meta<typeof Header> = {
 ### 🧭 Reusable Multi-Role Header Widget
 
 Thành phần Header dùng chung đa vai trò (**Customer**, **Farmer / Field Ops**, **Admin**), tuân thủ nghiêm ngặt tiêu chuẩn Feature-Sliced Design (FSD Layer 3: Widgets):
-- **Customer**: Phong cách sáng, thoáng đãng, tập trung vào dịch vụ thuê vườn, nông sản và tài khoản cá nhân.
-- **Farmer (Vận hành thực địa)**: Phong cách xanh thẫm nông trường hiện đại (BioCloud), hiển thị trạng thái ca trực (*Đang làm việc*), danh mục ô đất và thông báo nhiệm vụ.
-- **Admin (Quản trị)**: Phong cách Dark Navy chuyên nghiệp, tích hợp ô tìm kiếm hệ thống, chỉ số kiểm toán và menu quản trị.
+- **Giao diện đồng nhất & thân thiện**: Phong cách sáng, thanh thoát, trang nhã, tối ưu nhận diện thương hiệu PlotFarm.
+- **Tùy biến linh hoạt theo vai trò**: Hỗ trợ slot tìm kiếm, slot thao tác nhanh, huy hiệu trạng thái ca trực và menu người dùng.
+- **Tối giản icon & màu sắc**: Không lạm dụng icon hay màu tối gắt, giữ trải nghiệm trực quan, dễ chịu.
 - **Tuyệt đối không có**: Chuyển đổi ngôn ngữ thừa và Role switcher trên UI người dùng theo đúng yêu cầu bài toán.
         `
       }
@@ -106,14 +106,14 @@ export const FarmerOperations: Story = {
         <Button
           variant="outline"
           size="sm"
-          className="h-8 px-2.5 text-xs text-white border-white/20 hover:bg-white/10"
+          className="h-8 px-2.5 text-xs text-foreground border-border hover:bg-muted"
         >
-          <QrCode className="h-3.5 w-3.5 mr-1 text-emerald-300" /> Quét QR
+          <QrCode className="h-3.5 w-3.5 mr-1 text-primary" /> Quét QR
         </Button>
         <Button
           variant="destructive"
           size="sm"
-          className="h-8 px-2.5 text-xs bg-red-600/90 hover:bg-red-600 text-white"
+          className="h-8 px-2.5 text-xs bg-red-600 hover:bg-red-700 text-white shadow-xs"
         >
           <AlertTriangle className="h-3.5 w-3.5 mr-1" /> Báo sự cố
         </Button>
@@ -141,10 +141,10 @@ export const AdminSystem: Story = {
     notificationCount: 12,
     searchSlot: (
       <div className="relative w-64">
-        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
         <Input
           placeholder="Tìm thửa đất, khách hàng..."
-          className="h-8 pl-8 pr-3 text-xs bg-slate-800/80 border-slate-700 text-slate-100 placeholder:text-slate-400 focus:border-primary"
+          className="h-8 pl-8 pr-3 text-xs bg-muted/40 border-input text-foreground placeholder:text-muted-foreground focus:border-primary"
         />
       </div>
     ),
@@ -152,7 +152,7 @@ export const AdminSystem: Story = {
       <Button
         variant="default"
         size="sm"
-        className="h-8 px-3 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
+        className="h-8 px-3 text-xs font-semibold shadow-xs"
       >
         <Plus className="h-3.5 w-3.5 mr-1" /> Thửa đất mới
       </Button>

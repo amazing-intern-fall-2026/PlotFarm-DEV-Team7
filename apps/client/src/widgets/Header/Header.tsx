@@ -181,9 +181,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 w-full border-b border-border bg-card/95 backdrop-blur-md transition-colors',
-        variant === 'admin' && 'bg-slate-900 text-slate-100 border-slate-800',
-        variant === 'farmer' && 'bg-emerald-950/95 text-emerald-50 border-emerald-900/60',
+        'sticky top-0 z-40 w-full border-b border-border bg-card/95 backdrop-blur-md text-foreground transition-colors',
         className
       )}
     >
@@ -193,12 +191,7 @@ export const Header: React.FC<HeaderProps> = ({
           {showBack && (
             <button
               onClick={onBack}
-              className={cn(
-                'inline-flex items-center justify-center p-2 rounded-lg transition-colors',
-                variant === 'admin' || variant === 'farmer'
-                  ? 'hover:bg-white/10 text-white'
-                  : 'hover:bg-muted text-foreground'
-              )}
+              className="inline-flex items-center justify-center p-2 rounded-lg text-foreground hover:bg-muted transition-colors"
               aria-label="Quay lại"
             >
               <ArrowLeft className="h-5 w-5" />
@@ -218,13 +211,13 @@ export const Header: React.FC<HeaderProps> = ({
                 <Logo size="sm" showText={false} />
                 <div className="flex flex-col text-left">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">
                       Cloud Farm Ops
                     </span>
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
                   </div>
-                  <span className="text-sm font-bold leading-tight text-white">
-                    {title || 'Field Operations'}
+                  <span className="text-sm font-bold leading-tight text-foreground">
+                    {title || 'Quản lý thực địa'}
                   </span>
                 </div>
               </a>
@@ -235,14 +228,14 @@ export const Header: React.FC<HeaderProps> = ({
                 <Logo size="sm" showText={false} />
                 <div className="flex flex-col text-left">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-400">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-amber-700">
                       PlotFarm Admin
                     </span>
-                    <Badge variant="destructive" className="text-[9px] px-1 py-0 h-4">
+                    <Badge variant="warning" className="text-[9px] px-1.5 py-0 h-4 font-semibold">
                       PROD
                     </Badge>
                   </div>
-                  <span className="text-sm font-bold leading-tight text-slate-100">
+                  <span className="text-sm font-bold leading-tight text-foreground">
                     {title || 'Hệ Thống Quản Trị'}
                   </span>
                 </div>
@@ -252,7 +245,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Subtitle / Breadcrumb for Admin/Farmer desktop */}
           {subtitle && (
-            <div className="hidden xl:flex items-center text-xs opacity-75 border-l border-white/20 pl-4">
+            <div className="hidden xl:flex items-center text-xs text-muted-foreground border-l border-border pl-4">
               {subtitle}
             </div>
           )}
@@ -271,25 +264,14 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
                 className={cn(
                   'px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-colors inline-flex items-center gap-1.5 whitespace-nowrap',
-                  variant === 'customer'
-                    ? item.isActive
-                      ? 'bg-primary/10 text-primary font-bold'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-                    : item.isActive
-                    ? 'bg-white/15 text-white font-bold'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                  item.isActive
+                    ? 'bg-primary/10 text-primary font-bold'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
                 )}
               >
                 {item.label}
                 {item.badge && (
-                  <span
-                    className={cn(
-                      'px-1.5 py-0.2 rounded-full text-[10px] font-bold',
-                      variant === 'customer'
-                        ? 'bg-primary/20 text-primary'
-                        : 'bg-emerald-500/30 text-emerald-200'
-                    )}
-                  >
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-primary/15 text-primary">
                     {item.badge}
                   </span>
                 )}
@@ -306,10 +288,10 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Actions Slot (e.g. Quét QR, Báo sự cố, Nút tạo đơn) */}
           {actionsSlot && <div className="flex items-center">{actionsSlot}</div>}
 
-          {/* Farmer Status Chip (Nổi bật cho Role Farmer như hình ảnh thiết kế) */}
+          {/* Farmer Status Chip */}
           {variant === 'farmer' && user?.statusText && (
-            <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 px-3 py-1 text-xs font-semibold text-emerald-200">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-800">
+              <span className="h-2 w-2 rounded-full bg-emerald-600" />
               {user.statusText}
             </div>
           )}
@@ -317,12 +299,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Notification Bell */}
           <button
             onClick={onNotificationClick}
-            className={cn(
-              'relative p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary',
-              variant === 'customer'
-                ? 'hover:bg-muted text-muted-foreground hover:text-foreground'
-                : 'hover:bg-white/10 text-white/80 hover:text-white'
-            )}
+            className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
             aria-label="Thông báo"
           >
             <Bell className="h-5 w-5" />
@@ -338,12 +315,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className={cn(
-                  'flex items-center gap-2.5 p-1.5 rounded-xl transition-all focus:outline-none',
-                  variant === 'customer'
-                    ? 'hover:bg-muted/80'
-                    : 'hover:bg-white/10'
-                )}
+                className="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-muted/80 transition-all focus:outline-none"
                 aria-expanded={isUserMenuOpen}
                 aria-haspopup="true"
               >
@@ -355,28 +327,17 @@ export const Header: React.FC<HeaderProps> = ({
                   className="ring-2 ring-primary/20"
                 />
                 <div className="hidden md:flex flex-col text-left">
-                  <span
-                    className={cn(
-                      'text-xs font-bold leading-tight max-w-[130px] truncate',
-                      variant === 'customer' ? 'text-foreground' : 'text-white'
-                    )}
-                  >
+                  <span className="text-xs font-bold leading-tight max-w-[130px] truncate text-foreground">
                     {user.fullName}
                   </span>
-                  <span
-                    className={cn(
-                      'text-[10px] leading-tight',
-                      variant === 'customer' ? 'text-muted-foreground' : 'text-white/70'
-                    )}
-                  >
+                  <span className="text-[10px] leading-tight text-muted-foreground">
                     {user.email || user.role}
                   </span>
                 </div>
                 <ChevronDown
                   className={cn(
-                    'h-3.5 w-3.5 transition-transform',
-                    isUserMenuOpen && 'rotate-180',
-                    variant === 'customer' ? 'text-muted-foreground' : 'text-white/70'
+                    'h-3.5 w-3.5 text-muted-foreground transition-transform',
+                    isUserMenuOpen && 'rotate-180'
                   )}
                 />
               </button>
@@ -434,11 +395,7 @@ export const Header: React.FC<HeaderProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={onLoginClick}
-                className={cn(
-                  'h-8 px-3 text-xs font-semibold',
-                  (variant === 'admin' || variant === 'farmer') &&
-                    'border-white/20 text-white hover:bg-white/10'
-                )}
+                className="h-8 px-3 text-xs font-semibold text-foreground border-border hover:bg-muted"
               >
                 Đăng nhập
               </Button>
@@ -456,12 +413,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Mobile Hamburger Menu Toggle Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={cn(
-              'lg:hidden p-2 rounded-lg transition-colors focus:outline-none',
-              variant === 'customer'
-                ? 'text-foreground hover:bg-muted'
-                : 'text-white hover:bg-white/10'
-            )}
+            className="lg:hidden p-2 rounded-lg text-foreground hover:bg-muted transition-colors focus:outline-none"
             aria-label="Mở danh mục điều hướng"
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -471,16 +423,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Menu Drawer / Dropdown */}
       {isMobileMenuOpen && (
-        <div
-          className={cn(
-            'lg:hidden border-t border-border px-4 py-4 space-y-3 animate-in slide-in-from-top-2',
-            variant === 'customer'
-              ? 'bg-card text-foreground'
-              : variant === 'admin'
-              ? 'bg-slate-900 text-white border-slate-800'
-              : 'bg-emerald-950 text-emerald-50 border-emerald-900'
-          )}
-        >
+        <div className="lg:hidden border-t border-border px-4 py-4 space-y-3 bg-card text-foreground animate-in slide-in-from-top-2">
           {searchSlot && <div className="pb-2">{searchSlot}</div>}
 
           <nav className="flex flex-col space-y-1">
@@ -499,9 +442,7 @@ export const Header: React.FC<HeaderProps> = ({
                   'px-3 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-between transition-colors',
                   item.isActive
                     ? 'bg-primary text-primary-foreground font-bold'
-                    : variant === 'customer'
-                    ? 'hover:bg-muted text-foreground'
-                    : 'hover:bg-white/10 text-white'
+                    : 'hover:bg-muted text-foreground'
                 )}
               >
                 <span>{item.label}</span>

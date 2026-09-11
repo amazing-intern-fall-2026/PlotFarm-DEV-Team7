@@ -32,14 +32,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ portalRole }) 
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) =>
-                    `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    `flex items-center px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-primary/10 text-primary font-semibold'
-                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        ? 'bg-primary/10 text-primary font-bold shadow-xs'
+                        : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
                     }`
                   }
                 >
-                  <span className="text-base">{item.icon}</span>
                   <span>{t(item.labelKey)}</span>
                 </NavLink>
               ))}
