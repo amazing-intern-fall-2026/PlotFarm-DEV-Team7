@@ -1,6 +1,9 @@
 import express, { type Express, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
 
 dotenv.config();
 
@@ -18,6 +21,8 @@ app.get("/health", (_req: Request, res: Response) => {
     message: "Server ready for module implementations.",
   });
 });
+const openApiDocument = YAML.load(path.join(__dirname, "docs/openapi.yaml"));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 /**
  * Hướng dẫn triển khai API:
