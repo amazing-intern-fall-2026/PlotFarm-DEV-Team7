@@ -26,20 +26,22 @@ export const MainLayout: React.FC = () => {
 
   const customerNav: HeaderNavItem[] = [
     { label: t('nav.home'), href: PATHS.PUBLIC.HOME, isActive: location.pathname === PATHS.PUBLIC.HOME },
+    { label: t('nav.plots'), href: PATHS.PUBLIC.PLOTS, isActive: location.pathname.startsWith(PATHS.PUBLIC.PLOTS) },
     { label: t('nav.crops'), href: PATHS.PUBLIC.CROPS, isActive: location.pathname.startsWith(PATHS.PUBLIC.CROPS) },
     { label: t('nav.farms'), href: PATHS.PUBLIC.FARMS, isActive: location.pathname.startsWith(PATHS.PUBLIC.FARMS) },
+    { label: t('nav.about'), href: PATHS.PUBLIC.ABOUT, isActive: location.pathname.startsWith(PATHS.PUBLIC.ABOUT) },
     ...(user?.role === 'CUSTOMER'
-      ? [{ label: 'Mảnh vườn của tôi', href: PATHS.CUSTOMER.MY_PLOTS, isActive: location.pathname.startsWith(PATHS.CUSTOMER.MY_PLOTS) }]
+      ? [{ label: t('nav.myPlots'), href: PATHS.CUSTOMER.MY_PLOTS, isActive: location.pathname.startsWith(PATHS.CUSTOMER.MY_PLOTS), badge: '1 ô' }]
       : [])
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-sans antialiased">
-      {/* Reusable Global Header (No language toggle, no role switch on UI) */}
+      {/* Reusable Global Header (Matches Storybook exactly) */}
       <Header
         variant={variant}
         user={headerUser}
-        navigation={customerNav}
+        navigation={variant === 'customer' ? customerNav : undefined}
         onLoginClick={() => navigate(PATHS.AUTH.LOGIN)}
         onRegisterClick={() => navigate(PATHS.AUTH.REGISTER)}
         onLogout={logout}

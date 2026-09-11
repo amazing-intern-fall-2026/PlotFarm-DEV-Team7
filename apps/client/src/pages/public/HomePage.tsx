@@ -24,7 +24,7 @@ export const HomePage: React.FC = () => {
           to={PATHS.PUBLIC.PLOTS}
           className="rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-xs hover:bg-primary/90 transition"
         >
-          {t('nav.farms')}
+          {t('nav.plots')}
         </Link>
         <Link
           to={PATHS.PUBLIC.CROPS}

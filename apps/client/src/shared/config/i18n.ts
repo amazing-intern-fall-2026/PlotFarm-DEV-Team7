@@ -39,8 +39,10 @@ export const resources = {
       },
       nav: {
         home: "Trang chủ",
-        crops: "Cây giống",
-        farms: "Trang trại & Lô đất",
+        plots: "Gói thuê đất",
+        crops: "Cây trồng",
+        farms: "Nông trại mẫu",
+        about: "Về PlotFarm",
         myPlots: "Mảnh đất của tôi",
         contracts: "Hợp đồng",
         careRequests: "Yêu cầu chăm sóc",
@@ -52,7 +54,7 @@ export const resources = {
         harvests: "Thu hoạch",
         shipments: "Vận chuyển",
         manageFarms: "Quản lý Farm",
-        manageCrops: "Quản lý Cây giống",
+        manageCrops: "Quản lý Cây trồng",
         managePlots: "Quản lý Lô đất",
         auditLogs: "Kiểm toán hệ thống",
         users: "Người dùng"
@@ -106,8 +108,10 @@ export const resources = {
       },
       nav: {
         home: "Home",
+        plots: "Plot Packages",
         crops: "Crops",
-        farms: "Farms & Plots",
+        farms: "Model Farms",
+        about: "About PlotFarm",
         myPlots: "My Plots",
         contracts: "Contracts",
         careRequests: "Care Requests",

@@ -22,6 +22,10 @@ export const publicRoutes: RouteObject[] = [
     element: <HomePage />,
   },
   {
+    path: PATHS.PUBLIC.ABOUT,
+    element: <HomePage />,
+  },
+  {
     element: <PublicOnlyGuard />,
     children: [
       {
