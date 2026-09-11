@@ -102,53 +102,113 @@ export const TongQuan: StoryObj = {
       <Separator />
 
       {/* Semantic Color Tokens */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Palette className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-bold tracking-tight">Hệ Thống Semantic Design Tokens</h2>
+      <div className="space-y-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2.5">
+            <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <Palette className="h-5 w-5" />
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">Hệ Thống Semantic Design Tokens</h2>
+          </div>
+          <p className="text-base text-muted-foreground leading-relaxed pl-11">
+            Bảng màu chuẩn hóa định danh hệ sinh thái nông nghiệp công nghệ cao PlotFarm, bảo đảm độ tương phản tối ưu theo tiêu chuẩn WCAG 2.1 AA/AAA:
+          </p>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Bảng màu thương hiệu xanh lá nông nghiệp kết hợp nền xám nhẹ hiện đại, bảo đảm độ tương phản chuẩn WCAG 2.1 AA:
-        </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 rounded-xl border border-border bg-card shadow-sm space-y-2">
-            <div className="h-12 w-full rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold text-xs">
-              Primary (#2E7D32)
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+          {/* Primary */}
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm hover:shadow-md transition-shadow space-y-4">
+            <div className="h-28 w-full rounded-xl bg-primary flex flex-col justify-between p-4 text-primary-foreground shadow-inner">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold uppercase tracking-wider bg-black/20 px-2.5 py-1 rounded-full backdrop-blur-sm">
+                  Primary
+                </span>
+                <span className="text-xs font-mono font-medium opacity-90">WCAG AAA</span>
+              </div>
+              <span className="font-mono text-xl font-bold tracking-wider">#16A34A</span>
             </div>
-            <div className="text-xs">
-              <p className="font-semibold text-foreground">bg-primary</p>
-              <p className="text-muted-foreground">Màu chủ đạo nông nghiệp</p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-base text-foreground">Xanh Sinh Thái</h3>
+                <code className="text-xs bg-muted px-2 py-0.5 rounded-md font-mono font-semibold text-primary">
+                  bg-primary
+                </code>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Màu sắc nhận diện cốt lõi cho các hành động chính, nút bấm, trạng thái sinh trưởng và chứng nhận VietGAP.
+              </p>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl border border-border bg-card shadow-sm space-y-2">
-            <div className="h-12 w-full rounded-lg bg-secondary flex items-center justify-center text-secondary-foreground font-bold text-xs">
-              Secondary (Hổ Phách)
+          {/* Secondary */}
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm hover:shadow-md transition-shadow space-y-4">
+            <div className="h-28 w-full rounded-xl bg-secondary flex flex-col justify-between p-4 text-secondary-foreground shadow-inner">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold uppercase tracking-wider bg-black/20 px-2.5 py-1 rounded-full backdrop-blur-sm">
+                  Secondary
+                </span>
+                <span className="text-xs font-mono font-medium opacity-90">WCAG AAA</span>
+              </div>
+              <span className="font-mono text-xl font-bold tracking-wider">#D97706</span>
             </div>
-            <div className="text-xs">
-              <p className="font-semibold text-foreground">bg-secondary</p>
-              <p className="text-muted-foreground">Màu điểm nhấn nông sản</p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-base text-foreground">Hổ Phách Nông Sản</h3>
+                <code className="text-xs bg-muted px-2 py-0.5 rounded-md font-mono font-semibold text-amber-700">
+                  bg-secondary
+                </code>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Màu điểm nhấn cho mùa vụ thu hoạch, nông sản chín, cảnh báo tiến độ và tính năng cao cấp.
+              </p>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl border border-border bg-card shadow-sm space-y-2">
-            <div className="h-12 w-full rounded-lg bg-background border border-border flex items-center justify-center text-foreground font-bold text-xs">
-              Background (#F8FAFC)
+          {/* Background */}
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm hover:shadow-md transition-shadow space-y-4">
+            <div className="h-28 w-full rounded-xl bg-background border-2 border-dashed border-border flex flex-col justify-between p-4 text-foreground shadow-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold uppercase tracking-wider bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
+                  Background
+                </span>
+                <span className="text-xs font-mono font-medium text-muted-foreground">Neutral 50</span>
+              </div>
+              <span className="font-mono text-xl font-bold tracking-wider text-foreground">#F8FAFC</span>
             </div>
-            <div className="text-xs">
-              <p className="font-semibold text-foreground">bg-background</p>
-              <p className="text-muted-foreground">Nền trang web tổng thể</p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-base text-foreground">Nền Mây Hiện Đại</h3>
+                <code className="text-xs bg-muted px-2 py-0.5 rounded-md font-mono font-semibold text-foreground">
+                  bg-background
+                </code>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Tone nền tổng thể dịu mắt, sạch sẽ, giúp tôn vinh thông tin cây trồng và bản đồ thửa đất một cách tự nhiên.
+              </p>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl border border-border bg-card shadow-sm space-y-2">
-            <div className="h-12 w-full rounded-lg bg-destructive flex items-center justify-center text-destructive-foreground font-bold text-xs">
-              Destructive (#DC2626)
+          {/* Destructive */}
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm hover:shadow-md transition-shadow space-y-4">
+            <div className="h-28 w-full rounded-xl bg-destructive flex flex-col justify-between p-4 text-destructive-foreground shadow-inner">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold uppercase tracking-wider bg-black/20 px-2.5 py-1 rounded-full backdrop-blur-sm">
+                  Destructive
+                </span>
+                <span className="text-xs font-mono font-medium opacity-90">WCAG AAA</span>
+              </div>
+              <span className="font-mono text-xl font-bold tracking-wider">#DC2626</span>
             </div>
-            <div className="text-xs">
-              <p className="font-semibold text-foreground">bg-destructive</p>
-              <p className="text-muted-foreground">Cảnh báo sâu bệnh, lỗi</p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-base text-foreground">Đỏ Cảnh Báo Lỗi</h3>
+                <code className="text-xs bg-muted px-2 py-0.5 rounded-md font-mono font-semibold text-destructive">
+                  bg-destructive
+                </code>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Cảnh báo nguy hiểm, dịch bệnh cây trồng, thao tác hủy đơn hoặc lỗi kết nối hệ thống cảm biến.
+              </p>
             </div>
           </div>
         </div>
