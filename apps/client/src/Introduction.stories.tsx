@@ -38,13 +38,13 @@ export const TongQuan: StoryObj = {
       {/* Hero Banner */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-800 via-emerald-700 to-green-900 p-8 text-white shadow-xl">
         <div className="relative z-10 space-y-4 max-w-2xl">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-md px-3 py-1 text-xs font-semibold text-emerald-100 border border-white/20">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur-md px-3 py-1 text-xs font-semibold text-white border border-white/30">
             <Sprout className="h-4 w-4" /> PlotFarm Design System v1.0.0
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-white">
             Chuẩn Hóa Giao Diện & Kiến Trúc UI
           </h1>
-          <p className="text-emerald-100 text-base leading-relaxed">
+          <p className="text-white/95 text-base leading-relaxed">
             Hệ thống thiết kế tập trung, tinh giản và đồng bộ dựa trên chuẩn mực Feature-Sliced Design (FSD).
             Mọi thành phần trong <code className="bg-black/20 px-1.5 py-0.5 rounded text-white font-mono text-sm">shared/ui</code> đều là <strong>Atomic Base UI</strong> thuần túy, loại bỏ hoàn toàn mã nguồn thừa và không phụ thuộc domain logic.
           </p>
