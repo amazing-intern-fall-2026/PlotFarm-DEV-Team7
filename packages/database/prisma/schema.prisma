@@ -31,6 +31,7 @@ model User {
   fullName        String         @map("full_name")
   avatarUrl       String?        @map("avatar_url")
   role            UserRole       @default(CUSTOMER)
+  active          Boolean        @default(true)
   isVerified      Boolean        @default(false) @map("is_verified")
   preferredLocale String         @default("vi") @map("preferred_locale")
   lastLoginAt     DateTime?      @map("last_login_at")
@@ -72,24 +73,4 @@ model Plot {
   @@map("plots")
 }
 
-model User {
-  id            String         @id @default(uuid())
-  email         String         @unique
-  password      String
-  fullName      String?
-  role          String         @default("CUSTOMER")
-  active        Boolean        @default(true)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  refreshTokens RefreshToken[]
-}
-
-model RefreshToken {
-  id        String   @id @default(uuid())
-  token     String   @unique
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-}
 
