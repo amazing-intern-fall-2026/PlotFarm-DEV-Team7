@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
+import { plotsRouter } from "./modules/plots/plots.routes";
+import { authRouter } from "./modules/auth/auth.routes";
+import { careRouter } from "./modules/care/care.routes";
 
 dotenv.config();
 
@@ -23,6 +26,11 @@ app.get("/health", (_req: Request, res: Response) => {
 });
 const openApiDocument = YAML.load(path.join(__dirname, "docs/openapi.yaml"));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
+
+// Mock endpoints for AC-3 (US-06) — FE can build against these before real BE logic lands.
+app.use("/api/v1", plotsRouter);
+app.use("/api/v1", authRouter);
+app.use("/api/v1", careRouter);
 
 /**
  * Hướng dẫn triển khai API:
