@@ -20,4 +20,5 @@
  *
  * TODO: Tạo từng widget sub-folder khi bắt đầu implement UI
  */
-export {};
+export { Header } from './Header';
+export type { HeaderProps, HeaderNavItem, HeaderUser } from './Header';
