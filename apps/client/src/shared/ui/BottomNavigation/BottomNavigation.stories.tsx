@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { BottomNavigation } from "./BottomNavigation";
 
 const meta: Meta<typeof BottomNavigation> = {
-  title: "Shared/UI/BottomNavigation",
+  title: "Shared/UI/Navigation",
   component: BottomNavigation,
   tags: ["autodocs"],
   parameters: {

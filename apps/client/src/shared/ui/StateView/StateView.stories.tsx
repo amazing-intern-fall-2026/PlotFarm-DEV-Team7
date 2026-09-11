@@ -4,7 +4,7 @@ import { Button } from "../Button";
 import { Plus } from "lucide-react";
 
 const meta: Meta<typeof StateView> = {
-  title: "Shared/UI/StateView",
+  title: "Shared/UI/State",
   component: StateView,
   tags: ["autodocs"],
   parameters: {

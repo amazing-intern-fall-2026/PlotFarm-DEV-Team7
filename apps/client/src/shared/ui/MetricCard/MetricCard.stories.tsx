@@ -3,7 +3,7 @@ import { TrendingUp, AlertTriangle, CheckCircle, Leaf } from "lucide-react";
 import { MetricCard } from "./MetricCard";
 
 const meta: Meta<typeof MetricCard> = {
-  title: "Shared/UI/MetricCard",
+  title: "Shared/UI/Metric",
   component: MetricCard,
   tags: ["autodocs"],
   parameters: {
