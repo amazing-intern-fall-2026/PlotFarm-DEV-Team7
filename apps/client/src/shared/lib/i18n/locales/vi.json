@@ -149,5 +149,33 @@
     "role_badge_admin": "Super Admin",
     "role_badge_farmer": "Kỹ thuật viên",
     "role_badge_customer": "Khách hàng"
+  },
+  "footer": {
+    "desc": "Hệ thống kết nối cư dân đô thị đồng sở hữu & canh tác vườn rau sạch từ xa tại nông trại công nghệ cao Đà Lạt.",
+    "col_farming": "Phân Hệ Canh Tác",
+    "col_legal": "Tài Khoản & Pháp Lý",
+    "col_farm_dalat": "Trang Trại Đà Lạt",
+    "link_explore_plots": "Khám phá các ô đất",
+    "link_my_farm": "Quản lý vườn của tôi",
+    "link_crop_journal": "Nhật ký nông vụ",
+    "link_gallery": "Thư viện ảnh camera 24/7",
+    "link_account_settings": "Hồ sơ & Cài đặt tài khoản",
+    "link_contracts": "Hợp đồng thuê đất số",
+    "link_organic_commitment": "Cam kết tiêu chuẩn hữu cơ",
+    "link_crop_insurance": "Chính sách bảo hiểm rủi ro mùa vụ",
+    "address_dalat": "Tiểu khu 158, Đạ Sar, Huyện Lạc Dương, TP. Đà Lạt, Lâm Đồng",
+    "hotline_label": "Hotline kỹ sư nông học:",
+    "copyright": "© 2025 BioCloud Farming Đà Lạt. Bản quyền thuộc Công ty CP Nông nghiệp Công nghệ cao Đà Lạt.",
+    "privacy_iot": "Bảo mật dữ liệu IoT",
+    "clean_agri_standards": "Tiêu chuẩn nông sản sạch"
+  },
+  "common": {
+    "loading": "Đang tải dữ liệu...",
+    "retry": "Thử lại",
+    "empty": "Chưa có dữ liệu",
+    "error": "Đã xảy ra sự cố",
+    "save": "Lưu thay đổi",
+    "cancel": "Hủy bỏ",
+    "back": "Quay lại"
   }
 }

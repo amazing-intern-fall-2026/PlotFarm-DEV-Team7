@@ -145,9 +145,37 @@
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar",
     "search_placeholder": "Quick search... (Ctrl+K)",
-    "breadcrumb_home": "System",
+    "breadcrumb_home": "Home",
     "role_badge_admin": "Super Admin",
     "role_badge_farmer": "Technician",
     "role_badge_customer": "Customer"
+  },
+  "footer": {
+    "desc": "Connecting urban residents to co-own and cultivate organic smart gardens remotely at Da Lat high-tech farms.",
+    "col_farming": "Farming System",
+    "col_legal": "Account & Legal",
+    "col_farm_dalat": "Da Lat Farm",
+    "link_explore_plots": "Explore Plots",
+    "link_my_farm": "My Garden",
+    "link_crop_journal": "Crop Journal",
+    "link_gallery": "24/7 Camera Gallery",
+    "link_account_settings": "Profile & Settings",
+    "link_contracts": "Digital Land Contracts",
+    "link_organic_commitment": "Organic Standards Commitment",
+    "link_crop_insurance": "Harvest Risk Insurance",
+    "address_dalat": "Subzone 158, Da Sar, Lac Duong, Da Lat, Lam Dong",
+    "hotline_label": "Agronomist Hotline:",
+    "copyright": "© 2025 BioCloud Farming Da Lat. High-Tech Agriculture JSC. All rights reserved.",
+    "privacy_iot": "IoT Data Privacy",
+    "clean_agri_standards": "Clean Agriculture Standards"
+  },
+  "common": {
+    "loading": "Loading data...",
+    "retry": "Retry",
+    "empty": "No data available",
+    "error": "An error occurred",
+    "save": "Save changes",
+    "cancel": "Cancel",
+    "back": "Go back"
   }
 }

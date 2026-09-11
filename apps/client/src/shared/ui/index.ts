@@ -17,3 +17,5 @@ export * from "./Metric";
 export * from "./Footer";
 export * from "./Header";
 export * from "./Breadcrumb";
+export * from "./Typography";
+export * from "./Box";
