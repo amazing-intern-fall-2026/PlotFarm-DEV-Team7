@@ -39,6 +39,17 @@
     --ring: 142 72% 36%;
     --radius: 0.5rem;
   }
+
+  /* ── Vô hiệu hóa icon con mắt mặc định của Edge / Windows để tránh hiển thị 2 icon mắt ── */
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear,
+  input::-ms-reveal,
+  input::-ms-clear {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+  }
 }
 
 /* ── PRIMARY COLOR — Bio Green ───────────────────────────── */
