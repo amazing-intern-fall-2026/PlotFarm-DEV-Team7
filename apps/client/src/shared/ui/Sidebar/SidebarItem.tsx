@@ -37,8 +37,8 @@ export function SidebarItem({
         "text-sm transition-all duration-150 focus-visible:outline-none",
         "focus-visible:ring-2 focus-visible:ring-primary/60",
         isActive
-          ? "bg-primary text-white font-semibold shadow-xs shadow-primary/20"
-          : "text-slate-600 dark:text-slate-300 font-medium hover:bg-accent/60 hover:text-foreground",
+          ? "bg-primary text-white font-semibold shadow-xs shadow-primary/20 hover:bg-primary-hover"
+          : "text-slate-600 dark:text-slate-300 font-medium hover:bg-accent/80 hover:text-foreground",
         collapsed ? "justify-center px-2 py-3" : "justify-start",
       )}
     >
