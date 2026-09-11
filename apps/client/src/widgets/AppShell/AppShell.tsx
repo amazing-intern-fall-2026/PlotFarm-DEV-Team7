@@ -42,13 +42,8 @@ export interface AppShellProps {
   breadcrumbs?: BreadcrumbItem[];
   /** Số thông báo chưa đọc */
   notificationCount?: number;
-  /** Số sản phẩm trong giỏ hàng (Customer only) */
-  cartCount?: number;
-  /** Hotline dành cho Customer header */
-  hotlineNumber?: string;
   /** Callbacks */
   onNavChange?: (id: string) => void;
-  onCartClick?: () => void;
   onNotificationsClick?: () => void;
   onLoginClick?: () => void;
   onLogoutClick?: () => void;
@@ -67,8 +62,7 @@ function useCustomerNavItems(
   return [
     { id: "home", label: t("nav.home"), isActive: activeNavId === "home", onClick: () => onNavChange("home") },
     { id: "explore", label: t("nav.explore"), isActive: activeNavId === "explore", onClick: () => onNavChange("explore") },
-    { id: "camera", label: t("nav.camera"), isActive: activeNavId === "camera", onClick: () => onNavChange("camera") },
-    { id: "journal", label: t("nav.journal"), isActive: activeNavId === "journal", onClick: () => onNavChange("journal") }
+    { id: "about", label: t("nav.about"), isActive: activeNavId === "about", onClick: () => onNavChange("about") }
   ];
 }
 
@@ -153,10 +147,7 @@ export function AppShell({
   activeNavId = "home",
   breadcrumbs = [],
   notificationCount = 0,
-  cartCount = 0,
-  hotlineNumber,
   onNavChange,
-  onCartClick,
   onNotificationsClick,
   onLoginClick,
   onLogoutClick,
@@ -194,15 +185,10 @@ export function AppShell({
         <CustomerHeader
           navItems={customerNavItems}
           user={user ?? null}
-          hotlineNumber={hotlineNumber}
-          hotlineText={t("nav.hotline")}
-          cartCount={cartCount}
           notificationCount={notificationCount}
-          cartLabel={t("nav.cart")}
           notificationsLabel={t("nav.notifications")}
           loginLabel={t("nav.login")}
           menuLabel={t("shell.menu")}
-          onCartClick={onCartClick}
           onNotificationsClick={onNotificationsClick}
           onLoginClick={onLoginClick}
           onLogoutClick={onLogoutClick}

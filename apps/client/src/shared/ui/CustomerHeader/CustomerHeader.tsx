@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Bell, ShoppingCart, Menu, Phone, X } from "lucide-react";
+import { Bell, Menu, X } from "lucide-react";
 import { Button } from "@/shared/ui/Button";
 import { Avatar } from "@/shared/ui/Avatar";
 import { Logo } from "@/shared/ui/Logo";
@@ -20,20 +20,13 @@ export interface CustomerHeaderUser {
 export interface CustomerHeaderProps {
   navItems: CustomerNavItem[];
   user?: CustomerHeaderUser | null;
-  /** Hotline string — từ i18n hoặc config */
-  hotlineText?: string;
-  hotlineNumber?: string;
-  /** Cart count */
-  cartCount?: number;
   /** Notification count */
   notificationCount?: number;
   /** i18n labels */
-  cartLabel?: string;
   notificationsLabel?: string;
   loginLabel?: string;
   menuLabel?: string;
   /** Callbacks */
-  onCartClick?: () => void;
   onNotificationsClick?: () => void;
   onLoginClick?: () => void;
   onLogoutClick?: () => void;
@@ -49,15 +42,10 @@ export interface CustomerHeaderProps {
 export function CustomerHeader({
   navItems,
   user,
-  hotlineText,
-  hotlineNumber,
-  cartCount = 0,
   notificationCount = 0,
-  cartLabel = "Giỏ hàng",
   notificationsLabel = "Thông báo",
   loginLabel = "Đăng nhập",
   menuLabel = "Menu",
-  onCartClick,
   onNotificationsClick,
   onLoginClick,
   onLogoutClick,
@@ -105,40 +93,10 @@ export function CustomerHeader({
         {/* ── Spacer ────────────────────────────────────────────────────── */}
         <div className="flex-1" />
 
-        {/* ── Hotline (desktop only) ─────────────────────────────────── */}
-        {hotlineNumber && (
-          <a
-            href={`tel:${hotlineNumber}`}
-            className="hidden lg:flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-            aria-label={`${hotlineText ?? "Hotline"}: ${hotlineNumber}`}
-          >
-            <Phone className="h-3.5 w-3.5" />
-            <span>{hotlineText && <span className="mr-1">{hotlineText}</span>}</span>
-            <span className="font-semibold text-foreground">{hotlineNumber}</span>
-          </a>
-        )}
+
 
         {/* ── Actions ───────────────────────────────────────────────────── */}
         <div className="flex items-center gap-1">
-          {/* Cart */}
-          <div className="relative">
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={cartLabel}
-              onClick={onCartClick}
-              className="h-9 w-9"
-              id="customer-header-cart-btn"
-            >
-              <ShoppingCart className="h-5 w-5" />
-            </Button>
-            {cartCount > 0 && (
-              <span className="absolute right-0.5 top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-white">
-                {cartCount > 99 ? "99+" : cartCount}
-              </span>
-            )}
-          </div>
-
           {/* Bell */}
           <div className="relative">
             <Button
@@ -220,16 +178,6 @@ export function CustomerHeader({
                 {item.label}
               </button>
             ))}
-            {hotlineNumber && (
-              <a
-                href={`tel:${hotlineNumber}`}
-                className="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
-              >
-                <Phone className="h-4 w-4" />
-                {hotlineText && <span>{hotlineText}:</span>}
-                <span className="font-semibold text-foreground">{hotlineNumber}</span>
-              </a>
-            )}
           </nav>
         </div>
       )}

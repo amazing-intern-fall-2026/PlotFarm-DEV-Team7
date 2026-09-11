@@ -29,8 +29,6 @@ export function App() {
         user={DEMO_USER}
         activeNavId={activeNavId}
         notificationCount={3}
-        cartCount={2}
-        hotlineNumber="1800 1234"
         breadcrumbs={[
           { label: "Hệ thống" },
           { label: "Tổng quan" }
