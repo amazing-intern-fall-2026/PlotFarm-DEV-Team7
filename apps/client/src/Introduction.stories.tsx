@@ -220,60 +220,24 @@ export const TongQuan: StoryObj = {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              <tr>
-                <td className="py-3.5 px-5 font-semibold text-primary whitespace-nowrap">Button</td>
-                <td className="py-3.5 px-5 text-muted-foreground">Kích hoạt hành động, submit form, mở modal</td>
-                <td className="py-3.5 px-5 font-mono text-xs text-slate-600">variant, size, isLoading, leftIcon</td>
-                <td className="py-3.5 px-5 text-center whitespace-nowrap"><Badge variant="success">Sẵn sàng</Badge></td>
-              </tr>
-              <tr>
-                <td className="py-3.5 px-5 font-semibold text-primary whitespace-nowrap">Input</td>
-                <td className="py-3.5 px-5 text-muted-foreground">Ô nhập liệu cho mọi form đăng nhập, tìm kiếm</td>
-                <td className="py-3.5 px-5 font-mono text-xs text-slate-600">label, hint, error, leftIcon</td>
-                <td className="py-3.5 px-5 text-center whitespace-nowrap"><Badge variant="success">Sẵn sàng</Badge></td>
-              </tr>
-              <tr>
-                <td className="py-3.5 px-5 font-semibold text-primary whitespace-nowrap">Card</td>
-                <td className="py-3.5 px-5 text-muted-foreground">Khung chứa thông tin gói thuê, thửa đất, bài viết</td>
-                <td className="py-3.5 px-5 font-mono text-xs text-slate-600">CardHeader, CardTitle, CardContent</td>
-                <td className="py-3.5 px-5 text-center whitespace-nowrap"><Badge variant="success">Sẵn sàng</Badge></td>
-              </tr>
-              <tr>
-                <td className="py-3.5 px-5 font-semibold text-primary whitespace-nowrap">Badge</td>
-                <td className="py-3.5 px-5 text-muted-foreground">Nhãn trạng thái (Đang canh tác, Sắp thu hoạch)</td>
-                <td className="py-3.5 px-5 font-mono text-xs text-slate-600">variant (default, secondary, success)</td>
-                <td className="py-3.5 px-5 text-center whitespace-nowrap"><Badge variant="success">Sẵn sàng</Badge></td>
-              </tr>
-              <tr>
-                <td className="py-3.5 px-5 font-semibold text-primary whitespace-nowrap">Avatar</td>
-                <td className="py-3.5 px-5 text-muted-foreground">Ảnh đại diện khách hàng, kỹ thuật viên phụ trách</td>
-                <td className="py-3.5 px-5 font-mono text-xs text-slate-600">src, name, size, status</td>
-                <td className="py-3.5 px-5 text-center whitespace-nowrap"><Badge variant="success">Sẵn sàng</Badge></td>
-              </tr>
-              <tr>
-                <td className="py-3.5 px-5 font-semibold text-primary whitespace-nowrap">Modal</td>
-                <td className="py-3.5 px-5 text-muted-foreground">Hộp thoại nổi xác nhận hành động, hiển thị chi tiết</td>
-                <td className="py-3.5 px-5 font-mono text-xs text-slate-600">isOpen, onClose, title, size</td>
-                <td className="py-3.5 px-5 text-center whitespace-nowrap"><Badge variant="success">Sẵn sàng</Badge></td>
-              </tr>
-              <tr>
-                <td className="py-3.5 px-5 font-semibold text-primary whitespace-nowrap">StateView</td>
-                <td className="py-3.5 px-5 text-muted-foreground">Hợp nhất 4 trạng thái Loading / Fetching / Empty / Error</td>
-                <td className="py-3.5 px-5 font-mono text-xs text-slate-600">state, emptyPreset, error, onRetry</td>
-                <td className="py-3.5 px-5 text-center whitespace-nowrap"><Badge variant="success">Sẵn sàng</Badge></td>
-              </tr>
-              <tr>
-                <td className="py-3.5 px-5 font-semibold text-primary whitespace-nowrap">Skeleton</td>
-                <td className="py-3.5 px-5 text-muted-foreground">Khung giả lập chuyển động nhấp nháy khi đang tải dữ liệu</td>
-                <td className="py-3.5 px-5 font-mono text-xs text-slate-600">className (h-*, w-*, rounded-*)</td>
-                <td className="py-3.5 px-5 text-center whitespace-nowrap"><Badge variant="success">Sẵn sàng</Badge></td>
-              </tr>
-              <tr>
-                <td className="py-3.5 px-5 font-semibold text-primary whitespace-nowrap">Separator</td>
-                <td className="py-3.5 px-5 text-muted-foreground">Đường kẻ phân tách các khu vực nội dung ngang hoặc dọc</td>
-                <td className="py-3.5 px-5 font-mono text-xs text-slate-600">orientation, decorative</td>
-                <td className="py-3.5 px-5 text-center whitespace-nowrap"><Badge variant="success">Sẵn sàng</Badge></td>
-              </tr>
+              {[
+                { name: 'Button', desc: 'Kích hoạt hành động, submit form, mở modal', props: 'variant, size, isLoading, leftIcon' },
+                { name: 'Input', desc: 'Ô nhập liệu cho mọi form đăng nhập, tìm kiếm', props: 'label, hint, error, leftIcon' },
+                { name: 'Card', desc: 'Khung chứa thông tin gói thuê, thửa đất, bài viết', props: 'CardHeader, CardTitle, CardContent' },
+                { name: 'Badge', desc: 'Nhãn trạng thái (Đang canh tác, Sắp thu hoạch)', props: 'variant (default, secondary, success)' },
+                { name: 'Avatar', desc: 'Ảnh đại diện khách hàng, kỹ thuật viên phụ trách', props: 'src, name, size, status' },
+                { name: 'Modal', desc: 'Hộp thoại nổi xác nhận hành động, hiển thị chi tiết', props: 'isOpen, onClose, title, size' },
+                { name: 'StateView', desc: 'Hợp nhất 4 trạng thái Loading / Fetching / Empty / Error', props: 'state, emptyPreset, error, onRetry' },
+                { name: 'Skeleton', desc: 'Khung giả lập chuyển động nhấp nháy khi đang tải dữ liệu', props: 'className (h-*, w-*, rounded-*)' },
+                { name: 'Separator', desc: 'Đường kẻ phân tách các khu vực nội dung ngang hoặc dọc', props: 'orientation, decorative' },
+              ].map((item) => (
+                <tr key={item.name}>
+                  <td className="py-3.5 px-5 font-semibold text-primary whitespace-nowrap">{item.name}</td>
+                  <td className="py-3.5 px-5 text-muted-foreground">{item.desc}</td>
+                  <td className="py-3.5 px-5 font-mono text-xs text-slate-600">{item.props}</td>
+                  <td className="py-3.5 px-5 text-center whitespace-nowrap"><Badge variant="success">Sẵn sàng</Badge></td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
