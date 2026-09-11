@@ -1,27 +1,11 @@
 /**
  * @layer widgets
- * @description Tầng Widgets — FSD Layer 3.
+ * @description Tầng Widgets (Khối giao diện tự chứa lớn) — FSD Layer 2.
  *
- * Trách nhiệm:
- *  - Chứa các UI block lớn, composed từ nhiều entities + features
- *  - Widgets là các thành phần UI "tự chứa" (self-contained), tái sử dụng được giữa các pages
- *  - Ví dụ: Navbar, Sidebar, Footer, DashboardHeader, PlotMapWidget, SensorSummaryWidget
- *
- * Cấu trúc mỗi widget (sub-folder):
- *  widgets/
- *  └── navbar/
- *      ├── ui/         → component JSX
- *      ├── model/      → logic, hooks riêng của widget (nếu có)
- *      └── index.ts    → public API của widget
- *
- * Quy tắc FSD:
- *  - Được phép import từ: features/, entities/, shared/
- *  - KHÔNG import từ pages/ hoặc app/
- *
- * TODO: Tạo từng widget sub-folder khi bắt đầu implement UI
+ * Hướng dẫn triển khai:
+ * 1. Header/     → Thanh điều hướng trên cùng, tùy biến theo vai trò người dùng (Customer, Staff, Admin).
+ * 2. Sidebar/    → Thanh menu điều hướng bên trái cho phân hệ Quản trị / Kỹ thuật viên (Laptop/Desktop).
+ * 3. Navigation/ → Thanh điều hướng dưới đáy màn hình (Bottom Navigation cuộn ngang) trên Mobile.
+ * 4. Footer/     → Chân trang thông tin chung (chỉ dành riêng cho Khách hàng & Công cộng, ẩn ở Admin/Staff).
  */
-export { Header } from './Header';
-export type { HeaderProps, HeaderNavItem, HeaderUser, HeaderLabels } from './Header';
-
-export { Footer } from './Footer';
-export type { FooterProps, FooterConfig, FooterColumn, FooterLink, FooterContact } from './Footer';
+export {};
