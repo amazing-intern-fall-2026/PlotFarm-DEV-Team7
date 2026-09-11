@@ -1,0 +1,2055 @@
+openapi: 3.0.3
+
+info:
+  title: PlotFarm API
+  version: 1.0.0
+  description: |
+    API documentation for PlotFarm system.
+
+    Design references followed:
+    - Response envelope (`meta` + `data` on success, `meta` + `error` on
+      failure) inspired by JSON:API conventions.
+    - Resource naming, pluralization and status codes follow the
+      Microsoft REST API Guidelines and Google AIP resource-oriented design.
+    - Exception: `/auth/login`, `/auth/register`, `/auth/refresh` and
+      `/auth/logout` are intentionally action-style endpoints (not pure CRUD
+      resources), matching common practice in APIs like GitHub/Stripe where
+      login/logout don't map cleanly to a resource.
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local development server
+
+tags:
+  - name: Authentication
+    description: Authentication APIs
+
+  - name: Farm
+    description: Farm management APIs
+
+  - name: Plot
+    description: Plot management APIs
+
+  - name: Crops
+    description: Crops management APIs
+
+  - name: Contract
+    description: Contract management APIs
+
+  - name: Dashboard
+    description: Dashboard APIs
+
+  - name: Farming Log
+    description: Farming log management APIs
+
+  - name: Care Request
+    description: Care request APIs
+
+  - name: Harvest
+    description: Harvest management APIs
+
+  - name: Shipment
+    description: Shipment management APIs
+
+components:
+  schemas:
+    Meta:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Business code used by frontend to identify the result
+          example: AUTH_UNAUTHORIZED
+        message:
+          type: string
+          description: Human-readable message describing the result
+          example: Vui lòng đăng nhập để tiếp tục
+        correlationId:
+          type: string
+          description: Id used to correlate this request across services and support tickets.
+          example: "corr_9a8b7c6d-5e4f-4a3b-2c1d-0e9f8a7b6c5d"
+        traceId:
+          type: string
+          description: Server-generated distributed tracing id (APM/log correlation).
+          example: "tr_01J7AB9K4X8M2026PF09A1B2"
+        userId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Id of the authenticated user who made the request; null if unauthenticated.
+          example: null
+        path:
+          type: string
+          description: Request path that produced this response.
+          example: "/api/v1/plots/plot-01"
+        timestamp:
+          type: string
+          format: date-time
+          description: Server time when the response was generated.
+          example: "2026-09-09T12:20:45.123Z"
+    Pagination:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - total_pages
+      properties:
+        page:
+          type: integer
+          description: Current page number (1-based).
+          example: 1
+        limit:
+          type: integer
+          description: Number of items per page.
+          example: 20
+        total:
+          type: integer
+          description: Total number of records matching the filter, across all pages.
+          example: 42
+        total_pages:
+          type: integer
+          description: Total number of pages available.
+          example: 3
+    ErrorResponse:
+      type: object
+      required:
+        - meta
+        - error
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+        error:
+          type: object
+          description: Always present (never null) whenever meta reports a failure.
+          required:
+            - category
+            - type
+            - details
+          properties:
+            category:
+              type: string
+              description: Broad error classification, used for grouping/alerting.
+              enum:
+                - AUTHENTICATION_ERROR
+                - AUTHORIZATION_ERROR
+                - VALIDATION_ERROR
+                - NOT_FOUND_ERROR
+                - BUSINESS_ERROR
+                - INTERNAL_ERROR
+              example: AUTHENTICATION_ERROR
+            type:
+              type: string
+              description: Underlying exception class/type name, for engineers reading logs.
+              example: JsonWebTokenError
+            details:
+              type: string
+              description: Developer-facing explanation of exactly what went wrong.
+              example: JWT token is expired or missing in Authorization header
+    User:
+      type: object
+      required:
+        - id
+        - role
+        - email
+        - full_name
+        - phone
+        - address
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+        role:
+          type: string
+          enum:
+            - USER
+            - STAFF
+            - ADMIN
+          example: USER
+
+        email:
+          type: string
+          format: email
+          example: user@example.com
+
+        full_name:
+          type: string
+          example: Nguyen Van A
+
+        phone:
+          type: string
+          example: "0123456789"
+
+        address:
+          type: string
+          example: 123 Nguyen Trai, Ho Chi Minh City
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+
+        password:
+          type: string
+          format: password
+          example: password123
+
+      required:
+        - email
+        - password
+    LoginResponse:
+      type: object
+      required:
+        - meta
+        - data
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+        data:
+          type: object
+          required:
+            - user
+            - access_token
+            - refresh_token
+          properties:
+            user:
+              $ref: "#/components/schemas/User"
+
+            access_token:
+              type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+            refresh_token:
+              type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+
+        password:
+          type: string
+          format: password
+          example: password123
+
+        full_name:
+          type: string
+          example: Nguyen Van A
+
+        phone:
+          type: string
+          example: "0123456789"
+
+        address:
+          type: string
+          example: 123 Nguyen Trai, Ho Chi Minh City
+
+      required:
+        - email
+        - password
+        - full_name
+        - phone
+        - address
+    RegisterResponse:
+      type: object
+      required:
+        - meta
+        - data
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+        data:
+          type: object
+          required:
+            - user
+          properties:
+            user:
+              $ref: "#/components/schemas/User"
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    RefreshTokenResponse:
+      type: object
+      required:
+        - meta
+        - data
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+        data:
+          type: object
+          required:
+            - access_token
+            - refresh_token
+          properties:
+            access_token:
+              type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+            refresh_token:
+              type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    LogoutResponse:
+      type: object
+      required:
+        - meta
+        - data
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+        data:
+          type: object
+          nullable: true
+          example: null
+
+    Farm:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+        name:
+          type: string
+          example: Organic Farm
+
+        address:
+          type: string
+          nullable: true
+          example: 123 Nguyen Trai, Da Lat
+
+    UpdateFarmRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Organic Farm
+
+        address:
+          type: string
+          example: 123 Nguyen Trai, Da Lat
+
+    FarmResponse:
+      type: object
+      required:
+        - meta
+        - data
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+        data:
+          $ref: "#/components/schemas/Farm"
+
+    PlotWritableFields:
+      type: object
+      properties:
+        crop_id:
+          type: string
+          format: uuid
+          example: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+
+        staff_id:
+          type: string
+          format: uuid
+          nullable: true
+          example: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+
+        plot_number:
+          type: string
+          example: A1
+
+        area_sqm:
+          type: number
+          format: float
+          example: 18
+
+        soil_type:
+          type: string
+          nullable: true
+          example: Đất thịt pha cát
+
+        stream_url:
+          type: string
+          nullable: true
+          example: https://stream.example.com/plots/a1.m3u8
+
+    Plot:
+      allOf:
+        - $ref: "#/components/schemas/PlotWritableFields"
+        - type: object
+          required:
+            - id
+            - farm_id
+            - status
+            - crop_id
+            - crop_name
+            - plot_number
+            - area_sqm
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+
+            farm_id:
+              type: string
+              format: uuid
+              example: "1a2b3c4d-5e6f-7890-abcd-ef1234567890"
+
+            status:
+              type: string
+              enum:
+                - AVAILABLE
+                - OCCUPIED
+                - MAINTENANCE
+              example: AVAILABLE
+
+            crop_name:
+              type: string
+              description: >
+                Denormalized from Crop so listing plots avoids an N+1
+                query (FE does not need GET /crops/{id} per plot).
+              example: Potato
+
+            staff_name:
+              type: string
+              nullable: true
+              description: Denormalized from the assigned staff User, same reason as crop_name.
+              example: Tran Thi B
+
+    CreatePlotRequest:
+      allOf:
+        - $ref: "#/components/schemas/PlotWritableFields"
+        - type: object
+          required:
+            - farm_id
+            - crop_id
+            - plot_number
+            - area_sqm
+          properties:
+            farm_id:
+              type: string
+              format: uuid
+              example: "1a2b3c4d-5e6f-7890-abcd-ef1234567890"
+
+    UpdatePlotRequest:
+      allOf:
+        - $ref: "#/components/schemas/PlotWritableFields"
+        - type: object
+          properties:
+            status:
+              type: string
+              enum:
+                - AVAILABLE
+                - OCCUPIED
+                - MAINTENANCE
+              example: MAINTENANCE
+    PlotResponse:
+      type: object
+      required:
+        - meta
+        - data
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+        data:
+          $ref: "#/components/schemas/Plot"
+
+    PlotListResponse:
+      type: object
+      required:
+        - meta
+        - data
+        - pagination
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Plot"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+
+    DeletePlotResponse:
+      type: object
+      required:
+        - meta
+        - data
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+        data:
+          $ref: "#/components/schemas/Plot"
+    CropWritableFields:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Potato
+        duration_days:
+          type: integer
+          example: 30
+        ideal_temp:
+          type: number
+          format: float
+          nullable: true
+          example: 25
+        ideal_moisture:
+          type: number
+          format: float
+          nullable: true
+          example: 25
+        icon_url:
+          type: string
+          nullable: true
+          example: https://example.com/icons/potato.png
+
+    Crop:
+      allOf:
+        - $ref: "#/components/schemas/CropWritableFields"
+        - type: object
+          required:
+            - id
+            - name
+            - duration_days
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: "1a2b3c4d-5e6f-7890-abcd-ef1234567890"
+
+    CreateCropRequest:
+      allOf:
+        - $ref: "#/components/schemas/CropWritableFields"
+        - type: object
+          required:
+            - name
+            - duration_days
+
+    UpdateCropRequest:
+      allOf:
+        - $ref: "#/components/schemas/CropWritableFields"
+
+    CropResponse:
+      type: object
+      required:
+        - meta
+        - data
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+        data:
+          $ref: "#/components/schemas/Crop"
+
+    CropListResponse:
+      type: object
+      required:
+        - meta
+        - data
+        - pagination
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Crop"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+    DeleteCropResponse:
+      type: object
+      required:
+        - meta
+        - data
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+        data:
+          $ref: "#/components/schemas/Crop"
+
+    Contract:
+      type: object
+      required:
+        - id
+        - contract_code
+        - user_id
+        - plot_id
+        - crop_id
+        - start_date
+        - harvest_date
+        - total_price
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+
+        contract_code:
+          type: string
+          example: "CF-20260909-0001"
+
+        user_id:
+          type: string
+          format: uuid
+          example: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+
+        plot_id:
+          type: string
+          format: uuid
+          example: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+
+        crop_id:
+          type: string
+          format: uuid
+          example: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+
+        start_date:
+          type: string
+          format: date
+          example: "2026-09-09"
+
+        harvest_date:
+          type: string
+          format: date
+          example: "2026-12-08"
+
+        total_price:
+          type: number
+          format: float
+          example: 1500000
+
+        status:
+          type: string
+          enum:
+            - PENDING_PAYMENT
+            - ACTIVE
+            - COMPLETED
+            - CANCELLED
+          example: PENDING_PAYMENT
+
+    CreateContractRequest:
+      type: object
+      required:
+        - plot_id
+      properties:
+        plot_id:
+          type: string
+          format: uuid
+          example: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+
+    UpdateContractRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - PENDING_PAYMENT
+            - ACTIVE
+            - COMPLETED
+            - CANCELLED
+          example: CANCELLED
+
+    ContractResponse:
+      type: object
+      required:
+        - meta
+        - data
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+        data:
+          $ref: "#/components/schemas/Contract"
+
+    ContractListResponse:
+      type: object
+      required:
+        - meta
+        - data
+        - pagination
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Contract"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            meta:
+              code: VALIDATION_ERROR
+              message: The provided data is invalid
+              correlationId: "corr_9a8b7c6d-5e4f-4a3b-2c1d-0e9f8a7b6c5d"
+              traceId: "tr_01J7AB9K4X8M2026PF09A1B2"
+              userId: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+              path: "/api/v1/plots"
+              timestamp: "2026-09-09T12:20:45.123Z"
+            error:
+              category: VALIDATION_ERROR
+              type: ValidationError
+              details: One or more fields failed validation
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            meta:
+              code: AUTH_UNAUTHORIZED
+              message: Vui lòng đăng nhập để tiếp tục
+              correlationId: "corr_9a8b7c6d-5e4f-4a3b-2c1d-0e9f8a7b6c5d"
+              traceId: "tr_01J7AB9K4X8M2026PF09A1B2"
+              userId: null
+              path: "/api/v1/plots"
+              timestamp: "2026-09-09T12:20:45.123Z"
+            error:
+              category: AUTHENTICATION_ERROR
+              type: JsonWebTokenError
+              details: JWT token is expired or missing in Authorization header
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            meta:
+              code: AUTH_FORBIDDEN
+              message: You do not have permission to perform this action
+              correlationId: "corr_9a8b7c6d-5e4f-4a3b-2c1d-0e9f8a7b6c5d"
+              traceId: "tr_01J7AB9K4X8M2026PF09A1B2"
+              userId: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+              path: "/api/v1/plots"
+              timestamp: "2026-09-09T12:20:45.123Z"
+            error:
+              category: AUTHORIZATION_ERROR
+              type: ForbiddenError
+              details: User role does not have permission to perform this action
+    Conflict:
+      description: Business conflict (e.g. plot already reserved by another user)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            meta:
+              code: PLOT_ALREADY_RESERVED
+              message: Mảnh đất này vừa được người khác giữ chỗ cách đây ít phút
+              correlationId: "corr_3e2f1a0b-9c8d-4e5f-6a7b-8c9d0e1f2a3b"
+              traceId: "tr_01J7AC999X2026PF09B3C4"
+              userId: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+              path: "/api/v1/contracts"
+              timestamp: "2026-09-09T12:22:15.890Z"
+            error:
+              category: BUSINESS_ERROR
+              type: PlotOptimisticLockException
+              details: Plot is temporarily locked by another user
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            meta:
+              code: RESOURCE_NOT_FOUND
+              message: The requested resource was not found
+              correlationId: "corr_9a8b7c6d-5e4f-4a3b-2c1d-0e9f8a7b6c5d"
+              traceId: "tr_01J7AB9K4X8M2026PF09A1B2"
+              userId: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+              path: "/api/v1/plots/9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+              timestamp: "2026-09-09T12:20:45.123Z"
+            error:
+              category: NOT_FOUND_ERROR
+              type: NotFoundError
+              details: The requested resource could not be found
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            meta:
+              code: INTERNAL_SERVER_ERROR
+              message: An unexpected internal server error occurred
+              correlationId: "corr_9a8b7c6d-5e4f-4a3b-2c1d-0e9f8a7b6c5d"
+              traceId: "tr_01J7AB9K4X8M2026PF09A1B2"
+              userId: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+              path: "/api/v1/plots"
+              timestamp: "2026-09-09T12:20:45.123Z"
+            error:
+              category: INTERNAL_ERROR
+              type: InternalServerError
+              details: An unexpected error occurred while processing the request
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+
+      summary: User login
+      description: Authenticate user with email and password
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+              example:
+                meta:
+                  code: AUTH_LOGIN_SUCCESS
+                  message: Login successful
+                data:
+                  user:
+                    id: "550e8400-e29b-41d4-a716-446655440000"
+                    role: USER
+                    email: user@example.com
+                    full_name: Nguyen Van A
+                    phone: "0123456789"
+                    address: 123 Nguyen Trai, Ho Chi Minh City
+                  access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+        "400":
+          description: Invalid login request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: AUTH_INVALID_REQUEST
+                  message: Invalid login request
+                error:
+                  category: VALIDATION_ERROR
+                  type: ValidationError
+                  details: Email or password field is missing or malformed
+
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: AUTH_INVALID_CREDENTIALS
+                  message: Email or password is incorrect
+                error:
+                  category: AUTHENTICATION_ERROR
+                  type: InvalidCredentialsError
+                  details: Email or password does not match any account
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: INTERNAL_SERVER_ERROR
+                  message: An unexpected internal server error occurred
+                error:
+                  category: INTERNAL_ERROR
+                  type: InternalServerError
+                  details: An unexpected error occurred while processing the request
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+
+      summary: Register a new user account
+      description: Register a new user account in the system
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+
+      responses:
+        "201":
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterResponse"
+              example:
+                meta:
+                  code: AUTH_REGISTER_SUCCESS
+                  message: User registered successfully
+                data:
+                  user:
+                    id: "550e8400-e29b-41d4-a716-446655440000"
+                    role: USER
+                    email: user@example.com
+                    full_name: Nguyen Van A
+                    phone: "0123456789"
+                    address: 123 Nguyen Trai, Ho Chi Minh City
+
+        "400":
+          description: Invalid registration request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: AUTH_INVALID_REGISTER_DATA
+                  message: Registration information is invalid
+                error:
+                  category: VALIDATION_ERROR
+                  type: ValidationError
+                  details: One or more registration fields are invalid
+
+        "409":
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: AUTH_EMAIL_ALREADY_EXISTS
+                  message: An account with this email already exists
+                error:
+                  category: BUSINESS_ERROR
+                  type: DuplicateEmailException
+                  details: An account with this email already exists
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: INTERNAL_SERVER_ERROR
+                  message: An unexpected internal server error occurred
+                error:
+                  category: INTERNAL_ERROR
+                  type: InternalServerError
+                  details: An unexpected error occurred while processing the request
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+
+      summary: Refresh access token
+      description: Generate new access token using refresh token
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshTokenRequest"
+
+      responses:
+        "200":
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshTokenResponse"
+              example:
+                meta:
+                  code: AUTH_TOKEN_REFRESH_SUCCESS
+                  message: Access token refreshed successfully
+                data:
+                  access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+        "401":
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: AUTH_INVALID_REFRESH_TOKEN
+                  message: Refresh token is invalid or expired
+                error:
+                  category: AUTHENTICATION_ERROR
+                  type: JsonWebTokenError
+                  details: Refresh token is invalid, expired, or has been revoked
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: INTERNAL_SERVER_ERROR
+                  message: An unexpected internal server error occurred
+                error:
+                  category: INTERNAL_ERROR
+                  type: InternalServerError
+                  details: An unexpected error occurred while processing the request
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+
+      security:
+        - BearerAuth: []
+
+      summary: Logout
+      description: Logout current user
+
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogoutResponse"
+              example:
+                meta:
+                  code: AUTH_LOGOUT_SUCCESS
+                  message: Logout successful
+                data: null
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: AUTH_UNAUTHORIZED
+                  message: Authentication is required
+                error:
+                  category: AUTHENTICATION_ERROR
+                  type: JsonWebTokenError
+                  details: JWT token is expired or missing in Authorization header
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: INTERNAL_SERVER_ERROR
+                  message: An unexpected internal server error occurred
+                error:
+                  category: INTERNAL_ERROR
+                  type: InternalServerError
+                  details: An unexpected error occurred while processing the request
+  /farm:
+    get:
+      tags:
+        - Farm
+
+      security:
+        - BearerAuth: []
+
+      summary: Get farm details
+      description: Retrieve information of the system farm
+
+      responses:
+        "200":
+          description: Farm retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FarmResponse"
+              example:
+                meta:
+                  code: FARM_GET_SUCCESS
+                  message: Farm information retrieved successfully
+                data:
+                  id: "550e8400-e29b-41d4-a716-446655440000"
+                  name: Organic Farm
+                  address: 123 Nguyen Trai, Da Lat
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: AUTH_UNAUTHORIZED
+                  message: Authentication is required
+                error:
+                  category: AUTHENTICATION_ERROR
+                  type: JsonWebTokenError
+                  details: JWT token is expired or missing in Authorization header
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: INTERNAL_SERVER_ERROR
+                  message: An unexpected internal server error occurred
+                error:
+                  category: INTERNAL_ERROR
+                  type: InternalServerError
+                  details: An unexpected error occurred while processing the request
+    patch:
+      tags:
+        - Farm
+
+      security:
+        - BearerAuth: []
+
+      summary: Update farm
+      description: Update system farm information. Only ADMIN can perform this action.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFarmRequest"
+
+      responses:
+        "200":
+          description: Farm updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FarmResponse"
+              example:
+                meta:
+                  code: FARM_UPDATE_SUCCESS
+                  message: Farm information updated successfully
+                data:
+                  id: "550e8400-e29b-41d4-a716-446655440000"
+                  name: Organic Farm
+                  address: 123 Nguyen Trai, Da Lat
+
+        "400":
+          description: Invalid farm update data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: FARM_INVALID_UPDATE_DATA
+                  message: The provided farm information is invalid
+                error:
+                  category: VALIDATION_ERROR
+                  type: ValidationError
+                  details: One or more farm update fields are invalid
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: AUTH_UNAUTHORIZED
+                  message: Authentication is required
+                error:
+                  category: AUTHENTICATION_ERROR
+                  type: JsonWebTokenError
+                  details: JWT token is expired or missing in Authorization header
+
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: AUTH_FORBIDDEN
+                  message: You do not have permission to perform this action
+                error:
+                  category: AUTHORIZATION_ERROR
+                  type: ForbiddenError
+                  details: User role does not have permission to perform this action
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                meta:
+                  code: INTERNAL_SERVER_ERROR
+                  message: An unexpected internal server error occurred
+                error:
+                  category: INTERNAL_ERROR
+                  type: InternalServerError
+                  details: An unexpected error occurred while processing the request
+  /plots:
+    get:
+      tags:
+        - Plot
+
+      security:
+        - BearerAuth: []
+
+      summary: List plots
+      description: Retrieve the list of plots, optionally filtered by farm or status
+
+      parameters:
+        - name: farm_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - AVAILABLE
+              - OCCUPIED
+              - MAINTENANCE
+        - name: page
+          in: query
+          required: false
+          description: Page number, 1-based.
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          description: Number of items per page.
+          schema:
+            type: integer
+            default: 20
+
+      responses:
+        "200":
+          description: Plots retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlotListResponse"
+              example:
+                meta:
+                  code: PLOT_LIST_SUCCESS
+                  message: Plots retrieved successfully
+                data:
+                  - id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                    farm_id: "1a2b3c4d-5e6f-7890-abcd-ef1234567890"
+                    crop_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                    crop_name: Potato
+                    staff_id: "3f2e1d0c-9b8a-7654-3210-fedcba987654"
+                    staff_name: Tran Thi B
+                    plot_number: A1
+                    area_sqm: 18
+                    soil_type: Đất thịt pha cát
+                    status: AVAILABLE
+                    stream_url: https://stream.example.com/plots/a1.m3u8
+                pagination:
+                  page: 1
+                  limit: 20
+                  total: 42
+                  total_pages: 3
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    post:
+      tags:
+        - Plot
+
+      security:
+        - BearerAuth: []
+
+      summary: Create a plot
+      description: Create a new plot in a farm. Only ADMIN can perform this action.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePlotRequest"
+
+      responses:
+        "201":
+          description: Plot created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlotResponse"
+              example:
+                meta:
+                  code: PLOT_CREATE_SUCCESS
+                  message: Plot created successfully
+                data:
+                  id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                  farm_id: "1a2b3c4d-5e6f-7890-abcd-ef1234567890"
+                  crop_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                  crop_name: Potato
+                  staff_id: "3f2e1d0c-9b8a-7654-3210-fedcba987654"
+                  staff_name: Tran Thi B
+                  plot_number: A1
+                  area_sqm: 18
+                  soil_type: Đất thịt pha cát
+                  status: AVAILABLE
+                  stream_url: https://stream.example.com/plots/a1.m3u8
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /plots/{id}:
+    get:
+      tags:
+        - Plot
+
+      security:
+        - BearerAuth: []
+
+      summary: Get plot details
+      description: Retrieve details of a single plot by id
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Plot retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlotResponse"
+              example:
+                meta:
+                  code: PLOT_GET_SUCCESS
+                  message: Plot retrieved successfully
+                data:
+                  id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                  farm_id: "1a2b3c4d-5e6f-7890-abcd-ef1234567890"
+                  crop_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                  crop_name: Potato
+                  staff_id: "3f2e1d0c-9b8a-7654-3210-fedcba987654"
+                  staff_name: Tran Thi B
+                  plot_number: A1
+                  area_sqm: 18
+                  soil_type: Đất thịt pha cát
+                  status: AVAILABLE
+                  stream_url: https://stream.example.com/plots/a1.m3u8
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    patch:
+      tags:
+        - Plot
+
+      security:
+        - BearerAuth: []
+
+      summary: Update a plot
+      description: Update plot information. Only ADMIN can perform this action.
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePlotRequest"
+
+      responses:
+        "200":
+          description: Plot updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlotResponse"
+              example:
+                meta:
+                  code: PLOT_UPDATE_SUCCESS
+                  message: Plot updated successfully
+                data:
+                  id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                  farm_id: "1a2b3c4d-5e6f-7890-abcd-ef1234567890"
+                  crop_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                  crop_name: Potato
+                  staff_id: "3f2e1d0c-9b8a-7654-3210-fedcba987654"
+                  staff_name: Tran Thi B
+                  plot_number: A1
+                  area_sqm: 18
+                  soil_type: Đất thịt pha cát
+                  status: MAINTENANCE
+                  stream_url: https://stream.example.com/plots/a1.m3u8
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    delete:
+      tags:
+        - Plot
+
+      security:
+        - BearerAuth: []
+
+      summary: Delete a plot
+      description: Delete a plot. Only ADMIN can perform this action.
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Plot deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletePlotResponse"
+              example:
+                meta:
+                  code: PLOT_DELETE_SUCCESS
+                  message: Plot deleted successfully
+                data:
+                  id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                  farm_id: "1a2b3c4d-5e6f-7890-abcd-ef1234567890"
+                  crop_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                  crop_name: Potato
+                  staff_id: "3f2e1d0c-9b8a-7654-3210-fedcba987654"
+                  staff_name: Tran Thi B
+                  plot_number: A1
+                  area_sqm: 18
+                  soil_type: Đất thịt pha cát
+                  status: AVAILABLE
+                  stream_url: https://stream.example.com/plots/a1.m3u8
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /crops:
+    get:
+      tags:
+        - Crops
+      security:
+        - BearerAuth: []
+      summary: List crops
+      description: Retrieve the list of crop varieties available in the system
+
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Page number, 1-based.
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          description: Number of items per page.
+          schema:
+            type: integer
+            default: 20
+
+      responses:
+        "200":
+          description: Crops retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CropListResponse"
+              example:
+                meta:
+                  code: CROP_LIST_SUCCESS
+                  message: Crops retrieved successfully
+                data:
+                  - id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                    name: Potato
+                    duration_days: 70
+                    ideal_temp: 25
+                    ideal_moisture: 70
+                    icon_url: https://example.com/icons/potato.png
+                pagination:
+                  page: 1
+                  limit: 20
+                  total: 15
+                  total_pages: 1
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    post:
+      tags:
+        - Crops
+
+      security:
+        - BearerAuth: []
+
+      summary: Create a crop
+      description: Create a new crop variety. Only ADMIN can perform this action.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCropRequest"
+
+      responses:
+        "201":
+          description: Crop created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CropResponse"
+              example:
+                meta:
+                  code: CROP_CREATE_SUCCESS
+                  message: Crop created successfully
+                data:
+                  id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                  name: Potato
+                  duration_days: 70
+                  ideal_temp: 25
+                  ideal_moisture: 70
+                  icon_url: https://example.com/icons/potato.png
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /crops/{id}:
+    get:
+      tags:
+        - Crops
+
+      security:
+        - BearerAuth: []
+
+      summary: Get crop details
+      description: Retrieve details of a single crop by id
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Crop retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CropResponse"
+              example:
+                meta:
+                  code: CROP_GET_SUCCESS
+                  message: Crop retrieved successfully
+                data:
+                  id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                  name: Potato
+                  duration_days: 70
+                  ideal_temp: 25
+                  ideal_moisture: 70
+                  icon_url: https://example.com/icons/potato.png
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    patch:
+      tags:
+        - Crops
+
+      security:
+        - BearerAuth: []
+
+      summary: Update a crop
+      description: Update crop information. Only ADMIN can perform this action.
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCropRequest"
+
+      responses:
+        "200":
+          description: Crop updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CropResponse"
+              example:
+                meta:
+                  code: CROP_UPDATE_SUCCESS
+                  message: Crop updated successfully
+                data:
+                  id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                  name: Potato
+                  duration_days: 70
+                  ideal_temp: 25
+                  ideal_moisture: 70
+                  icon_url: https://example.com/icons/potato.png
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    delete:
+      tags:
+        - Crops
+
+      security:
+        - BearerAuth: []
+
+      summary: Delete a crop
+      description: Delete a crop variety. Only ADMIN can perform this action.
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Crop deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteCropResponse"
+              example:
+                meta:
+                  code: CROP_DELETE_SUCCESS
+                  message: Crop deleted successfully
+                data:
+                  id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                  name: Potato
+                  duration_days: 70
+                  ideal_temp: 25
+                  ideal_moisture: 70
+                  icon_url: https://example.com/icons/potato.png
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /contracts:
+    get:
+      tags:
+        - Contract
+
+      security:
+        - BearerAuth: []
+
+      summary: List contracts
+      description: Retrieve contracts. USER only sees their own contracts; ADMIN/STAFF can see all and filter by user_id or status.
+
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - PENDING_PAYMENT
+              - ACTIVE
+              - COMPLETED
+              - CANCELLED
+        - name: page
+          in: query
+          required: false
+          description: Page number, 1-based.
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          description: Number of items per page.
+          schema:
+            type: integer
+            default: 20
+
+      responses:
+        "200":
+          description: Contracts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractListResponse"
+              example:
+                meta:
+                  code: CONTRACT_LIST_SUCCESS
+                  message: Contracts retrieved successfully
+                data:
+                  - id: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+                    contract_code: "CF-20260909-0001"
+                    user_id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+                    plot_id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                    crop_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                    start_date: "2026-09-09"
+                    harvest_date: "2026-12-08"
+                    total_price: 1500000
+                    status: PENDING_PAYMENT
+                pagination:
+                  page: 1
+                  limit: 20
+                  total: 7
+                  total_pages: 1
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    post:
+      tags:
+        - Contract
+
+      security:
+        - BearerAuth: []
+
+      summary: Create a contract (book a plot)
+      description: Customer books an AVAILABLE plot. The server copies crop_id from the plot, computes harvest_date and total_price, generates contract_code, and sets status to PENDING_PAYMENT.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateContractRequest"
+
+      responses:
+        "201":
+          description: Contract created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractResponse"
+              example:
+                meta:
+                  code: CONTRACT_CREATE_SUCCESS
+                  message: Contract created successfully
+                data:
+                  id: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+                  contract_code: "CF-20260909-0001"
+                  user_id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+                  plot_id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                  crop_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                  start_date: "2026-09-09"
+                  harvest_date: "2026-12-08"
+                  total_price: 1500000
+                  status: PENDING_PAYMENT
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /contracts/{id}:
+    get:
+      tags:
+        - Contract
+
+      security:
+        - BearerAuth: []
+
+      summary: Get contract details
+      description: Retrieve details of a single contract by id
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Contract retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractResponse"
+              example:
+                meta:
+                  code: CONTRACT_GET_SUCCESS
+                  message: Contract retrieved successfully
+                data:
+                  id: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+                  contract_code: "CF-20260909-0001"
+                  user_id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+                  plot_id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                  crop_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                  start_date: "2026-09-09"
+                  harvest_date: "2026-12-08"
+                  total_price: 1500000
+                  status: PENDING_PAYMENT
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    patch:
+      tags:
+        - Contract
+
+      security:
+        - BearerAuth: []
+
+      summary: Update contract status
+      description: Update a contract's status (e.g. cancel it, or mark it ACTIVE/COMPLETED). Only ADMIN, or the system itself via internal webhooks, can perform this action.
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateContractRequest"
+
+      responses:
+        "200":
+          description: Contract updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractResponse"
+              example:
+                meta:
+                  code: CONTRACT_UPDATE_SUCCESS
+                  message: Contract updated successfully
+                data:
+                  id: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+                  contract_code: "CF-20260909-0001"
+                  user_id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+                  plot_id: "9b2f1c3a-6e4d-4b8a-9f1a-3c7d2e5b0a11"
+                  crop_id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                  start_date: "2026-09-09"
+                  harvest_date: "2026-12-08"
+                  total_price: 1500000
+                  status: CANCELLED
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+

@@ -191,6 +191,9 @@ importers:
       '@types/node':
         specifier: ^20.12.12
         version: 20.19.43
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.1
       prisma:
         specifier: ^5.14.0
         version: 5.22.0
@@ -216,6 +219,9 @@ importers:
       '@repo/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.1
       typescript:
         specifier: ^5.4.5
         version: 5.9.3
