@@ -8,15 +8,17 @@ import {
   User,
   LayoutDashboard,
   MapPin,
-  Wrench,
-  Leaf,
   ClipboardList,
-  Truck,
   ShieldCheck,
   CheckSquare,
   QrCode,
   FileText,
   Bell,
+  CalendarCheck,
+  Sprout,
+  AlertTriangle,
+  Settings,
+  LogOut,
 } from "lucide-react";
 
 import { useT } from "@/shared/lib/i18n";
@@ -30,6 +32,7 @@ import {
   Header,
   type HeaderNavItem,
   Footer,
+  Avatar,
 } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 
@@ -120,58 +123,49 @@ function useCustomerBottomItems(t: (key: string) => string) {
 }
 
 function useAdminSections(
-  t: (key: string) => string,
+  _t: (key: string) => string,
   onNavChange?: (id: string) => void,
 ): SidebarSection[] {
   return [
     {
+      title: "TỔNG QUAN",
       items: [
         {
           id: "overview",
-          icon: <LayoutDashboard className="h-4 w-4" />,
-          label: t("admin.overview"),
+          icon: <LayoutDashboard className="h-5 w-5" />,
+          label: "Bảng điều khiển",
           onClick: () => onNavChange?.("overview"),
         },
         {
           id: "plots",
-          icon: <MapPin className="h-4 w-4" />,
-          label: t("admin.plots"),
+          icon: <Sprout className="h-5 w-5" />,
+          label: "Bản đồ nông trại",
           onClick: () => onNavChange?.("plots"),
-        },
-        {
-          id: "tech_config",
-          icon: <Wrench className="h-4 w-4" />,
-          label: t("admin.tech_config"),
-          onClick: () => onNavChange?.("tech_config"),
-        },
-        {
-          id: "seeds_supply",
-          icon: <Leaf className="h-4 w-4" />,
-          label: t("admin.seeds_supply"),
-          onClick: () => onNavChange?.("seeds_supply"),
         },
       ],
     },
     {
-      title: "Vận hành",
+      title: "QUẢN TRỊ",
       items: [
         {
-          id: "work_orders",
-          icon: <ClipboardList className="h-4 w-4" />,
-          label: t("admin.work_orders"),
-          onClick: () => onNavChange?.("work_orders"),
+          id: "contracts",
+          icon: <FileText className="h-5 w-5" />,
+          label: "Hợp đồng thuê đất",
+          badge: "12",
+          onClick: () => onNavChange?.("contracts"),
         },
         {
-          id: "harvest",
-          icon: <Truck className="h-4 w-4" />,
-          label: t("admin.harvest"),
-          onClick: () => onNavChange?.("harvest"),
+          id: "alerts",
+          icon: <AlertTriangle className="h-5 w-5" />,
+          label: "Cảnh báo hệ thống",
+          badge: "5",
+          onClick: () => onNavChange?.("alerts"),
         },
         {
-          id: "rbac",
-          icon: <ShieldCheck className="h-4 w-4" />,
-          label: t("admin.rbac"),
-          onClick: () => onNavChange?.("rbac"),
+          id: "settings",
+          icon: <Settings className="h-5 w-5" />,
+          label: "Cấu hình nông trại",
+          onClick: () => onNavChange?.("settings"),
         },
       ],
     },
@@ -209,35 +203,66 @@ function useAdminBottomItems(t: (key: string) => string) {
 }
 
 function useFarmerSections(
-  t: (key: string) => string,
+  _t: (key: string) => string,
   onNavChange?: (id: string) => void,
 ): SidebarSection[] {
   return [
     {
+      title: "VẬN HÀNH",
       items: [
         {
           id: "tasks_today",
-          icon: <CheckSquare className="h-4 w-4" />,
-          label: t("farmer.tasks_today"),
+          icon: <CalendarCheck className="h-5 w-5" />,
+          label: "Nhiệm vụ hôm nay",
+          badge: "4",
           onClick: () => onNavChange?.("tasks_today"),
         },
         {
           id: "my_plots",
-          icon: <MapPin className="h-4 w-4" />,
-          label: t("farmer.my_plots"),
+          icon: <Sprout className="h-5 w-5" />,
+          label: "Quản lý ô đất",
           onClick: () => onNavChange?.("my_plots"),
         },
         {
-          id: "iot_camera",
-          icon: <Camera className="h-4 w-4" />,
-          label: t("farmer.iot_camera"),
-          onClick: () => onNavChange?.("iot_camera"),
+          id: "scan_qr",
+          icon: <QrCode className="h-5 w-5" />,
+          label: "Quét mã QR lô",
+          onClick: () => onNavChange?.("scan_qr"),
         },
+      ],
+    },
+    {
+      title: "NHẬT KÝ & BÁO CÁO",
+      items: [
         {
           id: "task_journal",
-          icon: <FileText className="h-4 w-4" />,
-          label: t("farmer.task_journal"),
+          icon: <FileText className="h-5 w-5" />,
+          label: "Nhật ký canh tác",
           onClick: () => onNavChange?.("task_journal"),
+        },
+        {
+          id: "alerts",
+          icon: <AlertTriangle className="h-5 w-5" />,
+          label: "Cảnh báo vi khí hậu",
+          badge: "2",
+          onClick: () => onNavChange?.("alerts"),
+        },
+      ],
+    },
+    {
+      title: "CÁ NHÂN",
+      items: [
+        {
+          id: "profile",
+          icon: <User className="h-5 w-5" />,
+          label: "Hồ sơ kỹ thuật viên",
+          onClick: () => onNavChange?.("profile"),
+        },
+        {
+          id: "settings",
+          icon: <Settings className="h-5 w-5" />,
+          label: "Cài đặt thiết bị",
+          onClick: () => onNavChange?.("settings"),
         },
       ],
     },
@@ -382,6 +407,32 @@ export function RootLayout({
       ? breadcrumbs
       : [{ label: t("shell.breadcrumb_home") }];
 
+  const sidebarFooter = isAdmin ? (
+    <div className="flex items-center gap-3 w-full">
+      <Avatar name={user?.name || "Ban Trị"} size="md" status="online" />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-bold text-foreground truncate">{user?.name || "Admin BioCloud"}</p>
+        <p className="text-xs text-muted-foreground truncate">Toàn quyền hệ thống</p>
+      </div>
+    </div>
+  ) : (
+    <div className="flex items-center gap-3 w-full">
+      <Avatar name={user?.name || "Nguyễn Nông"} size="md" status="online" />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-bold text-foreground truncate">{user?.name || "Nguyễn Văn Nông"}</p>
+        <p className="text-xs text-muted-foreground truncate">Kỹ thuật viên Lô A</p>
+      </div>
+      <button
+        type="button"
+        title="Đăng xuất"
+        aria-label="Đăng xuất"
+        className="text-slate-400 hover:text-foreground transition-colors p-1 rounded-lg hover:bg-accent shrink-0 ml-auto"
+      >
+        <LogOut className="h-5 w-5" />
+      </button>
+    </div>
+  );
+
   return (
     <div className={cn("flex h-screen overflow-hidden bg-muted/30", className)}>
       {/* ── Sidebar (desktop only) ─────────────────────────────────── */}
@@ -390,6 +441,7 @@ export function RootLayout({
         activeItemId={activeId}
         collapseLabel={t("shell.collapse")}
         expandLabel={t("shell.expand")}
+        footer={sidebarFooter}
       />
 
       {/* ── Right column: TopBar + main ─────────────────────────────── */}

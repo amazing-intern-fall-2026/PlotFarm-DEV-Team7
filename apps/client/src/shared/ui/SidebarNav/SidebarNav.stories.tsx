@@ -57,7 +57,7 @@ type Story = StoryObj<typeof SidebarNav>;
 
 const FARMER_SECTIONS: SidebarSection[] = [
   {
-    title: "Vận hành",
+    title: "VẬN HÀNH",
     items: [
       { id: "tasks", label: "Nhiệm vụ hôm nay", icon: <CalendarCheck className="h-5 w-5" />, badge: "4" },
       { id: "plots", label: "Quản lý ô đất", icon: <Sprout className="h-5 w-5" /> },
@@ -65,14 +65,14 @@ const FARMER_SECTIONS: SidebarSection[] = [
     ],
   },
   {
-    title: "Nhật ký & Báo cáo",
+    title: "NHẬT KÝ & BÁO CÁO",
     items: [
       { id: "logs", label: "Nhật ký canh tác", icon: <FileText className="h-5 w-5" /> },
       { id: "alerts", label: "Cảnh báo vi khí hậu", icon: <AlertTriangle className="h-5 w-5" />, badge: "2" },
     ],
   },
   {
-    title: "Cá nhân",
+    title: "CÁ NHÂN",
     items: [
       { id: "profile", label: "Hồ sơ kỹ thuật viên", icon: <User className="h-5 w-5" /> },
       { id: "settings", label: "Cài đặt thiết bị", icon: <Settings className="h-5 w-5" /> },
@@ -82,14 +82,14 @@ const FARMER_SECTIONS: SidebarSection[] = [
 
 const ADMIN_SECTIONS: SidebarSection[] = [
   {
-    title: "Tổng quan",
+    title: "TỔNG QUAN",
     items: [
       { id: "dashboard", label: "Bảng điều khiển", icon: <LayoutDashboard className="h-5 w-5" /> },
       { id: "plots_admin", label: "Bản đồ nông trại", icon: <Sprout className="h-5 w-5" /> },
     ],
   },
   {
-    title: "Quản trị",
+    title: "QUẢN TRỊ",
     items: [
       { id: "contracts", label: "Hợp đồng thuê đất", icon: <FileText className="h-5 w-5" />, badge: "12" },
       { id: "alerts_admin", label: "Cảnh báo hệ thống", icon: <AlertTriangle className="h-5 w-5" />, badge: "5" },
@@ -109,13 +109,19 @@ export const FarmerSidebar: Story = {
     collapseLabel: "Thu gọn",
     expandLabel: "Mở rộng",
     footer: (
-      <div className="flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-accent cursor-pointer transition-colors">
-        <Avatar name="Nguyễn Văn Nông" size="sm" status="online" />
+      <div className="flex items-center gap-3 w-full">
+        <Avatar name="Nguyễn Văn Nông" size="md" status="online" />
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-semibold text-foreground truncate">Nguyễn Văn Nông</p>
-          <p className="text-[10px] text-muted-foreground truncate">Kỹ thuật viên Lô A</p>
+          <p className="text-sm font-bold text-foreground truncate">Nguyễn Văn Nông</p>
+          <p className="text-xs text-muted-foreground truncate">Kỹ thuật viên Lô A</p>
         </div>
-        <LogOut className="h-4 w-4 text-muted-foreground shrink-0" />
+        <button
+          type="button"
+          aria-label="Đăng xuất"
+          className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-lg hover:bg-accent shrink-0 ml-auto"
+        >
+          <LogOut className="h-5 w-5" />
+        </button>
       </div>
     ),
   },
@@ -140,11 +146,11 @@ export const AdminSidebar: Story = {
     collapseLabel: "Thu gọn",
     expandLabel: "Mở rộng",
     footer: (
-      <div className="flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-accent cursor-pointer transition-colors">
-        <Avatar name="Ban Quản Trị" size="sm" status="online" />
+      <div className="flex items-center gap-3 w-full">
+        <Avatar name="Ban Trị" size="md" status="online" />
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-semibold text-foreground truncate">Admin BioCloud</p>
-          <p className="text-[10px] text-muted-foreground truncate">Toàn quyền hệ thống</p>
+          <p className="text-sm font-bold text-foreground truncate">Admin BioCloud</p>
+          <p className="text-xs text-muted-foreground truncate">Toàn quyền hệ thống</p>
         </div>
       </div>
     ),

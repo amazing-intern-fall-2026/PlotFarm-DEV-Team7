@@ -13,7 +13,7 @@ export interface SidebarItemProps {
 
 /**
  * SidebarItem — một mục menu trong Sidebar (Desktop).
- * Hỗ trợ hai trạng thái: expanded (icon + label) và collapsed (chỉ icon).
+ * Hỗ trợ hai trạng thái: expanded (icon + label + badge) và collapsed (chỉ icon + dot badge).
  */
 export function SidebarItem({
   icon,
@@ -22,7 +22,7 @@ export function SidebarItem({
   collapsed = false,
   onClick,
   badge,
-  id
+  id,
 }: SidebarItemProps) {
   return (
     <button
@@ -33,20 +33,22 @@ export function SidebarItem({
       aria-label={label}
       aria-current={isActive ? "page" : undefined}
       className={cn(
-        "group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5",
-        "text-sm font-medium transition-all duration-150 focus-visible:outline-none",
+        "group relative flex w-full items-center gap-3.5 rounded-xl px-3.5 py-2.5",
+        "text-sm transition-all duration-150 focus-visible:outline-none",
         "focus-visible:ring-2 focus-visible:ring-primary/60",
         isActive
-          ? "bg-primary text-white shadow-sm shadow-primary/30"
-          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-        collapsed ? "justify-center px-2" : "justify-start"
+          ? "bg-primary text-white font-semibold shadow-xs shadow-primary/20"
+          : "text-slate-600 dark:text-slate-300 font-medium hover:bg-accent/60 hover:text-foreground",
+        collapsed ? "justify-center px-2 py-3" : "justify-start",
       )}
     >
       {/* Icon */}
       <span
         className={cn(
-          "flex h-5 w-5 shrink-0 items-center justify-center transition-transform duration-150",
-          isActive && !collapsed && "scale-105"
+          "flex h-5 w-5 shrink-0 items-center justify-center transition-colors duration-150",
+          isActive
+            ? "text-white"
+            : "text-slate-500 dark:text-slate-400 group-hover:text-foreground",
         )}
       >
         {icon}
@@ -57,15 +59,14 @@ export function SidebarItem({
         <span className="flex-1 truncate text-left leading-tight">{label}</span>
       )}
 
-      {/* Badge */}
+      {/* Badge khi expanded */}
       {badge !== undefined && !collapsed && (
         <span
           className={cn(
-            "ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5",
-            "text-[10px] font-semibold leading-none",
+            "ml-auto flex items-center justify-center rounded-full text-xs font-semibold leading-none",
             isActive
-              ? "bg-white/20 text-white"
-              : "bg-primary/10 text-primary"
+              ? "h-6 min-w-[24px] px-1.5 bg-white/20 text-white font-bold"
+              : "px-2 py-0.5 min-w-[20px] bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300",
           )}
         >
           {badge}
