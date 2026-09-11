@@ -44,13 +44,15 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Left: Back button, Branding, Subtitle, Navigation */}
         <div className="flex items-center gap-4 lg:gap-8">
           {showBack && (
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onBack}
-              className="inline-flex items-center justify-center p-2 rounded-lg text-foreground hover:bg-muted transition-colors"
+              className="text-foreground"
               aria-label={t.backAria}
             >
               <ArrowLeft className="h-5 w-5" />
-            </button>
+            </Button>
           )}
 
           <HeaderBranding variant={variant} title={title} />
@@ -76,9 +78,11 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           )}
 
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onNotificationClick}
-            className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+            className="relative text-muted-foreground hover:text-foreground"
             aria-label={t.notificationAria}
           >
             <Bell className="h-5 w-5" />
@@ -87,7 +91,7 @@ export const Header: React.FC<HeaderProps> = ({
                 {notificationCount > 99 ? '99+' : notificationCount}
               </span>
             )}
-          </button>
+          </Button>
 
           {user ? (
             <HeaderUserMenu
@@ -117,13 +121,15 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           )}
 
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg text-foreground hover:bg-muted transition-colors focus:outline-none"
+            className="lg:hidden text-foreground"
             aria-label={t.menuAria}
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          </Button>
         </div>
       </div>
 

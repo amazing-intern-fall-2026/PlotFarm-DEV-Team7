@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, LogOut, User, Settings } from 'lucide-react';
-import { Avatar, Badge } from '@/shared/ui';
+import { Avatar, Badge, Button } from '@/shared/ui';
 import { cn } from '@/shared/lib/utils';
 import type { HeaderUser, HeaderLabels } from './types';
 import { DEFAULT_HEADER_LABELS, ROLE_BADGE_CONFIG } from './constants';
@@ -81,40 +81,46 @@ export const HeaderUserMenu: React.FC<HeaderUserMenuProps> = ({
             </div>
           </div>
 
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => {
               setIsOpen(false);
               onProfileClick?.();
             }}
-            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-foreground hover:bg-muted transition-colors"
+            leftIcon={<User className="h-4 w-4 text-muted-foreground" />}
+            className="w-full justify-start text-xs font-medium text-foreground hover:bg-muted h-9 px-3"
           >
-            <User className="h-4 w-4 text-muted-foreground" />
             {t.profile}
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => {
               setIsOpen(false);
               onProfileClick?.();
             }}
-            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-foreground hover:bg-muted transition-colors"
+            leftIcon={<Settings className="h-4 w-4 text-muted-foreground" />}
+            className="w-full justify-start text-xs font-medium text-foreground hover:bg-muted h-9 px-3"
           >
-            <Settings className="h-4 w-4 text-muted-foreground" />
             {t.settings}
-          </button>
+          </Button>
 
           <div className="my-1 border-t border-border" />
 
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => {
               setIsOpen(false);
               onLogout?.();
             }}
-            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+            leftIcon={<LogOut className="h-4 w-4 text-destructive" />}
+            className="w-full justify-start text-xs font-medium text-destructive hover:bg-destructive/10 hover:text-destructive h-9 px-3"
           >
-            <LogOut className="h-4 w-4" />
             {t.logout}
-          </button>
+          </Button>
         </div>
       )}
     </div>
