@@ -1,61 +1,125 @@
+import * as React from "react";
+import {
+  Home,
+  Search,
+  Camera,
+  ShoppingBag,
+  User,
+  CheckSquare,
+  MapPin,
+  QrCode,
+  BookOpen,
+  LayoutDashboard,
+  ClipboardList,
+  Bell,
+  ShieldCheck,
+} from "lucide-react";
 import { BottomNavItem, type BottomNavItemProps } from "./BottomNavItem";
 import { cn } from "@/shared/lib/utils";
 
+export type BottomNavRole = "customer" | "farmer" | "admin";
 
 export interface BottomNavigationProps {
-  /** Danh sách các tab hiển thị */
-  items: BottomNavItemProps[];
+  /** Vai trò ứng dụng: "customer" | "farmer" | "admin" — Tự động áp dụng bộ tabs chuẩn theo role */
+  role?: BottomNavRole;
+  /** Danh sách các tab hiển thị tùy biến (ghi đè bộ tabs của role nếu truyền vào) */
+  items?: BottomNavItemProps[];
   /** Index của tab đang active */
   activeIndex?: number;
-  /** Callback khi chọn tab (trả về index) */
-  onTabChange?: (index: number) => void;
+  /** ID của tab đang active (tự động tính activeIndex dựa theo item.id) */
+  activeId?: string;
+  /** Callback khi chọn tab (trả về index và item) */
+  onTabChange?: (index: number, item?: BottomNavItemProps) => void;
   className?: string;
 }
 
+/** Bộ tab chuẩn cho vai trò Customer (Marketplace / Khách hàng) */
+export const DEFAULT_CUSTOMER_BOTTOM_ITEMS: BottomNavItemProps[] = [
+  { id: "home", icon: <Home className="h-5 w-5" />, label: "Trang chủ" },
+  { id: "explore", icon: <Search className="h-5 w-5" />, label: "Khám phá" },
+  { id: "camera", icon: <Camera className="h-5 w-5" />, label: "Camera 24/7" },
+  { id: "orders", icon: <ShoppingBag className="h-5 w-5" />, label: "Vườn của tôi" },
+  { id: "profile", icon: <User className="h-5 w-5" />, label: "Tài khoản" },
+];
+
+/** Bộ tab chuẩn cho vai trò Farmer (Kỹ thuật viên / Nông dân thực địa) */
+export const DEFAULT_FARMER_BOTTOM_ITEMS: BottomNavItemProps[] = [
+  { id: "tasks_today", icon: <CheckSquare className="h-5 w-5" />, label: "Nhiệm vụ" },
+  { id: "my_plots", icon: <MapPin className="h-5 w-5" />, label: "Ô đất" },
+  { id: "scan_qr", icon: <QrCode className="h-5 w-5" />, label: "Quét QR" },
+  { id: "task_journal", icon: <BookOpen className="h-5 w-5" />, label: "Nhật ký" },
+  { id: "profile", icon: <User className="h-5 w-5" />, label: "Hồ sơ" },
+];
+
+/** Bộ tab chuẩn cho vai trò Admin (Quản trị hệ thống) */
+export const DEFAULT_ADMIN_BOTTOM_ITEMS: BottomNavItemProps[] = [
+  { id: "overview", icon: <LayoutDashboard className="h-5 w-5" />, label: "Tổng quan" },
+  { id: "plots", icon: <MapPin className="h-5 w-5" />, label: "Ô đất" },
+  { id: "work_orders", icon: <ClipboardList className="h-5 w-5" />, label: "Công việc" },
+  { id: "alerts", icon: <Bell className="h-5 w-5" />, label: "Cảnh báo" },
+  { id: "settings", icon: <ShieldCheck className="h-5 w-5" />, label: "Cài đặt" },
+];
+
 /**
- * BottomNavigation — thanh điều hướng đáy màn hình cố định cho mobile.
+ * BottomNavigation — thanh điều hướng đáy màn hình linh hoạt cho mọi vai trò (Multi-role).
  *
- * Hiển thị khi viewport < 1024px (lg).
- * Đặt `pb-20` (hoặc `pb-[64px]`) lên `<main>` để nội dung không bị che.
+ * Hỗ trợ tự động cấu hình theo `role`:
+ * - `role="customer"`: Trang chủ • Khám phá • Camera 24/7 • Vườn của tôi • Tài khoản
+ * - `role="farmer"`: Nhiệm vụ • Ô đất • Quét QR • Nhật ký • Hồ sơ
+ * - `role="admin"`: Tổng quan • Ô đất • Công việc • Cảnh báo • Cài đặt
  *
- * @example
- * <BottomNavigation
- *   items={customerTabs}
- *   activeIndex={0}
- *   onTabChange={(i) => navigate(tabs[i].path)}
- * />
+ * Hoặc truyền `items` tùy biến theo nhu cầu bất kỳ.
  */
 export function BottomNavigation({
+  role = "customer",
   items,
-  activeIndex = 0,
+  activeIndex,
+  activeId,
   onTabChange,
-  className
+  className,
 }: BottomNavigationProps) {
+  // Xác định danh sách tabs theo items truyền vào hoặc role mặc định
+  const resolvedItems = React.useMemo(() => {
+    if (items && items.length > 0) return items;
+    switch (role) {
+      case "farmer":
+        return DEFAULT_FARMER_BOTTOM_ITEMS;
+      case "admin":
+        return DEFAULT_ADMIN_BOTTOM_ITEMS;
+      case "customer":
+      default:
+        return DEFAULT_CUSTOMER_BOTTOM_ITEMS;
+    }
+  }, [items, role]);
+
+  // Xác định activeIndex từ activeId hoặc activeIndex truyền vào
+  const currentActiveIndex = React.useMemo(() => {
+    if (activeId !== undefined) {
+      const idx = resolvedItems.findIndex((i) => i.id === activeId);
+      if (idx !== -1) return idx;
+    }
+    return activeIndex ?? 0;
+  }, [activeId, activeIndex, resolvedItems]);
+
   return (
     <nav
-      aria-label="Điều hướng chính"
+      aria-label="Điều hướng thanh đáy"
       className={cn(
-        // Fixed bottom, full width, z-50
         "fixed bottom-0 left-0 right-0 z-50",
-        // Height & layout
         "flex h-[60px] items-stretch",
-        // Bg + blur + border top
-        "bg-white/95 backdrop-blur-sm border-t border-border",
-        // Safe area for notch devices
-        "pb-safe",
-        className
+        "bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-t border-border",
+        "pb-safe shadow-lg",
+        className,
       )}
     >
-      {items.map((item, index) => (
+      {resolvedItems.map((item, index) => (
         <BottomNavItem
           key={item.id ?? index}
-          id={item.id ?? `bottom-nav-item-${index}`}
-          icon={item.icon}
-          label={item.label}
-          isActive={index === activeIndex}
+          {...item}
+          isActive={index === currentActiveIndex}
           onClick={() => {
             item.onClick?.();
-            onTabChange?.(index);
+            onTabChange?.(index, item);
           }}
         />
       ))}

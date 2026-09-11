@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Bell, Search, Menu } from "lucide-react";
 import { Button } from "@/shared/ui/Button";
 import { Avatar } from "@/shared/ui/Avatar";
@@ -48,7 +47,7 @@ const ROLE_COLORS: Record<AppRole, string> = {
  */
 export function TopBar({
   user,
-  breadcrumbs = [],
+  breadcrumbs: _breadcrumbs = [],
   notificationCount = 0,
   searchPlaceholder = "Tìm kiếm...",
   notificationsLabel = "Thông báo",
@@ -61,7 +60,7 @@ export function TopBar({
   return (
     <header
       className={cn(
-        "flex h-14 shrink-0 items-center gap-3 border-b border-border bg-white px-4",
+        "flex h-16 shrink-0 items-center gap-3 border-b border-border bg-white px-4 sm:px-6",
         className
       )}
     >
@@ -76,62 +75,25 @@ export function TopBar({
         <Menu className="h-5 w-5" />
       </Button>
 
-      {/* ── Breadcrumb (desktop only) ─────────────────────────────────── */}
-      {breadcrumbs.length > 0 && (
-        <nav aria-label="Breadcrumb" className="hidden lg:flex items-center gap-1.5 text-sm">
-          {breadcrumbs.map((crumb, i) => (
-            <React.Fragment key={i}>
-              {i > 0 && (
-                <span className="text-muted-foreground/50" aria-hidden="true">
-                  /
-                </span>
-              )}
-              {crumb.onClick ? (
-                <button
-                  type="button"
-                  onClick={crumb.onClick}
-                  className={cn(
-                    "font-medium transition-colors hover:text-primary",
-                    i === breadcrumbs.length - 1
-                      ? "text-foreground"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {crumb.label}
-                </button>
-              ) : (
-                <span
-                  className={cn(
-                    "font-medium",
-                    i === breadcrumbs.length - 1
-                      ? "text-foreground"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {crumb.label}
-                </span>
-              )}
-            </React.Fragment>
-          ))}
-        </nav>
-      )}
-
-      {/* ── Spacer ─────────────────────────────────────────────────────── */}
-      <div className="flex-1" />
-
-      {/* ── Search bar ──────────────────────────────────────────────────── */}
-      <div className="hidden sm:flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-1.5 w-48 lg:w-64">
-        <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+      {/* ── Search bar (đặt ngay bên trái thay thế vị trí breadcrumbs) ── */}
+      <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 hover:bg-muted/60 focus-within:bg-background focus-within:ring-2 focus-within:ring-primary/40 focus-within:border-primary/40 transition-all px-3 py-1.5 w-60 sm:w-80 md:w-96">
+        <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
         <input
           type="search"
           placeholder={searchPlaceholder}
           aria-label={searchPlaceholder}
           className={cn(
-            "flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground",
+            "flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground",
             "focus:outline-none min-w-0"
           )}
         />
+        <kbd className="hidden sm:inline-flex items-center rounded border border-border/80 bg-background px-1.5 py-0.5 text-[10px] font-mono font-medium text-muted-foreground shadow-2xs">
+          Ctrl+K
+        </kbd>
       </div>
+
+      {/* ── Spacer đẩy toàn bộ cụm actions sang phải ───────────────────── */}
+      <div className="flex-1" />
 
       {/* ── Notifications ───────────────────────────────────────────────── */}
       <div className="relative">

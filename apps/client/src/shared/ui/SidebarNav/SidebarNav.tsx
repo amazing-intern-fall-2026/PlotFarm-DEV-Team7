@@ -56,8 +56,8 @@ export function SidebarNav({
       {/* ── Logo header ────────────────────────────────────────────── */}
       <div
         className={cn(
-          "flex items-center border-b border-border shrink-0",
-          collapsed ? "justify-center px-0 py-4" : "gap-2 px-4 py-4"
+          "flex h-16 items-center border-b border-border shrink-0",
+          collapsed ? "justify-center px-0" : "gap-2 px-4"
         )}
       >
         <Logo size="sm" showText={!collapsed} />

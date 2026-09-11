@@ -13,5 +13,6 @@ export * from "./Steps";
 export * from "./BottomNavigation";
 export * from "./SidebarNav";
 export * from "./TopBar";
-export * from "./CustomerHeader";
-
+export * from "./MetricCard";
+export * from "./Footer";
+export * from "./Header";
