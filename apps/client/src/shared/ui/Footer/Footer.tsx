@@ -3,6 +3,7 @@ import { Sprout, MapPin, Phone, Mail } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { State } from "../State";
 import { Box } from "../Box";
+import { Container } from "../Container";
 import { Typography } from "../Typography";
 import { useT } from "@/shared/lib/i18n";
 
@@ -23,6 +24,7 @@ export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
  * 6. Bottom bar: Bản quyền © 2025 BioCloud Farming & liên kết Bảo mật dữ liệu IoT, Tiêu chuẩn nông sản sạch
  * 7. Tích hợp Skeleton Loading State có tính tái sử dụng cao thông qua component State
  * 8. Chuẩn hóa i18n toàn diện qua useT(), loại bỏ hoàn toàn việc fix cứng text
+ * 9. Bọc trong component Container chuẩn hóa bố cục
  */
 export function Footer({
   className,
@@ -37,13 +39,13 @@ export function Footer({
       <footer
         aria-label="Đang tải chân trang"
         className={cn(
-          "border-t border-border bg-muted/40 text-foreground font-sans mt-auto py-10 px-4 sm:px-6",
+          "border-t border-border bg-muted/40 text-foreground font-sans mt-auto py-10",
           className,
         )}
       >
-        <Box className="mx-auto max-w-7xl">
+        <Container>
           <State variant="skeleton" skeletonPreset="grid" skeletonCount={4} />
-        </Box>
+        </Container>
       </footer>
     );
   }
@@ -56,7 +58,7 @@ export function Footer({
       )}
       {...props}
     >
-      <Box className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 pb-8">
+      <Container className="pt-12 pb-8">
         <Box className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           {/* Cột 1: BioCloud Farming & Tiêu chuẩn */}
           <Box className="space-y-4">
@@ -64,27 +66,27 @@ export function Footer({
               <Box className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shrink-0 shadow-xs">
                 <Sprout className="h-4 w-4" />
               </Box>
-              <Typography.H4 className="text-xl font-bold tracking-tight text-primary">
+              <Typography.H4 className="text-lg font-bold tracking-tight text-primary">
                 {brandName}
               </Typography.H4>
             </Box>
 
-            <Typography.P className="text-xs text-muted-foreground leading-relaxed max-w-xs">
+            <Typography.P className="text-sm text-muted-foreground leading-relaxed max-w-sm">
               {t("footer.desc")}
             </Typography.P>
 
             {/* Badges: Row 1 & Row 2 */}
-            <Box className="space-y-1.5 pt-1">
+            <Box className="space-y-2 pt-1">
               <Box className="flex flex-wrap items-center gap-2">
-                <Typography.Small className="rounded-full bg-background border border-border px-3 py-1 text-[11px] font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
+                <Typography.Small className="rounded-full bg-background border border-border px-3 py-1 text-xs font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
                   VietGAP Certified
                 </Typography.Small>
-                <Typography.Small className="rounded-full bg-background border border-border px-3 py-1 text-[11px] font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
+                <Typography.Small className="rounded-full bg-background border border-border px-3 py-1 text-xs font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
                   GlobalGAP 100%
                 </Typography.Small>
               </Box>
               <Box>
-                <Typography.Small className="inline-block rounded-full bg-background border border-border px-3 py-1 text-[11px] font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
+                <Typography.Small className="inline-block rounded-full bg-background border border-border px-3 py-1 text-xs font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
                   Organic Bio
                 </Typography.Small>
               </Box>
@@ -93,14 +95,14 @@ export function Footer({
 
           {/* Cột 2: Phân Hệ Canh Tác */}
           <Box className="space-y-3.5">
-            <Typography.H5 className="text-sm font-bold uppercase tracking-wider text-foreground">
+            <Typography.H5 className="text-xs font-bold uppercase tracking-wider text-foreground">
               {t("footer.col_farming")}
             </Typography.H5>
-            <ul className="space-y-2.5 text-xs text-muted-foreground">
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
               <li>
                 <a
                   href="/plots"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors inline-block"
                 >
                   {t("footer.link_explore_plots")}
                 </a>
@@ -108,7 +110,7 @@ export function Footer({
               <li>
                 <a
                   href="/my-farm"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors inline-block"
                 >
                   {t("footer.link_my_farm")}
                 </a>
@@ -116,7 +118,7 @@ export function Footer({
               <li>
                 <a
                   href="/journal"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors inline-block"
                 >
                   {t("footer.link_crop_journal")}
                 </a>
@@ -124,7 +126,7 @@ export function Footer({
               <li>
                 <a
                   href="/journal"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors inline-block"
                 >
                   {t("footer.link_gallery")}
                 </a>
@@ -134,14 +136,14 @@ export function Footer({
 
           {/* Cột 3: Tài Khoản & Pháp Lý */}
           <Box className="space-y-3.5">
-            <Typography.H5 className="text-sm font-bold uppercase tracking-wider text-foreground">
+            <Typography.H5 className="text-xs font-bold uppercase tracking-wider text-foreground">
               {t("footer.col_legal")}
             </Typography.H5>
-            <ul className="space-y-2.5 text-xs text-muted-foreground">
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
               <li>
                 <a
                   href="/my-farm"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors inline-block"
                 >
                   {t("footer.link_account_settings")}
                 </a>
@@ -149,7 +151,7 @@ export function Footer({
               <li>
                 <a
                   href="/about"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors inline-block"
                 >
                   {t("footer.link_contracts")}
                 </a>
@@ -157,7 +159,7 @@ export function Footer({
               <li>
                 <a
                   href="/about"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors inline-block"
                 >
                   {t("footer.link_organic_commitment")}
                 </a>
@@ -165,7 +167,7 @@ export function Footer({
               <li>
                 <a
                   href="/about"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors inline-block"
                 >
                   {t("footer.link_crop_insurance")}
                 </a>
@@ -175,19 +177,19 @@ export function Footer({
 
           {/* Cột 4: Trang Trại Đà Lạt */}
           <Box className="space-y-3.5">
-            <Typography.H5 className="text-sm font-bold uppercase tracking-wider text-foreground">
+            <Typography.H5 className="text-xs font-bold uppercase tracking-wider text-foreground">
               {t("footer.col_farm_dalat")}
             </Typography.H5>
-            <ul className="space-y-3 text-xs text-muted-foreground">
+            <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                <Typography.Text className="leading-relaxed text-muted-foreground">
+                <Typography.Text className="text-sm leading-relaxed text-muted-foreground">
                   {t("footer.address_dalat")}
                 </Typography.Text>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="h-4 w-4 text-secondary shrink-0" />
-                <Typography.Text>
+                <Typography.Text className="text-sm text-muted-foreground">
                   {t("footer.hotline_label")}{" "}
                   <a
                     href="tel:19006868"
@@ -201,7 +203,7 @@ export function Footer({
                 <Mail className="h-4 w-4 text-primary shrink-0" />
                 <a
                   href="mailto:kythuat@biocloud.dalat.vn"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors text-sm"
                 >
                   kythuat@biocloud.dalat.vn
                 </a>
@@ -230,7 +232,7 @@ export function Footer({
             </a>
           </Box>
         </Box>
-      </Box>
+      </Container>
     </footer>
   );
 }

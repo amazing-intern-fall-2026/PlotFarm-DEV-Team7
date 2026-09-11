@@ -33,6 +33,7 @@ import {
   type HeaderNavItem,
   Footer,
   Avatar,
+  Container,
 } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 
@@ -364,13 +365,10 @@ export function RootLayout({
         />
 
         {/* Main content — pb-20 hides content behind BottomNav on mobile */}
-        <main
-          className={cn(
-            "flex-1 w-full mx-auto max-w-7xl px-4 sm:px-6 py-6",
-            "lg:pb-6 pb-20",
-          )}
-        >
-          {children}
+        <main className="flex-1 w-full py-6 lg:pb-6 pb-20">
+          <Container>
+            {children}
+          </Container>
         </main>
 
         {/* Footer */}

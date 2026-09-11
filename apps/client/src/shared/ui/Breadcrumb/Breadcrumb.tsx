@@ -88,15 +88,29 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
                         {item.icon}
                         <span>{item.label}</span>
                       </BreadcrumbPage>
-                    ) : (
+                    ) : item.href ? (
                       <BreadcrumbLink
                         href={item.href}
                         onClick={item.onClick}
-                        className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors font-medium"
+                        className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors font-medium"
                       >
                         {item.icon}
                         <span>{item.label}</span>
                       </BreadcrumbLink>
+                    ) : item.onClick ? (
+                      <button
+                        type="button"
+                        onClick={item.onClick}
+                        className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors font-medium"
+                      >
+                        {item.icon}
+                        <span>{item.label}</span>
+                      </button>
+                    ) : (
+                      <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
+                        {item.icon}
+                        <span>{item.label}</span>
+                      </span>
                     )}
                   </BreadcrumbItem>
                   {!isLast && (
@@ -152,23 +166,60 @@ export const BreadcrumbItem = React.forwardRef<
 BreadcrumbItem.displayName = "BreadcrumbItem";
 
 export interface BreadcrumbLinkProps
-  extends React.ComponentPropsWithoutRef<"a"> {
+  extends React.HTMLAttributes<HTMLElement> {
+  href?: string;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   asChild?: boolean;
 }
 
 export const BreadcrumbLink = React.forwardRef<
-  HTMLAnchorElement,
+  HTMLElement,
   BreadcrumbLinkProps
->(({ className, ...props }, ref) => (
-  <a
-    ref={ref}
-    className={cn(
-      "transition-colors hover:text-foreground text-muted-foreground font-medium",
-      className,
-    )}
-    {...props}
-  />
-));
+>(({ href, onClick, className, children, ...props }, ref) => {
+  if (href) {
+    return (
+      <a
+        ref={ref as React.Ref<HTMLAnchorElement>}
+        href={href}
+        onClick={onClick}
+        className={cn(
+          "transition-colors hover:text-foreground text-muted-foreground font-medium",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  if (onClick) {
+    return (
+      <button
+        ref={ref as React.Ref<HTMLButtonElement>}
+        type="button"
+        onClick={onClick}
+        className={cn(
+          "transition-colors hover:text-foreground text-muted-foreground font-medium",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+
+  return (
+    <span
+      ref={ref as React.Ref<HTMLSpanElement>}
+      className={cn("text-muted-foreground font-medium", className)}
+      {...props}
+    >
+      {children}
+    </span>
+  );
+});
 BreadcrumbLink.displayName = "BreadcrumbLink";
 
 export const BreadcrumbPage = React.forwardRef<

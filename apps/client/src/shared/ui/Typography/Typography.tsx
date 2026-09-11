@@ -40,16 +40,16 @@ export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const variantStyles: Record<TypographyVariant, string> = {
-  h1: "text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground",
-  h2: "text-2xl sm:text-3xl font-bold tracking-tight text-foreground",
-  h3: "text-xl sm:text-2xl font-bold tracking-tight text-foreground",
-  h4: "text-lg sm:text-xl font-semibold text-foreground",
-  h5: "text-base sm:text-lg font-semibold text-foreground",
-  h6: "text-sm sm:text-base font-semibold text-foreground",
-  p: "text-sm sm:text-base text-foreground leading-relaxed",
-  lead: "text-lg sm:text-xl text-muted-foreground leading-relaxed font-normal",
-  large: "text-base sm:text-lg font-semibold text-foreground",
-  small: "text-xs sm:text-sm text-muted-foreground font-medium",
+  h1: "text-3xl font-extrabold tracking-tight text-foreground",
+  h2: "text-2xl font-bold tracking-tight text-foreground",
+  h3: "text-xl font-bold tracking-tight text-foreground",
+  h4: "text-lg font-bold tracking-tight text-foreground",
+  h5: "text-base font-semibold text-foreground",
+  h6: "text-sm font-semibold text-foreground",
+  p: "text-sm text-foreground leading-relaxed",
+  lead: "text-base text-muted-foreground leading-relaxed font-normal",
+  large: "text-base font-semibold text-foreground",
+  small: "text-xs text-muted-foreground font-medium",
   muted: "text-xs text-muted-foreground",
 };
 

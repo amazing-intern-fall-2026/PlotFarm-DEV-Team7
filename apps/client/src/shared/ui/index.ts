@@ -19,3 +19,4 @@ export * from "./Header";
 export * from "./Breadcrumb";
 export * from "./Typography";
 export * from "./Box";
+export * from "./Container";
