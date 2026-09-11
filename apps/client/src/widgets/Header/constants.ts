@@ -19,7 +19,7 @@ export const DEFAULT_CUSTOMER_AUTH_NAV: HeaderNavItem[] = [
   { label: 'Trang chủ', href: '/' },
   { label: 'Khám phá ô đất', href: '/plots' },
   { label: 'Vườn của tôi', href: '/customer/my-plots' },
-  { label: 'Nhật ký nông vụ', href: '/customer/care-requests' },
+  { label: 'Về chúng tôi', href: '/about' },
 ];
 
 export const DEFAULT_NAV_BY_ROLE: Record<'customer' | 'farmer' | 'admin', HeaderNavItem[]> = {
@@ -28,7 +28,7 @@ export const DEFAULT_NAV_BY_ROLE: Record<'customer' | 'farmer' | 'admin', Header
     { label: 'Gói thuê đất', href: '/plots' },
     { label: 'Cây trồng', href: '/crops' },
     { label: 'Nông trại mẫu', href: '/farms' },
-    { label: 'Về PlotFarm', href: '/about' },
+    { label: 'Về chúng tôi', href: '/about' },
   ],
   farmer: [
     { label: 'Ô đất phụ trách', href: '/staff/assigned-plots', badge: '5 ô' },

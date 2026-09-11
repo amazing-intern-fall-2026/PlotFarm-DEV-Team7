@@ -77,7 +77,7 @@ export const CustomerAuthenticated: Story = {
       { label: 'Trang chủ', href: '/', isActive: true },
       { label: 'Khám phá ô đất', href: '/plots' },
       { label: 'Vườn của tôi', href: '/customer/my-plots' },
-      { label: 'Nhật ký nông vụ', href: '/customer/care-requests' }
+      { label: 'Về chúng tôi', href: '/about' }
     ]
   }
 };
