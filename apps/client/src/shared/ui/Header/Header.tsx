@@ -167,9 +167,9 @@ export function Header({
       )}
       {...props}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
-        {/* ── Logo & Role Badge ── */}
-        <div className="flex items-center gap-2.5 shrink-0">
+      <div className="mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6">
+        {/* ── Logo & Role Badge (Left Column) ── */}
+        <div className="flex flex-1 items-center gap-2.5 min-w-0">
           <Logo size="sm" showText />
           {resolvedRoleBadge && (
             <Badge
@@ -185,10 +185,10 @@ export function Header({
           )}
         </div>
 
-        {/* ── Desktop Navigation Links ── */}
+        {/* ── Desktop Navigation Links (Center Column - Căn giữa hoàn hảo) ── */}
         <nav
           aria-label="Điều hướng thanh trên"
-          className="hidden lg:flex items-center gap-1 ml-4"
+          className="hidden lg:flex shrink-0 items-center justify-center gap-1"
         >
           {resolvedNavItems.map((item) => {
             const isActive = item.isActive !== undefined ? item.isActive : item.id === activeNavId;
@@ -200,7 +200,7 @@ export function Header({
                 onClick={() => handleItemClick(item.id, item.onClick)}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150",
+                  "flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors duration-150",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
                   isActive
                     ? "bg-primary/10 text-primary font-semibold"
@@ -219,28 +219,26 @@ export function Header({
           })}
         </nav>
 
-        {/* ── Search bar (Dành cho Admin hoặc bật tuỳ chọn) ── */}
-        {(showSearch || role === "admin") && (
-          <div className="hidden md:flex flex-1 max-w-xs items-center relative ml-2">
-            <Search className="h-4 w-4 absolute left-3 text-muted-foreground pointer-events-none" />
-            <input
-              type="text"
-              placeholder={searchPlaceholder ?? (role === "admin" ? "Tìm kiếm ô đất, cảm biến, người dùng..." : "Tìm kiếm...")}
-              onChange={(e) => onSearchChange?.(e.target.value)}
-              className="w-full h-9 pl-9 pr-3 rounded-xl bg-muted/60 text-xs border border-border/80 focus:bg-background focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
-            />
-          </div>
-        )}
+        {/* ── Right Actions (Right Column) ── */}
+        <div className="flex flex-1 items-center justify-end gap-3 min-w-0">
+          {/* Search bar (Dành cho Admin hoặc bật tuỳ chọn) */}
+          {(showSearch || role === "admin") && (
+            <div className="hidden md:flex max-w-xs w-full items-center relative">
+              <Search className="h-4 w-4 absolute left-3 text-muted-foreground pointer-events-none" />
+              <input
+                type="text"
+                placeholder={searchPlaceholder ?? (role === "admin" ? "Tìm kiếm ô đất, cảm biến, người dùng..." : "Tìm kiếm...")}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                className="w-full h-9 pl-9 pr-3 rounded-xl bg-muted/60 text-xs border border-border/80 focus:bg-background focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+              />
+            </div>
+          )}
 
-        <div className="flex-1" />
-
-        {/* ── Role-Specific Shortcuts (Phím tắt theo vai trò) ── */}
-        <div className="hidden sm:flex items-center gap-3">
           {/* Customer: Hotline 1900 6868 */}
           {role === "customer" && (
             <a
               href="tel:19006868"
-              className="flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-800/80 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-200 transition-colors"
+              className="hidden sm:flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-800/80 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-200 transition-colors shrink-0"
             >
               <Phone className="h-3.5 w-3.5 text-primary" />
               <span>1900 6868</span>
@@ -253,7 +251,7 @@ export function Header({
               size="sm"
               variant="outline"
               onClick={onActionClick}
-              className="gap-1.5 text-xs h-8"
+              className="hidden sm:flex gap-1.5 text-xs h-8 shrink-0"
             >
               <QrCode className="h-3.5 w-3.5 text-emerald-600" />
               <span>Quét mã QR</span>
@@ -262,10 +260,9 @@ export function Header({
 
           {/* Extra slot actions */}
           {extraActions}
-        </div>
 
-        {/* ── Action icons: Notifications & User Avatar ── */}
-        <div className="flex items-center gap-1">
+          {/* Action icons: Notifications & User Avatar */}
+          <div className="flex items-center gap-1 shrink-0">
           {/* Bell Notifications */}
           <div className="relative">
             <Button
@@ -325,6 +322,7 @@ export function Header({
           </Button>
         </div>
       </div>
+    </div>
 
       {/* ── Slide-Down Mobile Drawer Menu ── */}
       {mobileOpen && (
