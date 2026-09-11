@@ -7,10 +7,7 @@ import {
   LogOut,
   User,
   Settings,
-  ArrowLeft,
-  Sparkles,
-  ShieldCheck,
-  Wrench
+  ArrowLeft
 } from 'lucide-react';
 import { Logo, Avatar, Badge, Button } from '@/shared/ui';
 import { cn } from '@/shared/lib/utils';
@@ -162,20 +159,20 @@ export const Header: React.FC<HeaderProps> = ({
     switch (role) {
       case 'ADMIN':
         return (
-          <Badge variant="destructive" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5">
-            <ShieldCheck className="h-3 w-3 mr-1" /> Admin
+          <Badge variant="destructive" className="text-[10px] font-semibold px-2 py-0.5">
+            Quản trị viên
           </Badge>
         );
       case 'STAFF':
         return (
-          <Badge variant="warning" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5">
-            <Wrench className="h-3 w-3 mr-1" /> Vận Hành
+          <Badge variant="warning" className="text-[10px] font-semibold px-2 py-0.5">
+            Kỹ thuật viên
           </Badge>
         );
       default:
         return (
-          <Badge variant="success" className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5">
-            <Sparkles className="h-3 w-3 mr-1" /> Khách Hàng
+          <Badge variant="success" className="text-[10px] font-semibold px-2 py-0.5">
+            Khách hàng
           </Badge>
         );
     }
