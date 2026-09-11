@@ -24,9 +24,10 @@ import { BottomNavigation } from "@/shared/ui/BottomNavigation";
 import { SidebarNav, type SidebarSection } from "@/shared/ui/SidebarNav";
 import { TopBar, type AppRole, type BreadcrumbItem } from "@/shared/ui/TopBar";
 import {
-  CustomerHeader,
-  type CustomerNavItem,
-} from "@/shared/ui/CustomerHeader";
+  Header,
+  type HeaderNavItem,
+} from "@/shared/ui/Header";
+import { Footer } from "@/shared/ui/Footer";
 import { cn } from "@/shared/lib/utils";
 
 // ─── User shape ─────────────────────────────────────────────────────────────
@@ -60,7 +61,7 @@ function useCustomerNavItems(
   t: (key: string) => string,
   activeNavId: string,
   onNavChange: (id: string) => void,
-): CustomerNavItem[] {
+): HeaderNavItem[] {
   return [
     {
       id: "home",
@@ -115,7 +116,10 @@ function useCustomerBottomItems(t: (key: string) => string) {
   ];
 }
 
-function useAdminSections(t: (key: string) => string): SidebarSection[] {
+function useAdminSections(
+  t: (key: string) => string,
+  onNavChange?: (id: string) => void,
+): SidebarSection[] {
   return [
     {
       items: [
@@ -123,21 +127,25 @@ function useAdminSections(t: (key: string) => string): SidebarSection[] {
           id: "overview",
           icon: <LayoutDashboard className="h-4 w-4" />,
           label: t("admin.overview"),
+          onClick: () => onNavChange?.("overview"),
         },
         {
           id: "plots",
           icon: <MapPin className="h-4 w-4" />,
           label: t("admin.plots"),
+          onClick: () => onNavChange?.("plots"),
         },
         {
           id: "tech_config",
           icon: <Wrench className="h-4 w-4" />,
           label: t("admin.tech_config"),
+          onClick: () => onNavChange?.("tech_config"),
         },
         {
           id: "seeds_supply",
           icon: <Leaf className="h-4 w-4" />,
           label: t("admin.seeds_supply"),
+          onClick: () => onNavChange?.("seeds_supply"),
         },
       ],
     },
@@ -148,16 +156,19 @@ function useAdminSections(t: (key: string) => string): SidebarSection[] {
           id: "work_orders",
           icon: <ClipboardList className="h-4 w-4" />,
           label: t("admin.work_orders"),
+          onClick: () => onNavChange?.("work_orders"),
         },
         {
           id: "harvest",
           icon: <Truck className="h-4 w-4" />,
           label: t("admin.harvest"),
+          onClick: () => onNavChange?.("harvest"),
         },
         {
           id: "rbac",
           icon: <ShieldCheck className="h-4 w-4" />,
           label: t("admin.rbac"),
+          onClick: () => onNavChange?.("rbac"),
         },
       ],
     },
@@ -194,7 +205,10 @@ function useAdminBottomItems(t: (key: string) => string) {
   ];
 }
 
-function useFarmerSections(t: (key: string) => string): SidebarSection[] {
+function useFarmerSections(
+  t: (key: string) => string,
+  onNavChange?: (id: string) => void,
+): SidebarSection[] {
   return [
     {
       items: [
@@ -202,21 +216,25 @@ function useFarmerSections(t: (key: string) => string): SidebarSection[] {
           id: "tasks_today",
           icon: <CheckSquare className="h-4 w-4" />,
           label: t("farmer.tasks_today"),
+          onClick: () => onNavChange?.("tasks_today"),
         },
         {
           id: "my_plots",
           icon: <MapPin className="h-4 w-4" />,
           label: t("farmer.my_plots"),
+          onClick: () => onNavChange?.("my_plots"),
         },
         {
           id: "iot_camera",
           icon: <Camera className="h-4 w-4" />,
           label: t("farmer.iot_camera"),
+          onClick: () => onNavChange?.("iot_camera"),
         },
         {
           id: "task_journal",
           icon: <FileText className="h-4 w-4" />,
           label: t("farmer.task_journal"),
+          onClick: () => onNavChange?.("task_journal"),
         },
       ],
     },
@@ -304,7 +322,8 @@ export function RootLayout({
 
     return (
       <div className={cn("flex min-h-screen flex-col", className)}>
-        <CustomerHeader
+        <Header
+          role="customer"
           navItems={customerNavItems}
           user={user ?? null}
           notificationCount={notificationCount}
@@ -326,6 +345,9 @@ export function RootLayout({
           {children}
         </main>
 
+        {/* Footer */}
+        <Footer />
+
         {/* Bottom Nav — mobile only */}
         <div className="lg:hidden">
           <BottomNavigation
@@ -340,7 +362,9 @@ export function RootLayout({
 
   // ─── ADMIN / FARMER ───────────────────────────────────────────────────────
   const isAdmin = role === "admin";
-  const sidebarSections = isAdmin ? useAdminSections(t) : useFarmerSections(t);
+  const sidebarSections = isAdmin
+    ? useAdminSections(t, handleNavChange)
+    : useFarmerSections(t, handleNavChange);
   const bottomItems = isAdmin
     ? useAdminBottomItems(t)
     : useFarmerBottomItems(t);
