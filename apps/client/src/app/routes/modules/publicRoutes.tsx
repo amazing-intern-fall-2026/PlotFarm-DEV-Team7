@@ -1,8 +1,8 @@
-import type { RouteObject } from 'react-router-dom';
-import { PATHS } from '../paths';
-import { HomePage } from '../../../pages/public/HomePage';
-import { LoginPage } from '../../../pages/auth/LoginPage';
-import { PublicOnlyGuard } from '../PublicOnlyGuard';
+import type { RouteObject } from "react-router-dom";
+import { PATHS } from "../paths";
+import { HomePage } from "../../../pages/public/HomePage";
+import { LoginPage } from "../../../pages/auth/LoginPage";
+import { PublicOnlyGuard } from "../PublicOnlyGuard";
 
 export const publicRoutes: RouteObject[] = [
   {
