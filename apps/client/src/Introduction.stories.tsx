@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Badge } from "@/shared/ui/Badge";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/shared/ui/Card";
-import { Separator } from "@/shared/ui/Separator";
+import { Badge, Card, CardHeader, CardTitle, CardDescription, Separator } from "@/shared/ui";
 
 const meta: Meta = {
   title: "Giới thiệu/Tổng quan hệ thống",

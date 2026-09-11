@@ -20,14 +20,17 @@ import {
 } from "lucide-react";
 
 import { useT } from "@/shared/lib/i18n";
-import { BottomNavigation } from "@/shared/ui/BottomNavigation";
-import { SidebarNav, type SidebarSection } from "@/shared/ui/SidebarNav";
-import { TopBar, type AppRole, type BreadcrumbItem } from "@/shared/ui/TopBar";
 import {
+  BottomNavigation,
+  SidebarNav,
+  type SidebarSection,
+  TopBar,
+  type AppRole,
+  type BreadcrumbItem,
   Header,
   type HeaderNavItem,
-} from "@/shared/ui/Header";
-import { Footer } from "@/shared/ui/Footer";
+  Footer,
+} from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 
 // ─── User shape ─────────────────────────────────────────────────────────────

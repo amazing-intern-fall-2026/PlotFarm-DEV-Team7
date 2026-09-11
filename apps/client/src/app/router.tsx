@@ -7,7 +7,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { RootLayout } from "@/widgets/RootLayout";
-import type { AppRole, BreadcrumbItem } from "@/shared/ui/TopBar";
+import type { AppRole, BreadcrumbItem } from "@/shared/ui";
 import {
   HomePage,
   PlotsPage,
