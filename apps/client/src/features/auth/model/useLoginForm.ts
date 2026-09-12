@@ -59,9 +59,9 @@ export function useLoginForm() {
 
   const registerEmail = register("email", {
     validate: {
-      notEmpty: (val) =>
+      notEmpty: (val: string) =>
         (val && val.trim().length > 0) || AUTH_VALIDATION_MESSAGES.EMAIL_REQUIRED,
-      validEmail: (val) =>
+      validEmail: (val: string) =>
         AUTH_VALIDATION.EMAIL_REGEX.test(val?.trim() || "") ||
         AUTH_VALIDATION_MESSAGES.EMAIL_INVALID,
     },
@@ -73,9 +73,9 @@ export function useLoginForm() {
 
   const registerPassword = register("password", {
     validate: {
-      notEmpty: (val) =>
+      notEmpty: (val: string) =>
         (val && val.length > 0) || AUTH_VALIDATION_MESSAGES.PASSWORD_REQUIRED,
-      minLength: (val) =>
+      minLength: (val: string) =>
         (val && val.length >= AUTH_VALIDATION.PASSWORD_MIN_LENGTH) ||
         AUTH_VALIDATION_MESSAGES.PASSWORD_MIN_LENGTH,
     },
