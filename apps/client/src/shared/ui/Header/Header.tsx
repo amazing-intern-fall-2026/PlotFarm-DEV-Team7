@@ -135,9 +135,11 @@ export function Header({
         return DEFAULT_ADMIN_NAV_ITEMS;
       case "customer":
       default:
-        return DEFAULT_CUSTOMER_NAV_ITEMS;
+        return user
+          ? DEFAULT_CUSTOMER_NAV_ITEMS
+          : DEFAULT_CUSTOMER_NAV_ITEMS.filter((i) => i.id !== "journal");
     }
-  }, [navItems, role]);
+  }, [navItems, role, user]);
 
   // 2. Xác định nhãn badge theo role
   const resolvedRoleBadge = React.useMemo(() => {

@@ -68,8 +68,9 @@ function useCustomerNavItems(
   t: (key: string) => string,
   activeNavId: string,
   onNavChange: (id: string) => void,
+  isLoggedIn: boolean,
 ): HeaderNavItem[] {
-  return [
+  const items: HeaderNavItem[] = [
     {
       id: "home",
       label: t("nav.home"),
@@ -82,19 +83,26 @@ function useCustomerNavItems(
       isActive: activeNavId === "explore",
       onClick: () => onNavChange("explore"),
     },
-    {
+  ];
+
+  // Chưa đăng nhập thì không có nhật ký nông vụ
+  if (isLoggedIn) {
+    items.push({
       id: "journal",
       label: t("nav.journal"),
       isActive: activeNavId === "journal",
       onClick: () => onNavChange("journal"),
-    },
-    {
-      id: "about",
-      label: t("nav.about"),
-      isActive: activeNavId === "about",
-      onClick: () => onNavChange("about"),
-    },
-  ];
+    });
+  }
+
+  items.push({
+    id: "about",
+    label: t("nav.about"),
+    isActive: activeNavId === "about",
+    onClick: () => onNavChange("about"),
+  });
+
+  return items;
 }
 
 function useCustomerBottomItems(t: (key: string) => string) {
@@ -345,7 +353,12 @@ export function RootLayout({
 
   // ─── CUSTOMER ─────────────────────────────────────────────────────────────
   if (role === "customer") {
-    const customerNavItems = useCustomerNavItems(t, activeId, handleNavChange);
+    const customerNavItems = useCustomerNavItems(
+      t,
+      activeId,
+      handleNavChange,
+      Boolean(user)
+    );
     const customerBottomItems = useCustomerBottomItems(t);
     const bottomIndex = customerBottomItems.findIndex((i) => i.id === activeId);
 
@@ -401,9 +414,7 @@ export function RootLayout({
     : t("shell.role_badge_farmer");
 
   const defaultBreadcrumbs: TopbarBreadcrumbItem[] =
-    breadcrumbs.length > 0
-      ? breadcrumbs
-      : [{ label: t("shell.breadcrumb_home") }];
+    breadcrumbs ?? [{ label: t("shell.breadcrumb_home") }];
 
   const sidebarFooter = isAdmin ? (
     <div className="flex items-center gap-3 w-full">

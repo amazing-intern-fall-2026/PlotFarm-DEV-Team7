@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import { RootLayout } from "@/widgets/RootLayout";
 import type { AppRole, TopbarBreadcrumbItem } from "@/shared/ui";
-import { LoginPage } from "@/features/auth/ui/LoginPage";
+import { LoginPage, ProtectedRoute } from "@/features/auth";
 import { AUTH_ROUTES, SESSION_KEYS } from "@/features/auth/constants";
 import {
   HomePage,
@@ -90,40 +90,34 @@ export function ShellRouteLayout() {
     if (role === "admin") {
       if (pathname.includes("/config")) {
         return [
-          { label: "Quản trị hệ thống", href: "/admin" },
+          { label: "Tổng quan điều hành", href: "/admin" },
           { label: "Danh mục ô đất", href: "/admin/plots" },
           { label: "Cấu hình IoT & Cây trồng" },
         ];
       }
       if (pathname.startsWith("/admin/plots")) {
         return [
-          { label: "Quản trị hệ thống", href: "/admin" },
+          { label: "Tổng quan điều hành", href: "/admin" },
           { label: "Danh sách ô đất" },
         ];
       }
-      return [
-        { label: "Quản trị hệ thống" },
-        { label: "Tổng quan điều hành" },
-      ];
+      return [];
     }
 
     if (role === "farmer") {
       if (pathname.match(/\/farmer\/tasks\/.+/)) {
         return [
-          { label: "Nhiệm vụ hôm nay", href: "/farmer/tasks" },
+          { label: "Nhiệm vụ hôm nay", href: "/farmer" },
           { label: "Thực hiện nhiệm vụ" },
         ];
       }
       if (pathname.startsWith("/farmer/plots")) {
         return [
-          { label: "Nông dân thực địa" },
+          { label: "Nhiệm vụ hôm nay", href: "/farmer" },
           { label: "Quản lý ô đất" },
         ];
       }
-      return [
-        { label: "Nông dân thực địa" },
-        { label: "Nhiệm vụ hôm nay" },
-      ];
+      return [];
     }
 
     // Customer
@@ -248,29 +242,46 @@ export const router = createBrowserRouter([
     path: "/",
     element: <ShellRouteLayout />,
     children: [
-      // Customer routes
+      // Public routes — Khách vãng lai xem được
       { index: true, element: <HomePage /> },
       { path: "plots", element: <PlotsPage /> },
       { path: "plots/:id", element: <PlotDetailPage /> },
-      { path: "checkout", element: <CheckoutPage /> },
-      { path: "checkout/:id", element: <CheckoutPage /> },
-      { path: "my-farm", element: <MyFarmPage /> },
-      { path: "my-farm/:id", element: <MyFarmPage /> },
-      { path: "journal", element: <JournalPage /> },
       { path: "about", element: <AboutPage /> },
 
-      // Farmer routes
-      { path: "farmer", element: <FarmerTasksPage /> },
-      { path: "farmer/tasks", element: <Navigate to="/farmer" replace /> },
-      { path: "farmer/tasks/:id", element: <FarmerTaskExecutePage /> },
-      { path: "farmer/tasks/:id/execute", element: <FarmerTaskExecutePage /> },
-      { path: "farmer/plots", element: <FarmerPlotsPage /> },
+      // Protected Customer routes — Chưa login thì không có nhật ký nông vụ & thuê đất
+      {
+        element: <ProtectedRoute />,
+        children: [
+          { path: "journal", element: <JournalPage /> },
+          { path: "checkout", element: <CheckoutPage /> },
+          { path: "checkout/:id", element: <CheckoutPage /> },
+          { path: "my-farm", element: <MyFarmPage /> },
+          { path: "my-farm/:id", element: <MyFarmPage /> },
+        ],
+      },
 
-      // Admin routes
-      { path: "admin", element: <AdminDashboardPage /> },
-      { path: "admin/dashboard", element: <Navigate to="/admin" replace /> },
-      { path: "admin/plots", element: <AdminPlotsPage /> },
-      { path: "admin/plots/:id/config", element: <AdminPlotConfigPage /> },
+      // Protected Farmer routes — Chỉ dành cho STAFF hoặc ADMIN
+      {
+        element: <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]} />,
+        children: [
+          { path: "farmer", element: <FarmerTasksPage /> },
+          { path: "farmer/tasks", element: <Navigate to="/farmer" replace /> },
+          { path: "farmer/tasks/:id", element: <FarmerTaskExecutePage /> },
+          { path: "farmer/tasks/:id/execute", element: <FarmerTaskExecutePage /> },
+          { path: "farmer/plots", element: <FarmerPlotsPage /> },
+        ],
+      },
+
+      // Protected Admin routes — Chỉ dành cho ADMIN
+      {
+        element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
+        children: [
+          { path: "admin", element: <AdminDashboardPage /> },
+          { path: "admin/dashboard", element: <Navigate to="/admin" replace /> },
+          { path: "admin/plots", element: <AdminPlotsPage /> },
+          { path: "admin/plots/:id/config", element: <AdminPlotConfigPage /> },
+        ],
+      },
 
       // Fallback
       { path: "*", element: <Navigate to="/" replace /> },
