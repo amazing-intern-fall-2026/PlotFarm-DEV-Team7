@@ -1,16 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
-import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
+import {
+  ApiErrorResponse,
+  ApiErrorDetail,
+  ERROR_CODES,
+  ZodError,
+} from "@repo/shared";
 import { AppError } from "../errors/AppError";
-
-interface ErrorResponsePayload {
-  success: false;
-  error: {
-    code: string;
-    message: string;
-    details: unknown[];
-  };
-}
 
 /**
  * Type guard for Express body-parser SyntaxError (e.g. malformed JSON).
@@ -58,18 +54,17 @@ export const errorHandler = (
   err: unknown,
   req: Request,
   res: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction
 ): void => {
   let statusCode = 500;
-  let errorCode = "ERR_INTERNAL_SERVER";
+  let errorCode: string = ERROR_CODES.INTERNAL_SERVER;
   let message = "Internal server error";
-  let details: unknown[] = [];
+  let details: ApiErrorDetail[] = [];
 
   // 1. Check for Invalid / Malformed JSON Body error from express.json()
   if (isMalformedJsonError(err)) {
     statusCode = 400;
-    errorCode = "ERR_INVALID_JSON";
+    errorCode = ERROR_CODES.INVALID_JSON;
     message = "Invalid JSON payload";
     details = [];
   }
@@ -78,12 +73,12 @@ export const errorHandler = (
     statusCode = err.statusCode;
     errorCode = err.errorCode;
     message = err.message;
-    details = err.details;
+    details = err.details as ApiErrorDetail[];
   }
   // 3. Check for Zod Validation Errors
   else if (err instanceof ZodError) {
     statusCode = 400;
-    errorCode = "ERR_VALIDATION";
+    errorCode = ERROR_CODES.VALIDATION;
     message = "Validation failed";
     details = err.issues.map((issue) => ({
       field: formatZodPath(issue.path),
@@ -96,7 +91,7 @@ export const errorHandler = (
       case "P2002": {
         // Unique constraint failed
         statusCode = 409;
-        errorCode = "ERR_DUPLICATE";
+        errorCode = ERROR_CODES.DUPLICATE;
         message = "A record with the provided value already exists";
         details = extractPrismaUniqueField(err.meta as Record<string, unknown> | undefined);
         break;
@@ -104,7 +99,7 @@ export const errorHandler = (
       case "P2025": {
         // Record not found
         statusCode = 404;
-        errorCode = "ERR_NOT_FOUND";
+        errorCode = ERROR_CODES.NOT_FOUND;
         message = "Record not found";
         details = [];
         break;
@@ -112,14 +107,14 @@ export const errorHandler = (
       case "P2003": {
         // Foreign key constraint failed
         statusCode = 400;
-        errorCode = "ERR_FOREIGN_KEY_CONSTRAINT";
+        errorCode = ERROR_CODES.FOREIGN_KEY_CONSTRAINT;
         message = "Foreign key constraint failed";
         details = [];
         break;
       }
       default: {
         statusCode = 400;
-        errorCode = "ERR_DATABASE";
+        errorCode = ERROR_CODES.DATABASE;
         message = "Database operation failed";
         details = [];
         break;
@@ -127,14 +122,14 @@ export const errorHandler = (
     }
   } else if (err instanceof Prisma.PrismaClientValidationError) {
     statusCode = 400;
-    errorCode = "ERR_BAD_REQUEST";
+    errorCode = ERROR_CODES.BAD_REQUEST;
     message = "Database validation failed";
     details = [];
   }
   // 5. Unknown / System Runtime Errors (500)
   else {
     statusCode = 500;
-    errorCode = "ERR_INTERNAL_SERVER";
+    errorCode = ERROR_CODES.INTERNAL_SERVER;
     message = "Internal server error";
     details = [];
 
@@ -150,8 +145,8 @@ export const errorHandler = (
     );
   }
 
-  // Response format adheres strictly to the envelope specification
-  const responsePayload: ErrorResponsePayload = {
+  // Response format adheres strictly to the shared envelope specification
+  const responsePayload: ApiErrorResponse = {
     success: false,
     error: {
       code: errorCode,

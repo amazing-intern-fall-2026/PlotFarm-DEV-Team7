@@ -113,3 +113,25 @@ export const ChangePasswordResponseDataSchema = z.object({
 export type ChangePasswordResponseData = z.infer<
   typeof ChangePasswordResponseDataSchema
 >;
+
+export const AuthUserSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  role: z.string(),
+  fullName: z.string().optional(),
+});
+export type AuthUser = z.infer<typeof AuthUserSchema>;
+
+export const AuthTokensSchema = z.object({
+  accessToken: z.string(),
+  refreshToken: z.string().optional(),
+});
+export type AuthTokens = z.infer<typeof AuthTokensSchema>;
+
+export const AuthPayloadSchema = z.object({
+  userId: z.string(),
+  email: z.string().email(),
+  role: z.string(),
+});
+export type AuthPayload = z.infer<typeof AuthPayloadSchema>;
+

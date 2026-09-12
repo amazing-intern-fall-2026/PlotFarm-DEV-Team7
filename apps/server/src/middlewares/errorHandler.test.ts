@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import type { Request, Response, NextFunction } from "express";
-import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import { z } from "@repo/shared";
 import { errorHandler } from "./errorHandler";
 import { AppError } from "../errors/AppError";
 

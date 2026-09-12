@@ -1,6 +1,17 @@
 import { Router } from "express";
-import { login } from "./auth.controller";
+import { AuthController, login } from "./auth.controller";
+import { authGuard } from "../../middlewares/authGuard";
 
-export const authRouter: Router = Router();
+const router: Router = Router();
 
-authRouter.post("/auth/login", login);
+// Endpoint công khai để gia hạn access token
+router.post("/refresh", AuthController.refresh);
+
+// Endpoint login
+router.post("/login", login);
+router.post("/auth/login", login);
+
+// Endpoint được bảo vệ bằng authGuard
+router.get("/profile", authGuard, AuthController.getProfile);
+
+export { router as authRoutes, router as authRouter };

@@ -8,3 +8,4 @@ export * from "./types/payment.types";
 export * from "./types/diary.types";
 export * from "./types/shipment.types";
 export * from "./constants";
+export { z, ZodError, type AnyZodObject, type ZodTypeAny } from "zod";
