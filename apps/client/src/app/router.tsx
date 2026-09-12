@@ -8,6 +8,8 @@ import {
 } from "react-router-dom";
 import { RootLayout } from "@/widgets/RootLayout";
 import type { AppRole, TopbarBreadcrumbItem } from "@/shared/ui";
+import { LoginPage } from "@/features/auth/ui/LoginPage";
+import { AUTH_ROUTES } from "@/features/auth/constants";
 import {
   HomePage,
   PlotsPage,
@@ -196,7 +198,7 @@ export function ShellRouteLayout() {
       breadcrumbs={breadcrumbs}
       notificationCount={3}
       onNavChange={handleNavChange}
-      onLoginClick={() => navigate("/my-farm")}
+      onLoginClick={() => navigate(AUTH_ROUTES.LOGIN)}
     >
       <Outlet />
     </RootLayout>
@@ -204,6 +206,10 @@ export function ShellRouteLayout() {
 }
 
 export const router = createBrowserRouter([
+  // Auth routes — full-screen, NO shell layout
+  { path: AUTH_ROUTES.LOGIN.slice(1), element: <LoginPage /> },
+  { path: AUTH_ROUTES.FORGOT_PASSWORD.slice(1), element: <Navigate to={AUTH_ROUTES.LOGIN} replace /> },
+
   {
     path: "/",
     element: <ShellRouteLayout />,

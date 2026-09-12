@@ -11,5 +11,10 @@
  * Mỗi feature bao gồm:
  *  - ui/             → Form tương tác, dialog, action buttons
  *  - model/          → Logic xử lý sự kiện, mutations, validations
+ *  - api/            → Gateway dispatch calls
+ *  - constants/      → Error codes, routes, storage keys
  */
-export {};
+export { authApi } from "./auth/api/authApi";
+export { useLoginForm } from "./auth/model/useLoginForm";
+export { LoginPage } from "./auth/ui/LoginPage";
+export * from "./auth/constants";
