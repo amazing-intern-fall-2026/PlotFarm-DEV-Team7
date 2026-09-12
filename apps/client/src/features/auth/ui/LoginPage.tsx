@@ -56,7 +56,7 @@ function AppleIcon() {
 ───────────────────────────────────────────── */
 function HeroPanel() {
   return (
-    <div className="relative hidden lg:flex flex-col justify-between h-full overflow-hidden rounded-2xl bg-[hsl(135,45%,16%)]">
+    <div className="relative flex flex-col justify-between h-full overflow-hidden rounded-2xl bg-[hsl(135,45%,16%)]">
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-[hsl(135,50%,8%)/60%] via-transparent to-[hsl(135,50%,8%)/80%]" />
 
@@ -161,14 +161,14 @@ function TabSwitch({
   onChange: (t: AuthTab) => void;
 }) {
   return (
-    <div className="flex gap-6 border-b border-border">
+    <div className="flex gap-4 sm:gap-6 border-b border-border">
       {(["login", "register"] as const).map((tab) => (
         <button
           key={tab}
           type="button"
           onClick={() => onChange(tab)}
           className={cn(
-            "pb-3 text-sm font-medium transition-colors",
+            "pb-3 text-xs sm:text-sm font-medium transition-colors",
             active === tab
               ? "border-b-2 border-primary text-primary font-semibold"
               : "text-muted-foreground hover:text-foreground"
@@ -189,12 +189,12 @@ function LoginFormPanel() {
     useLoginForm();
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-foreground">
+    <form onSubmit={handleSubmit} noValidate className="space-y-4 sm:space-y-5">
+      <div className="space-y-1.5">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
           {AUTH_UI_TEXT.LOGIN_TITLE}
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
           {AUTH_UI_TEXT.LOGIN_SUBTITLE}
         </p>
       </div>
@@ -325,16 +325,16 @@ function LoginFormPanel() {
 ───────────────────────────────────────────── */
 function RegisterPlaceholder() {
   return (
-    <div className="space-y-5">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-foreground">
+    <div className="space-y-4 sm:space-y-5">
+      <div className="space-y-1.5">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
           {AUTH_UI_TEXT.REGISTER_TITLE}
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
           {AUTH_UI_TEXT.REGISTER_SUBTITLE}
         </p>
       </div>
-      <div className="rounded-lg border border-dashed border-border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
+      <div className="rounded-lg border border-dashed border-border bg-muted/40 p-6 sm:p-8 text-center text-xs sm:text-sm text-muted-foreground">
         {AUTH_UI_TEXT.REGISTER_WIP_NOTICE}
         <br />
         {AUTH_UI_TEXT.REGISTER_BACK_TO_LOGIN}{" "}
@@ -358,16 +358,31 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
-        <div className="grid lg:grid-cols-[1fr_1fr] gap-0 rounded-2xl border border-border shadow-2xl shadow-black/30 overflow-hidden bg-card">
-          {/* Left hero */}
-          <div className="h-[480px] lg:h-auto">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-3 sm:p-6 lg:p-8">
+      <div className="w-full max-w-md lg:max-w-4xl my-auto">
+        <div className="grid lg:grid-cols-[1fr_1fr] gap-0 rounded-2xl border border-border shadow-2xl shadow-black/20 overflow-hidden bg-card">
+          {/* Left hero (Desktop only) */}
+          <div className="hidden lg:block lg:h-auto">
             <HeroPanel />
           </div>
 
           {/* Right form */}
-          <div className="flex flex-col justify-center gap-6 p-8 lg:p-10">
+          <div className="flex flex-col justify-center gap-5 sm:gap-6 p-5 sm:p-8 lg:p-10">
+            {/* Mobile brand header (shown only when < lg) */}
+            <div className="flex lg:hidden items-center justify-center gap-2.5 mb-1">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-xs">
+                <Leaf className="h-5 w-5" />
+              </div>
+              <div>
+                <span className="text-lg font-bold text-foreground tracking-tight block leading-tight">
+                  CloudFarm
+                </span>
+                <span className="text-[10px] text-muted-foreground font-medium block">
+                  {AUTH_UI_TEXT.HERO_BRAND_SUB}
+                </span>
+              </div>
+            </div>
+
             <TabSwitch active={tab} onChange={setTab} />
 
             {tab === "login" ? <LoginFormPanel /> : <RegisterPlaceholder />}
