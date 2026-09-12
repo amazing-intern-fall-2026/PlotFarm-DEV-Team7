@@ -287,6 +287,7 @@ export function Header({
             <button
               type="button"
               aria-label={user.name}
+              title="Bấm để đăng xuất hoặc chuyển tài khoản"
               onClick={onLogoutClick}
               className="ml-1 flex items-center gap-2 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 hover:opacity-90 transition-opacity"
               id="header-user-btn"
@@ -368,8 +369,41 @@ export function Header({
             })}
           </nav>
 
-          {role === "customer" && (
-            <div className="pt-2 border-t border-border/60">
+          <div className="pt-2 border-t border-border/60 space-y-2">
+            {user ? (
+              <div className="flex items-center justify-between p-2 rounded-xl bg-muted/60">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Avatar name={user.name} src={user.avatarSrc} size="sm" />
+                  <span className="text-xs font-semibold text-foreground truncate">{user.name}</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    onLogoutClick?.();
+                  }}
+                  className="text-xs h-7 text-destructive border-destructive/30 hover:bg-destructive/10 shrink-0"
+                >
+                  Đăng xuất
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="default"
+                size="default"
+                onClick={() => {
+                  setMobileOpen(false);
+                  onLoginClick?.();
+                }}
+                className="w-full text-xs font-bold"
+                id="header-mobile-login-btn"
+              >
+                {loginLabel || "Đăng nhập"}
+              </Button>
+            )}
+
+            {role === "customer" && (
               <a
                 href="tel:19006868"
                 className="flex items-center justify-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 p-2.5 text-xs font-bold text-slate-800 dark:text-slate-200"
@@ -377,8 +411,8 @@ export function Header({
                 <Phone className="h-4 w-4 text-primary" />
                 <span>Tổng đài tư vấn: 1900 6868</span>
               </a>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
     </header>

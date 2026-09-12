@@ -36,6 +36,9 @@ export interface TopbarProps {
   onMenuClick?: () => void;
   /** Callback mở notification panel */
   onNotificationsClick?: () => void;
+  /** Callback điều hướng đăng nhập / đăng xuất */
+  onLoginClick?: () => void;
+  onLogoutClick?: () => void;
   className?: string;
 }
 
@@ -61,6 +64,8 @@ export function Topbar({
   roleBadgeLabel,
   onMenuClick,
   onNotificationsClick,
+  onLoginClick,
+  onLogoutClick,
   className
 }: TopbarProps) {
   return (
@@ -151,8 +156,8 @@ export function Topbar({
           )}
         </div>
 
-        {/* ── User info ───────────────────────────────────────────────────── */}
-        {user && (
+        {/* ── User info / Login button ──────────────────────────────────── */}
+        {user ? (
           <div className="flex items-center gap-2.5 pl-1">
             <div className="hidden sm:flex flex-col items-end leading-none">
               <span className="text-sm font-semibold text-foreground truncate max-w-[120px]">
@@ -169,14 +174,32 @@ export function Topbar({
                 </span>
               )}
             </div>
-            <Avatar
-              name={user.name}
-              src={user.avatarSrc}
-              size="sm"
-              status="online"
-            />
+            <button
+              type="button"
+              onClick={onLogoutClick}
+              title="Bấm để đăng xuất hoặc chuyển tài khoản"
+              className="flex items-center rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 hover:opacity-85 transition-opacity"
+              id="topbar-user-btn"
+            >
+              <Avatar
+                name={user.name}
+                src={user.avatarSrc}
+                size="sm"
+                status="online"
+              />
+            </button>
           </div>
-        )}
+        ) : onLoginClick ? (
+          <Button
+            variant="default"
+            size="sm"
+            onClick={onLoginClick}
+            className="text-xs h-8 ml-1"
+            id="topbar-login-btn"
+          >
+            Đăng nhập
+          </Button>
+        ) : null}
       </div>
     </header>
   );

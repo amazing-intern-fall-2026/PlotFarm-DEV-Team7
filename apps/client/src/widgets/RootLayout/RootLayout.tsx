@@ -412,6 +412,15 @@ export function RootLayout({
         <p className="text-sm font-bold text-foreground truncate">{user?.name || "Admin BioCloud"}</p>
         <p className="text-xs text-muted-foreground truncate">Toàn quyền hệ thống</p>
       </div>
+      <button
+        type="button"
+        title="Đăng xuất"
+        aria-label="Đăng xuất"
+        onClick={onLogoutClick}
+        className="text-slate-400 hover:text-foreground transition-colors p-1 rounded-lg hover:bg-accent shrink-0 ml-auto"
+      >
+        <LogOut className="h-5 w-5" />
+      </button>
     </div>
   ) : (
     <div className="flex items-center gap-3 w-full">
@@ -424,6 +433,7 @@ export function RootLayout({
         type="button"
         title="Đăng xuất"
         aria-label="Đăng xuất"
+        onClick={onLogoutClick}
         className="text-slate-400 hover:text-foreground transition-colors p-1 rounded-lg hover:bg-accent shrink-0 ml-auto"
       >
         <LogOut className="h-5 w-5" />
@@ -453,6 +463,8 @@ export function RootLayout({
           menuLabel={t("shell.menu")}
           roleBadgeLabel={roleBadgeLabel}
           onNotificationsClick={onNotificationsClick}
+          onLoginClick={onLoginClick}
+          onLogoutClick={onLogoutClick}
         />
 
         {/* Scrollable main — pb-20 for mobile bottom nav */}

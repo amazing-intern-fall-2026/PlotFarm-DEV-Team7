@@ -9,7 +9,7 @@ import {
 import { RootLayout } from "@/widgets/RootLayout";
 import type { AppRole, TopbarBreadcrumbItem } from "@/shared/ui";
 import { LoginPage } from "@/features/auth/ui/LoginPage";
-import { AUTH_ROUTES } from "@/features/auth/constants";
+import { AUTH_ROUTES, SESSION_KEYS } from "@/features/auth/constants";
 import {
   HomePage,
   PlotsPage,
@@ -34,6 +34,28 @@ export function ShellRouteLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = location.pathname;
+
+  // 0. Xác định trạng thái đăng nhập từ sessionStorage
+  const user = React.useMemo(() => {
+    try {
+      const rawUser = sessionStorage.getItem(SESSION_KEYS.USER);
+      if (!rawUser) return undefined;
+      const parsed = JSON.parse(rawUser);
+      return {
+        name: parsed.fullName || parsed.name || "Người dùng",
+        avatarSrc: parsed.avatarUrl || undefined,
+      };
+    } catch {
+      return undefined;
+    }
+  }, [location.pathname]);
+
+  const handleLogout = React.useCallback(() => {
+    sessionStorage.removeItem(SESSION_KEYS.ACCESS_TOKEN);
+    sessionStorage.removeItem(SESSION_KEYS.REFRESH_TOKEN);
+    sessionStorage.removeItem(SESSION_KEYS.USER);
+    navigate(AUTH_ROUTES.LOGIN);
+  }, [navigate]);
 
   // 1. Xác định vai trò từ URL
   let role: AppRole = "customer";
@@ -150,16 +172,28 @@ export function ShellRouteLayout() {
           navigate("/about");
           break;
         case "orders":
-        case "profile":
           navigate("/my-farm");
+          break;
+        case "profile":
+          if (!user) {
+            navigate(AUTH_ROUTES.LOGIN);
+          } else {
+            navigate("/my-farm");
+          }
           break;
       }
     } else if (role === "farmer") {
       switch (id) {
         case "tasks_today":
         case "task_journal":
-        case "profile":
           navigate("/farmer");
+          break;
+        case "profile":
+          if (!user) {
+            navigate(AUTH_ROUTES.LOGIN);
+          } else {
+            navigate("/farmer");
+          }
           break;
         case "my_plots":
         case "iot_camera":
@@ -193,12 +227,13 @@ export function ShellRouteLayout() {
   return (
     <RootLayout
       role={role}
-      user={{ name: "Nguyễn Văn An" }}
+      user={user}
       activeNavId={activeNavId}
       breadcrumbs={breadcrumbs}
       notificationCount={3}
       onNavChange={handleNavChange}
       onLoginClick={() => navigate(AUTH_ROUTES.LOGIN)}
+      onLogoutClick={handleLogout}
     >
       <Outlet />
     </RootLayout>
