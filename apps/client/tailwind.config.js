@@ -45,6 +45,7 @@ export default {
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          hover: "var(--color-secondary-hover)",
           50: "var(--color-secondary-50)",
           100: "var(--color-secondary-100)",
           200: "var(--color-secondary-200)",

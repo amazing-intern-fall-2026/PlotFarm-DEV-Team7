@@ -18,9 +18,11 @@ const preview: Preview = {
               "Badge",
               "Avatar",
               "Modal",
-              "StateView",
+              "State",
               "Skeleton",
-              "Separator"
+              "Separator",
+              "Slider",
+              "Steps"
             ]
           ]
         ]

@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Badge } from "@/shared/ui/Badge";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/shared/ui/Card";
-import { Separator } from "@/shared/ui/Separator";
+import { Badge, Card, CardHeader, CardTitle, CardDescription, Separator } from "@/shared/ui";
 
 const meta: Meta = {
   title: "Giới thiệu/Tổng quan hệ thống",
@@ -79,9 +77,9 @@ export const TongQuan: StoryObj = {
               <span className="inline-block w-fit text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200/60 px-2.5 py-1 rounded-full">
                 03. Trạng Thái Trực Quan
               </span>
-              <CardTitle className="text-lg font-bold">Hợp Nhất StateView</CardTitle>
+              <CardTitle className="text-lg font-bold">Hợp Nhất State</CardTitle>
               <CardDescription className="text-sm text-muted-foreground leading-relaxed">
-                Tập trung xử lý trọn vẹn 4 trường hợp: đang tải, tải thêm, danh sách trống và báo lỗi vào duy nhất component <strong>StateView</strong> để người dùng luôn nắm bắt thông tin rõ ràng.
+                Tập trung xử lý trọn vẹn 4 trường hợp: đang tải, tải thêm, danh sách trống và báo lỗi vào duy nhất component <strong>State</strong> để người dùng luôn nắm bắt thông tin rõ ràng.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -227,7 +225,7 @@ export const TongQuan: StoryObj = {
                 { name: 'Badge', desc: 'Nhãn trạng thái (Đang canh tác, Sắp thu hoạch)', props: 'variant (default, secondary, success)' },
                 { name: 'Avatar', desc: 'Ảnh đại diện khách hàng, kỹ thuật viên phụ trách', props: 'src, name, size, status' },
                 { name: 'Modal', desc: 'Hộp thoại nổi xác nhận hành động, hiển thị chi tiết', props: 'isOpen, onClose, title, size' },
-                { name: 'StateView', desc: 'Hợp nhất 4 trạng thái Loading / Fetching / Empty / Error', props: 'state, emptyPreset, error, onRetry' },
+                { name: 'State', desc: 'Hợp nhất 4 trạng thái Loading / Fetching / Empty / Error', props: 'state, emptyPreset, error, onRetry' },
                 { name: 'Skeleton', desc: 'Khung giả lập chuyển động nhấp nháy khi đang tải dữ liệu', props: 'className (h-*, w-*, rounded-*)' },
                 { name: 'Separator', desc: 'Đường kẻ phân tách các khu vực nội dung ngang hoặc dọc', props: 'orientation, decorative' },
               ].map((item) => (
@@ -250,11 +248,11 @@ export const TongQuan: StoryObj = {
           Import trực tiếp từ đường dẫn alias <code className="bg-white px-2 py-0.5 rounded border border-emerald-200 text-xs font-mono font-bold text-emerald-700">@/shared/ui</code>:
         </p>
         <pre className="bg-slate-900 text-slate-100 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed">
-{`import { Button, Input, Card, Badge, StateView } from "@/shared/ui";
+{`import { Button, Input, Card, Badge, State } from "@/shared/ui";
 
 export function PlotDetailView({ plot, isLoading, isError, onRetry }) {
   return (
-    <StateView state={isLoading ? "loading" : isError ? "error" : "idle"} onRetry={onRetry}>
+    <State state={isLoading ? "loading" : isError ? "error" : "idle"} onRetry={onRetry}>
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -266,7 +264,7 @@ export function PlotDetailView({ plot, isLoading, isError, onRetry }) {
           <p>Diện tích: {plot?.area} m²</p>
         </CardContent>
       </Card>
-    </StateView>
+    </State>
   );
 }`}
         </pre>
