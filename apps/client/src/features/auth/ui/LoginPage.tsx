@@ -13,7 +13,7 @@ import {
 import { Button } from "@/shared/ui/Button/Button";
 import { Input } from "@/shared/ui/Input/Input";
 import { cn } from "@/shared/lib/utils";
-import { AUTH_ROUTES } from "../constants";
+import { AUTH_ROUTES, AUTH_UI_TEXT } from "../constants";
 import { useLoginForm } from "../model/useLoginForm";
 
 /* ─────────────────────────────────────────────
@@ -83,13 +83,13 @@ function HeroPanel() {
             <div>
               <p className="text-sm font-semibold text-white">CloudFarm</p>
               <p className="text-[10px] text-[hsl(135,30%,65%)] uppercase tracking-wider">
-                Nông trại số hữu cơ
+                {AUTH_UI_TEXT.HERO_BRAND_SUB}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-1.5 rounded-full bg-[hsl(135,40%,12%)/70%] border border-[hsl(135,30%,25%)] px-3 py-1.5 backdrop-blur-sm">
             <Radio className="h-3 w-3 text-[hsl(135,70%,50%)] animate-pulse" />
-            <span className="text-xs text-[hsl(135,30%,70%)]">Trực tiếp tại Đà Lạt • 19.4°C</span>
+            <span className="text-xs text-[hsl(135,30%,70%)]">{AUTH_UI_TEXT.HERO_LIVE_BADGE}</span>
           </div>
         </div>
 
@@ -98,11 +98,11 @@ function HeroPanel() {
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full bg-[hsl(135,40%,12%)/60%] border border-[hsl(135,30%,25%)] px-3 py-1.5 backdrop-blur-sm">
               <ShieldCheck className="h-3.5 w-3.5 text-[hsl(135,55%,45%)]" />
-              <span className="text-xs text-[hsl(135,30%,70%)]">Mô hình nông trại thông minh 4.0</span>
+              <span className="text-xs text-[hsl(135,30%,70%)]">{AUTH_UI_TEXT.HERO_MODEL_BADGE}</span>
             </div>
 
             <blockquote className="text-2xl font-semibold leading-snug text-white max-w-sm">
-              "Trở thành chủ nhân vườn rau sạch công nghệ cao. Theo dõi cây lớn mỗi ngày qua camera trực tiếp và nhận nông sản hữu cơ tận nhà."
+              {AUTH_UI_TEXT.HERO_QUOTE}
             </blockquote>
 
             {/* Social proof */}
@@ -118,7 +118,9 @@ function HeroPanel() {
                 ))}
               </div>
               <p className="text-sm text-[hsl(135,20%,65%)]">
-                Hơn <strong className="text-white">2.400+</strong> gia đình đô thị đã sở hữu thửa rau riêng
+                {AUTH_UI_TEXT.HERO_PROOF_PREFIX}{" "}
+                <strong className="text-white">{AUTH_UI_TEXT.HERO_PROOF_COUNT}</strong>{" "}
+                {AUTH_UI_TEXT.HERO_PROOF_SUFFIX}
               </p>
             </div>
           </div>
@@ -127,9 +129,9 @@ function HeroPanel() {
         {/* Bottom: feature pills */}
         <div className="flex flex-wrap gap-2">
           {[
-            { icon: CheckCircle2, label: "100% đất sạch hữu cơ" },
-            { icon: Monitor, label: "Giám sát HLS 24/7" },
-            { icon: Truck, label: "Giao rau tận cửa" },
+            { icon: CheckCircle2, label: AUTH_UI_TEXT.HERO_PILL_SOIL },
+            { icon: Monitor, label: AUTH_UI_TEXT.HERO_PILL_CAMERA },
+            { icon: Truck, label: AUTH_UI_TEXT.HERO_PILL_DELIVERY },
           ].map(({ icon: Icon, label }) => (
             <div
               key={label}
@@ -167,11 +169,11 @@ function TabSwitch({
           className={cn(
             "pb-3 text-sm font-medium transition-colors",
             active === tab
-              ? "border-b-2 border-primary text-primary"
+              ? "border-b-2 border-primary text-primary font-semibold"
               : "text-muted-foreground hover:text-foreground"
           )}
         >
-          {tab === "login" ? "đăng nhập" : "đăng ký tài khoản mới"}
+          {tab === "login" ? AUTH_UI_TEXT.TAB_LOGIN : AUTH_UI_TEXT.TAB_REGISTER}
         </button>
       ))}
     </div>
@@ -189,10 +191,10 @@ function LoginFormPanel() {
     <form onSubmit={handleSubmit} noValidate className="space-y-5">
       <div className="space-y-2">
         <h1 className="text-2xl font-bold text-foreground">
-          chào mừng bạn trở lại vườn
+          {AUTH_UI_TEXT.LOGIN_TITLE}
         </h1>
         <p className="text-sm text-muted-foreground">
-          đăng nhập để kiểm tra thửa đất, độ ẩm và thu hoạch rau củ hôm nay.
+          {AUTH_UI_TEXT.LOGIN_SUBTITLE}
         </p>
       </div>
 
@@ -206,8 +208,8 @@ function LoginFormPanel() {
       <Input
         id="login-email"
         type="email"
-        label="email"
-        placeholder="tenban@gmail.com"
+        label={AUTH_UI_TEXT.EMAIL_LABEL}
+        placeholder={AUTH_UI_TEXT.EMAIL_PLACEHOLDER}
         autoComplete="email"
         value={values.email}
         onChange={(e) => handleChange("email", e.target.value)}
@@ -219,8 +221,8 @@ function LoginFormPanel() {
       <Input
         id="login-password"
         type="password"
-        label="mật khẩu"
-        placeholder="Nhập mật khẩu an toàn"
+        label={AUTH_UI_TEXT.PASSWORD_LABEL}
+        placeholder={AUTH_UI_TEXT.PASSWORD_PLACEHOLDER}
         autoComplete="current-password"
         value={values.password}
         onChange={(e) => handleChange("password", e.target.value)}
@@ -241,13 +243,13 @@ function LoginFormPanel() {
             onChange={(e) => handleChange("rememberMe", e.target.checked)}
             disabled={isLoading}
           />
-          ghi nhớ đăng nhập
+          {AUTH_UI_TEXT.REMEMBER_ME}
         </label>
         <Link
           to={AUTH_ROUTES.FORGOT_PASSWORD}
           className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
         >
-          quên mật khẩu?
+          {AUTH_UI_TEXT.FORGOT_PASSWORD}
         </Link>
       </div>
 
@@ -259,14 +261,14 @@ function LoginFormPanel() {
         isLoading={isLoading}
         leftIcon={!isLoading ? <ShieldCheck className="h-4 w-4" /> : undefined}
       >
-        đăng nhập vào vườn của tôi
+        {AUTH_UI_TEXT.SUBMIT_BUTTON}
       </Button>
 
       {/* Divider */}
       <div className="relative flex items-center gap-3">
         <div className="flex-1 border-t border-border" />
         <span className="text-xs text-muted-foreground whitespace-nowrap">
-          hoặc tiếp tục với
+          {AUTH_UI_TEXT.DIVIDER_OR}
         </span>
         <div className="flex-1 border-t border-border" />
       </div>
@@ -281,10 +283,10 @@ function LoginFormPanel() {
           className="w-full"
           disabled={isLoading}
           onClick={() =>
-            alert("Google Sign-In: tính năng đang được tích hợp.")
+            alert(AUTH_UI_TEXT.GOOGLE_SOON)
           }
         >
-          Google
+          {AUTH_UI_TEXT.SOCIAL_GOOGLE}
         </Button>
         <Button
           type="button"
@@ -294,24 +296,24 @@ function LoginFormPanel() {
           className="w-full"
           disabled={isLoading}
           onClick={() =>
-            alert("Apple Sign-In: tính năng đang được tích hợp.")
+            alert(AUTH_UI_TEXT.APPLE_SOON)
           }
         >
-          Apple
+          {AUTH_UI_TEXT.SOCIAL_APPLE}
         </Button>
       </div>
 
       {/* Terms */}
       <p className="text-center text-xs text-muted-foreground">
-        Bằng việc tiếp tục, bạn đồng ý với{" "}
-        <Link to="/terms" className="underline underline-offset-2 hover:text-foreground transition-colors">
-          điều khoản thuê đất
+        {AUTH_UI_TEXT.TERMS_PREFIX}{" "}
+        <Link to="/terms" className="underline underline-offset-2 hover:text-foreground transition-colors font-medium">
+          {AUTH_UI_TEXT.TERMS_CONTRACT}
         </Link>{" "}
-        và{" "}
-        <Link to="/privacy" className="underline underline-offset-2 hover:text-foreground transition-colors">
-          chính sách quyền riêng tư
+        {AUTH_UI_TEXT.TERMS_AND}{" "}
+        <Link to="/privacy" className="underline underline-offset-2 hover:text-foreground transition-colors font-medium">
+          {AUTH_UI_TEXT.TERMS_PRIVACY}
         </Link>{" "}
-        của nền tảng nông nghiệp số CloudFarm.
+        {AUTH_UI_TEXT.TERMS_SUFFIX}
       </p>
     </form>
   );
@@ -325,16 +327,17 @@ function RegisterPlaceholder() {
     <div className="space-y-5">
       <div className="space-y-2">
         <h1 className="text-2xl font-bold text-foreground">
-          tạo tài khoản mới
+          {AUTH_UI_TEXT.REGISTER_TITLE}
         </h1>
         <p className="text-sm text-muted-foreground">
-          đăng ký để bắt đầu hành trình trồng rau sạch của bạn.
+          {AUTH_UI_TEXT.REGISTER_SUBTITLE}
         </p>
       </div>
       <div className="rounded-lg border border-dashed border-border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
-        Tính năng đăng ký đang được hoàn thiện.
+        {AUTH_UI_TEXT.REGISTER_WIP_NOTICE}
         <br />
-        Vui lòng quay lại tab <strong>đăng nhập</strong>.
+        {AUTH_UI_TEXT.REGISTER_BACK_TO_LOGIN}{" "}
+        <strong className="text-foreground">{AUTH_UI_TEXT.TAB_LOGIN}</strong>.
       </div>
     </div>
   );
