@@ -1,17 +1,13 @@
 /**
  * @layer pages
- * @description Barrel export cho toàn bộ Pages — FSD Layer 2.
+ * @description Tầng Pages (Các trang hoàn chỉnh) — FSD Layer 1.
  *
- * Trách nhiệm:
- *  - Re-export tất cả page components để router trong app/ import gọn qua một điểm duy nhất
- *  - Mỗi sub-folder là 1 route-level screen độc lập
- *
- * Cấu trúc:
- *  pages/
- *  ├── home/         → màn hình Dashboard / Landing (route: "/")
- *  ├── not-found/    → màn hình 404 (route: "*")
- *  └── [tên-màn-hình]/ → các màn hình khác sẽ thêm theo US
- *
- * TODO: export các page components sau khi implement
+ * Hướng dẫn triển khai:
+ * 1. public/     → Trang chủ (Home), Giới thiệu (About), Khám phá ô đất (Plots).
+ * 2. customer/   → Không gian khách hàng (Vườn của tôi, Hợp đồng, Yêu cầu chăm sóc).
+ * 3. staff/      → Không gian kỹ thuật viên / nông dân thực địa (Công việc, Ô đất, Thu hoạch).
+ * 4. admin/      → Trung tâm điều hành quản trị hệ thống (Dashboard, Quản lý farm, Phân quyền).
+ * 5. auth/       → Trang đăng nhập, đăng ký tài khoản.
+ * 6. error/      → Trang 403 Unauthorized, 404 Not Found.
  */
 export {};
