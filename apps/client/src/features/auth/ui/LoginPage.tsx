@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import {
   Mail,
   Lock,
@@ -13,7 +13,8 @@ import {
 import { Button } from "@/shared/ui/Button/Button";
 import { Input } from "@/shared/ui/Input/Input";
 import { cn } from "@/shared/lib/utils";
-import { AUTH_ROUTES, AUTH_UI_TEXT } from "../constants";
+import { AUTH_ROUTES, AUTH_UI_TEXT, ROLE_HOME_ROUTES } from "../constants";
+import { getStoredUser, isAuthenticated } from "../model/authSession";
 import { useLoginForm } from "../model/useLoginForm";
 
 /* ─────────────────────────────────────────────
@@ -348,6 +349,13 @@ function RegisterPlaceholder() {
 ───────────────────────────────────────────── */
 export function LoginPage() {
   const [tab, setTab] = React.useState<AuthTab>("login");
+
+  // Nếu đã đăng nhập, tự động chuyển về trang chủ theo vai trò
+  const user = getStoredUser();
+  if (user && isAuthenticated()) {
+    const dest = ROLE_HOME_ROUTES[user.role] ?? "/";
+    return <Navigate to={dest} replace />;
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">

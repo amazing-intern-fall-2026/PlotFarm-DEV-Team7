@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import type { UserRole } from "@repo/shared";
 import { AppError } from "@/shared/lib/errors/AppError";
 import { authApi } from "../api/authApi";
@@ -36,6 +36,7 @@ function validatePassword(password: string): string | undefined {
 
 export function useLoginForm() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [values, setValues] = useState<LoginFormState>({
     email: "",
@@ -75,7 +76,9 @@ export function useLoginForm() {
       sessionStorage.setItem(SESSION_KEYS.REFRESH_TOKEN, refreshToken);
       sessionStorage.setItem(SESSION_KEYS.USER, JSON.stringify(user));
 
-      const dest = ROLE_HOME_ROUTES[user.role as UserRole] ?? AUTH_ROUTES.LOGIN;
+      const from = (location.state as { from?: { pathname?: string } })?.from?.pathname;
+      const roleHome = ROLE_HOME_ROUTES[user.role as UserRole] ?? AUTH_ROUTES.LOGIN;
+      const dest = from || roleHome;
       navigate(dest, { replace: true });
     } catch (err) {
       const appErr = AppError.fromUnknown(err);
