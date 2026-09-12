@@ -28,6 +28,17 @@ export const AUTH_VALIDATION = {
   EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
 } as const;
 
+/** Thông điệp validate chuẩn tiếng Việt, viết hoa đúng chính tả */
+export const AUTH_VALIDATION_MESSAGES = {
+  EMAIL_REQUIRED: "Vui lòng nhập email.",
+  EMAIL_INVALID: "Email không hợp lệ.",
+  PASSWORD_REQUIRED: "Vui lòng nhập mật khẩu.",
+  PASSWORD_MIN_LENGTH: `Mật khẩu tối thiểu ${AUTH_VALIDATION.PASSWORD_MIN_LENGTH} ký tự.`,
+} as const;
+
+/** Thời gian debounce cho validate form (ms) */
+export const AUTH_DEBOUNCE_MS = 400;
+
 /** Social providers có thể login */
 export const SOCIAL_PROVIDERS = {
   GOOGLE: "google",

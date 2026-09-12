@@ -93,8 +93,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               error && "border-destructive focus-visible:ring-destructive",
               className
             )}
-            ref={ref}
             {...props}
+            ref={ref}
           />
           {resolvedRightIcon && (
             <div className="absolute right-3 flex items-center text-muted-foreground">

@@ -1,21 +1,27 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
 import type { UserRole } from "@repo/shared";
 import { AppError } from "@/shared/lib/errors/AppError";
+import { useDebouncedCallback } from "@/shared/lib/hooks/useDebouncedCallback";
 import { authApi } from "../api/authApi";
 import {
   SESSION_KEYS,
   ROLE_HOME_ROUTES,
   AUTH_VALIDATION,
+  AUTH_VALIDATION_MESSAGES,
+  AUTH_DEBOUNCE_MS,
   AUTH_ROUTES,
+  getAuthErrorMessage,
 } from "../constants";
-import { getAuthErrorMessage } from "../constants";
 
-export interface LoginFormState {
+export interface LoginFormValues {
   email: string;
   password: string;
   rememberMe: boolean;
 }
+
+/** Tương thích ngược */
+export type LoginFormState = LoginFormValues;
 
 export interface LoginFormErrors {
   email?: string;
@@ -23,49 +29,65 @@ export interface LoginFormErrors {
   general?: string;
 }
 
-function validateEmail(email: string): string | undefined {
-  if (!email.trim()) return "Vui lòng nhập email.";
-  if (!AUTH_VALIDATION.EMAIL_REGEX.test(email)) return "Email không hợp lệ.";
-}
-
-function validatePassword(password: string): string | undefined {
-  if (!password) return "Vui lòng nhập mật khẩu.";
-  if (password.length < AUTH_VALIDATION.PASSWORD_MIN_LENGTH)
-    return `Mật khẩu tối thiểu ${AUTH_VALIDATION.PASSWORD_MIN_LENGTH} ký tự.`;
-}
-
 export function useLoginForm() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [values, setValues] = useState<LoginFormState>({
-    email: "",
-    password: "",
-    rememberMe: false,
+  const {
+    register,
+    handleSubmit,
+    trigger,
+    clearErrors,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: false,
+    },
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
-  const [errors, setErrors] = useState<LoginFormErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
 
-  function handleChange(field: keyof LoginFormState, value: string | boolean) {
-    setValues((prev) => ({ ...prev, [field]: value }));
-    if (field !== "rememberMe") {
-      setErrors((prev) => ({ ...prev, [field]: undefined, general: undefined }));
-    }
-  }
+  const debouncedTrigger = useDebouncedCallback(
+    (name: "email" | "password") => {
+      void trigger(name);
+    },
+    AUTH_DEBOUNCE_MS
+  );
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const registerEmail = register("email", {
+    validate: {
+      notEmpty: (val) =>
+        (val && val.trim().length > 0) || AUTH_VALIDATION_MESSAGES.EMAIL_REQUIRED,
+      validEmail: (val) =>
+        AUTH_VALIDATION.EMAIL_REGEX.test(val?.trim() || "") ||
+        AUTH_VALIDATION_MESSAGES.EMAIL_INVALID,
+    },
+    onChange: () => {
+      clearErrors("root");
+      debouncedTrigger("email");
+    },
+  });
 
-    const emailErr = validateEmail(values.email);
-    const passErr = validatePassword(values.password);
-    if (emailErr || passErr) {
-      setErrors({ email: emailErr, password: passErr });
-      return;
-    }
+  const registerPassword = register("password", {
+    validate: {
+      notEmpty: (val) =>
+        (val && val.length > 0) || AUTH_VALIDATION_MESSAGES.PASSWORD_REQUIRED,
+      minLength: (val) =>
+        (val && val.length >= AUTH_VALIDATION.PASSWORD_MIN_LENGTH) ||
+        AUTH_VALIDATION_MESSAGES.PASSWORD_MIN_LENGTH,
+    },
+    onChange: () => {
+      clearErrors("root");
+      debouncedTrigger("password");
+    },
+  });
 
-    setIsLoading(true);
-    setErrors({});
+  const registerRememberMe = register("rememberMe");
 
+  const onSubmit = async (values: LoginFormValues) => {
     try {
       const { accessToken, refreshToken, user } = await authApi.login(
         values.email.trim().toLowerCase(),
@@ -76,17 +98,34 @@ export function useLoginForm() {
       sessionStorage.setItem(SESSION_KEYS.REFRESH_TOKEN, refreshToken);
       sessionStorage.setItem(SESSION_KEYS.USER, JSON.stringify(user));
 
-      const from = (location.state as { from?: { pathname?: string } })?.from?.pathname;
-      const roleHome = ROLE_HOME_ROUTES[user.role as UserRole] ?? AUTH_ROUTES.LOGIN;
+      const from = (location.state as { from?: { pathname?: string } })?.from
+        ?.pathname;
+      const roleHome =
+        ROLE_HOME_ROUTES[user.role as UserRole] ?? AUTH_ROUTES.LOGIN;
       const dest = from || roleHome;
       navigate(dest, { replace: true });
     } catch (err) {
       const appErr = AppError.fromUnknown(err);
-      setErrors({ general: getAuthErrorMessage(appErr.errorCode) });
-    } finally {
-      setIsLoading(false);
+      setError("root", {
+        type: "server",
+        message: getAuthErrorMessage(appErr.errorCode),
+      });
     }
-  }
+  };
 
-  return { values, errors, isLoading, handleChange, handleSubmit };
+  return {
+    register,
+    registerEmail,
+    registerPassword,
+    registerRememberMe,
+    handleSubmit: handleSubmit(onSubmit),
+    errors: {
+      email: errors.email?.message,
+      password: errors.password?.message,
+      general: errors.root?.message,
+    },
+    formErrors: errors,
+    isLoading: isSubmitting,
+    debouncedTrigger,
+  };
 }
