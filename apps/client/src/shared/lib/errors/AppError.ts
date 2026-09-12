@@ -1,4 +1,6 @@
-import type { ApiErrorDetail, ResponseMeta, ApiResponseEnvelope } from "@repo/shared";
+import type { ErrorDetail, Meta, ApiErrorResponse, ApiSuccessResponse } from "@repo/shared";
+
+export type ApiResponseEnvelope<T = unknown> = ApiSuccessResponse<T> | ApiErrorResponse;
 
 /**
  * Lỗi chuẩn hóa phía FE — mirror với BE AppError.
@@ -7,16 +9,16 @@ import type { ApiErrorDetail, ResponseMeta, ApiResponseEnvelope } from "@repo/sh
 export class AppError extends Error {
   public readonly statusCode: number;
   public readonly errorCode: string;
-  public readonly detail: ApiErrorDetail;
-  public readonly meta: ResponseMeta;
+  public readonly detail?: ErrorDetail;
+  public readonly meta: Meta;
 
-  constructor(envelope: ApiResponseEnvelope) {
+  constructor(envelope: ApiErrorResponse) {
     const errDetail = envelope.error;
     super(errDetail?.message ?? envelope.message);
     this.name = "AppError";
     this.statusCode = envelope.code;
     this.errorCode = errDetail?.code ?? "ERR_UNKNOWN";
-    this.detail = errDetail ?? { message: envelope.message };
+    this.detail = errDetail;
     this.meta = envelope.meta;
 
     Object.setPrototypeOf(this, AppError.prototype);
@@ -29,7 +31,7 @@ export class AppError extends Error {
     const message =
       err instanceof Error ? err.message : "Đã xảy ra lỗi không xác định.";
 
-    const mockMeta: ResponseMeta = {
+    const mockMeta: Meta = {
       correlationId: "",
       traceId: "",
       userCode: "",

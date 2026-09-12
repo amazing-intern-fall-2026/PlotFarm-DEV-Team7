@@ -66,13 +66,13 @@ export function useLoginForm() {
     setErrors({});
 
     try {
-      const { tokens, user } = await authApi.login(
+      const { accessToken, refreshToken, user } = await authApi.login(
         values.email.trim().toLowerCase(),
         values.password
       );
 
-      sessionStorage.setItem(SESSION_KEYS.ACCESS_TOKEN, tokens.accessToken);
-      sessionStorage.setItem(SESSION_KEYS.REFRESH_TOKEN, tokens.refreshToken);
+      sessionStorage.setItem(SESSION_KEYS.ACCESS_TOKEN, accessToken);
+      sessionStorage.setItem(SESSION_KEYS.REFRESH_TOKEN, refreshToken);
       sessionStorage.setItem(SESSION_KEYS.USER, JSON.stringify(user));
 
       const dest = ROLE_HOME_ROUTES[user.role as UserRole] ?? AUTH_ROUTES.LOGIN;

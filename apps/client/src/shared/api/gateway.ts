@@ -1,5 +1,5 @@
-import type { ApiResponseEnvelope } from "@repo/shared";
-import { AppError } from "@/shared/lib/errors/AppError";
+import { AppError, type ApiResponseEnvelope } from "@/shared/lib/errors/AppError";
+import type { ApiErrorResponse } from "@repo/shared";
 import {
   GATEWAY_ENDPOINT,
   GATEWAY_TIMEOUT_MS,
@@ -17,7 +17,7 @@ export interface GatewayEnvelope<T = unknown> {
 /**
  * Dispatch một action tới single gateway endpoint `POST /api/gateway`.
  * - Native fetch, không cần axios.
- * - Response tuân theo `ApiResponseEnvelope<T>` từ @repo/shared.
+ * - Response tuân theo ApiResponseEnvelope<T> từ @repo/shared.
  * - Lỗi normalize thành `AppError` (instanceof-safe).
  * - Auto-gắn X-Correlation-ID và Authorization Bearer nếu có AT.
  */
@@ -68,9 +68,9 @@ export async function dispatchAction<TReq = unknown, TRes = unknown>(
   }
 
   // ── Error ─────────────────────────────────────────────────────────────────
-  if (!res.ok || body.error) {
-    throw new AppError(body);
+  if (!res.ok || "error" in body) {
+    throw new AppError(body as ApiErrorResponse);
   }
 
-  return body.data as TRes;
+  return body.data;
 }
