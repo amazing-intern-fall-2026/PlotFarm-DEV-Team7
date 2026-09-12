@@ -230,7 +230,6 @@ export function ShellRouteLayout() {
       user={user}
       activeNavId={activeNavId}
       breadcrumbs={breadcrumbs}
-      notificationCount={3}
       onNavChange={handleNavChange}
       onLoginClick={() => navigate(AUTH_ROUTES.LOGIN)}
       onLogoutClick={handleLogout}
