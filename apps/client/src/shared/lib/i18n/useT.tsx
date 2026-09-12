@@ -16,7 +16,7 @@ interface I18nContextValue {
 
 const I18nContext = React.createContext<I18nContextValue>({
   locale: "vi",
-  setLocale: () => {}
+  setLocale: () => {},
 });
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
@@ -25,7 +25,10 @@ export interface I18nProviderProps {
   children: React.ReactNode;
 }
 
-export function I18nProvider({ defaultLocale = "vi", children }: I18nProviderProps) {
+export function I18nProvider({
+  defaultLocale = "vi",
+  children,
+}: I18nProviderProps) {
   const [locale, setLocaleState] = React.useState<Locale>(() => {
     const stored = localStorage.getItem("pf_locale") as Locale | null;
     return stored === "vi" || stored === "en" ? stored : defaultLocale;
@@ -38,13 +41,11 @@ export function I18nProvider({ defaultLocale = "vi", children }: I18nProviderPro
 
   const ctxValue = React.useMemo(
     () => ({ locale, setLocale }),
-    [locale, setLocale]
+    [locale, setLocale],
   );
 
   return (
-    <I18nContext.Provider value={ctxValue}>
-      {children}
-    </I18nContext.Provider>
+    <I18nContext.Provider value={ctxValue}>{children}</I18nContext.Provider>
   );
 }
 
@@ -77,10 +78,7 @@ export function useT() {
   const { locale, setLocale } = useI18n();
   const dict = locales[locale];
 
-  const t = React.useCallback(
-    (key: string) => resolve(dict, key),
-    [dict]
-  );
+  const t = React.useCallback((key: string) => resolve(dict, key), [dict]);
 
   return { t, locale, setLocale };
 }

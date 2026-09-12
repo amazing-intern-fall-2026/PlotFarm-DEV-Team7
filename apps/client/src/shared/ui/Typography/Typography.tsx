@@ -31,11 +31,8 @@ export type TypographyElement =
   | "blockquote";
 
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
-  /** Thẻ HTML ngữ nghĩa cần render (h1-h6, p, span, div,...) */
   as?: TypographyElement;
-  /** Biến thể kiểu chữ theo Design System */
   variant?: TypographyVariant;
-  /** Khóa đa ngôn ngữ i18n — Tự động dịch qua useT() giúp tránh hardcode chuỗi */
   i18nKey?: string;
   children?: React.ReactNode;
 }
@@ -54,11 +51,6 @@ const variantStyles: Record<TypographyVariant, string> = {
   muted: "text-xs text-muted-foreground",
 };
 
-/**
- * Typography — Hệ thống kiểu chữ chuẩn hóa cho toàn bộ ứng dụng PlotFarm.
- * Hỗ trợ render linh hoạt từ h1 đến h6, p, lead, small, muted.
- * Tích hợp trực tiếp i18n thông qua prop `i18nKey` để không hardcode ngôn ngữ.
- */
 const TypographyRoot = React.forwardRef<HTMLElement, TypographyProps>(
   (
     {
@@ -96,7 +88,6 @@ const TypographyRoot = React.forwardRef<HTMLElement, TypographyProps>(
 
 TypographyRoot.displayName = "Typography";
 
-// ─── Subcomponents tiện ích ──────────────────────────────────────────────────
 export const Heading = React.forwardRef<
   HTMLHeadingElement,
   TypographyProps & { level?: 1 | 2 | 3 | 4 | 5 | 6 }
@@ -123,7 +114,6 @@ export const Paragraph = React.forwardRef<
 ));
 Paragraph.displayName = "Paragraph";
 
-// ─── Compound Object ────────────────────────────────────────────────────────
 export const Typography = Object.assign(TypographyRoot, {
   H1: (props: TypographyProps) => <TypographyRoot as="h1" variant="h1" {...props} />,
   H2: (props: TypographyProps) => <TypographyRoot as="h2" variant="h2" {...props} />,

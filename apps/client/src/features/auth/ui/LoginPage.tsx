@@ -26,9 +26,6 @@ import { AUTH_ROUTES, AUTH_UI_TEXT, ROLE_HOME_ROUTES } from "../constants";
 import { getStoredUser, isAuthenticated } from "../model/authSession";
 import { useLoginForm } from "../model/useLoginForm";
 
-/* ─────────────────────────────────────────────
-   Inline SVGs cho Google / Apple
-───────────────────────────────────────────── */
 function GoogleIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
@@ -60,20 +57,13 @@ function AppleIcon() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Hero panel left — stats + badges + quote
-───────────────────────────────────────────── */
 function HeroPanel() {
   return (
     <Box className="relative flex flex-col justify-between h-full overflow-hidden rounded-2xl bg-[hsl(135,45%,16%)]">
-      {/* Background gradient overlay */}
       <Box className="absolute inset-0 bg-gradient-to-b from-[hsl(135,50%,8%)/60%] via-transparent to-[hsl(135,50%,8%)/80%]" />
-
-      {/* Decorative blurred circles */}
       <Box className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-[hsl(135,60%,25%)/30%] blur-3xl" />
       <Box className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-[hsl(155,50%,20%)/20%] blur-3xl" />
 
-      {/* Greenhouse background image via CSS */}
       <Box
         className="absolute inset-0 opacity-30 bg-cover bg-center mix-blend-luminosity"
         style={{
@@ -82,9 +72,7 @@ function HeroPanel() {
         }}
       />
 
-      {/* Content */}
       <Box className="relative z-10 flex flex-col h-full p-8 gap-6">
-        {/* Top: brand + live badge */}
         <Box className="flex items-center justify-between">
           <Box className="flex items-center gap-2.5">
             <Logo size="sm" />
@@ -111,7 +99,6 @@ function HeroPanel() {
           </Badge>
         </Box>
 
-        {/* Middle: quote */}
         <Box className="flex-1 flex items-center">
           <Box className="space-y-6">
             <Badge
@@ -131,7 +118,6 @@ function HeroPanel() {
               {AUTH_UI_TEXT.HERO_QUOTE}
             </Typography>
 
-            {/* Social proof */}
             <Box className="flex items-center gap-3">
               <Box className="flex -space-x-2">
                 {["NL", "MA", "TK"].map((initials) => (
@@ -154,7 +140,6 @@ function HeroPanel() {
           </Box>
         </Box>
 
-        {/* Bottom: feature pills */}
         <Box className="flex flex-wrap gap-2">
           {[
             { icon: CheckCircle2, label: AUTH_UI_TEXT.HERO_PILL_SOIL },
@@ -176,9 +161,6 @@ function HeroPanel() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Tab toggle: Đăng nhập / Đăng ký
-───────────────────────────────────────────── */
 type AuthTab = "login" | "register";
 
 function TabSwitch({
@@ -209,9 +191,6 @@ function TabSwitch({
   );
 }
 
-/* ─────────────────────────────────────────────
-   Login Form panel
-───────────────────────────────────────────── */
 function LoginFormPanel() {
   const {
     registerEmail,
@@ -244,7 +223,6 @@ function LoginFormPanel() {
         </Text>
       </Box>
 
-      {/* General error alert */}
       {errors.general && (
         <Box className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {errors.general}
@@ -276,7 +254,6 @@ function LoginFormPanel() {
         {...registerPassword}
       />
 
-      {/* Remember me + Forgot password */}
       <Box className="flex items-center justify-between">
         <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground select-none">
           <input
@@ -309,7 +286,6 @@ function LoginFormPanel() {
         {AUTH_UI_TEXT.SUBMIT_BUTTON}
       </Button>
 
-      {/* Divider with Separator */}
       <Box className="relative flex items-center gap-3">
         <Separator className="flex-1" />
         <Text as="span" variant="muted" className="whitespace-nowrap">
@@ -318,7 +294,6 @@ function LoginFormPanel() {
         <Separator className="flex-1" />
       </Box>
 
-      {/* Social buttons */}
       <Box className="grid grid-cols-2 gap-3">
         <Button
           type="button"
@@ -344,7 +319,6 @@ function LoginFormPanel() {
         </Button>
       </Box>
 
-      {/* Terms */}
       <Text variant="muted" className="text-center text-xs">
         {AUTH_UI_TEXT.TERMS_PREFIX}{" "}
         <Link
@@ -366,9 +340,6 @@ function LoginFormPanel() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Register placeholder panel
-───────────────────────────────────────────── */
 function RegisterPlaceholder() {
   return (
     <Box className="space-y-4 sm:space-y-5">
@@ -396,13 +367,9 @@ function RegisterPlaceholder() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Main: LoginPage
-───────────────────────────────────────────── */
 export function LoginPage() {
   const [tab, setTab] = React.useState<AuthTab>("login");
 
-  // Nếu đã đăng nhập, tự động chuyển về trang chủ theo vai trò
   const user = getStoredUser();
   if (user && isAuthenticated()) {
     const dest = ROLE_HOME_ROUTES[user.role] ?? "/";
@@ -413,14 +380,11 @@ export function LoginPage() {
     <Box className="min-h-screen bg-background flex flex-col items-center justify-center p-3 sm:p-6 lg:p-8">
       <Box className="w-full max-w-md lg:max-w-4xl my-auto">
         <Box className="grid lg:grid-cols-[1fr_1fr] gap-0 rounded-2xl border border-border shadow-2xl shadow-black/20 overflow-hidden bg-card">
-          {/* Left hero (Desktop only) */}
           <Box className="hidden lg:block lg:h-auto">
             <HeroPanel />
           </Box>
 
-          {/* Right form */}
           <Box className="flex flex-col justify-center gap-5 sm:gap-6 p-5 sm:p-8 lg:p-10">
-            {/* Mobile brand header (shown only when < lg) */}
             <Box className="flex lg:hidden items-center justify-center gap-2.5 mb-1">
               <Logo size="md" />
               <Box>

@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
 
-/**
- * Hàm debounce thuần túy (pure utility) — không phụ thuộc React DOM.
- * Hỗ trợ phương thức `cancel()` để huỷ timeout bất kỳ lúc nào.
- */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounce<T extends (...args: any[]) => any>(
   fn: T,
@@ -28,10 +24,6 @@ export function debounce<T extends (...args: any[]) => any>(
   return debounced;
 }
 
-/**
- * Hook trả về một hàm được debounce với delayMs (mặc định 400ms).
- * Tự động đồng bộ callback mới nhất qua `useRef` và dọn dẹp timeout khi component unmount.
- */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useDebouncedCallback<T extends (...args: any[]) => any>(
   callback: T,

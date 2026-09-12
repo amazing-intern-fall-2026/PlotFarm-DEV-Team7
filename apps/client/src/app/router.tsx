@@ -26,16 +26,124 @@ import {
   AdminPlotConfigPage,
 } from "@/pages";
 
-/**
- * ShellRouteLayout — Wrapper tích hợp RootLayout với React Router
- * Tự động đồng bộ role, activeNavId, breadcrumbs theo pathname.
- */
-export function ShellRouteLayout() {
+interface RouteNavRule {
+  pattern: RegExp;
+  breadcrumbs: TopbarBreadcrumbItem[];
+  activeNavId: string;
+}
+
+const CUSTOMER_NAV_RULES: RouteNavRule[] = [
+  {
+    pattern: /^\/plots\/.+/,
+    breadcrumbs: [{ label: "Khám phá ô đất", href: "/plots" }, { label: "Chi tiết ô đất" }],
+    activeNavId: "explore",
+  },
+  {
+    pattern: /^\/plots/,
+    breadcrumbs: [{ label: "Trang chủ", href: "/" }, { label: "Khám phá ô đất" }],
+    activeNavId: "explore",
+  },
+  {
+    pattern: /^\/checkout/,
+    breadcrumbs: [{ label: "Khám phá ô đất", href: "/plots" }, { label: "Thanh toán & Hợp đồng" }],
+    activeNavId: "orders",
+  },
+  {
+    pattern: /^\/my-farm/,
+    breadcrumbs: [{ label: "Trang chủ", href: "/" }, { label: "Vườn của tôi" }],
+    activeNavId: "orders",
+  },
+  {
+    pattern: /^\/journal/,
+    breadcrumbs: [{ label: "Trang chủ", href: "/" }, { label: "Nhật ký nông vụ" }],
+    activeNavId: "journal",
+  },
+  {
+    pattern: /^\/about/,
+    breadcrumbs: [{ label: "Trang chủ", href: "/" }, { label: "Về chúng tôi" }],
+    activeNavId: "about",
+  },
+  {
+    pattern: /.*/,
+    breadcrumbs: [{ label: "PlotFarm" }, { label: "Trang chủ" }],
+    activeNavId: "home",
+  },
+];
+
+const FARMER_NAV_RULES: RouteNavRule[] = [
+  {
+    pattern: /^\/farmer\/tasks\/.+/,
+    breadcrumbs: [{ label: "Nhiệm vụ hôm nay", href: "/farmer" }, { label: "Thực hiện nhiệm vụ" }],
+    activeNavId: "tasks_today",
+  },
+  {
+    pattern: /^\/farmer\/plots/,
+    breadcrumbs: [{ label: "Nhiệm vụ hôm nay", href: "/farmer" }, { label: "Quản lý ô đất" }],
+    activeNavId: "my_plots",
+  },
+  {
+    pattern: /.*/,
+    breadcrumbs: [],
+    activeNavId: "tasks_today",
+  },
+];
+
+const ADMIN_NAV_RULES: RouteNavRule[] = [
+  {
+    pattern: /config/,
+    breadcrumbs: [
+      { label: "Tổng quan điều hành", href: "/admin" },
+      { label: "Danh mục ô đất", href: "/admin/plots" },
+      { label: "Cấu hình IoT & Cây trồng" },
+    ],
+    activeNavId: "tech_config",
+  },
+  {
+    pattern: /^\/admin\/plots/,
+    breadcrumbs: [{ label: "Tổng quan điều hành", href: "/admin" }, { label: "Danh sách ô đất" }],
+    activeNavId: "plots",
+  },
+  {
+    pattern: /.*/,
+    breadcrumbs: [],
+    activeNavId: "overview",
+  },
+];
+
+const ROLE_NAV_RULES: Record<AppRole, RouteNavRule[]> = {
+  customer: CUSTOMER_NAV_RULES,
+  farmer: FARMER_NAV_RULES,
+  admin: ADMIN_NAV_RULES,
+};
+
+const NAV_TARGETS: Record<string, string> = {
+  home: "/",
+  explore: "/plots",
+  journal: "/journal",
+  camera: "/journal",
+  about: "/about",
+  orders: "/my-farm",
+  tasks_today: "/farmer",
+  task_journal: "/farmer",
+  my_plots: "/farmer/plots",
+  iot_camera: "/farmer/plots",
+  scan_qr: "/farmer/tasks/TASK-01/execute",
+  overview: "/admin",
+  work_orders: "/admin",
+  harvest: "/admin",
+  rbac: "/admin",
+  alerts: "/admin",
+  settings: "/admin",
+  plots: "/admin/plots",
+  seeds_supply: "/admin/plots",
+  tech_config: "/admin/plots/p-01/config",
+};
+
+export function ShellRouteLayout({ role = "customer" }: { role?: AppRole }) {
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = location.pathname;
 
-  // 0. Xác định trạng thái đăng nhập từ sessionStorage
   const user = React.useMemo(() => {
     try {
       const rawUser = sessionStorage.getItem(SESSION_KEYS.USER);
@@ -48,7 +156,7 @@ export function ShellRouteLayout() {
     } catch {
       return undefined;
     }
-  }, [location.pathname]);
+  }, [pathname]);
 
   const handleLogout = React.useCallback(() => {
     sessionStorage.removeItem(SESSION_KEYS.ACCESS_TOKEN);
@@ -57,173 +165,31 @@ export function ShellRouteLayout() {
     navigate(AUTH_ROUTES.LOGIN);
   }, [navigate]);
 
-  // 1. Xác định vai trò từ URL
-  let role: AppRole = "customer";
-  if (pathname.startsWith("/admin")) {
-    role = "admin";
-  } else if (pathname.startsWith("/farmer")) {
-    role = "farmer";
-  }
-
-  // 2. Xác định activeNavId
-  let activeNavId = "home";
-  if (role === "customer") {
-    if (pathname === "/") activeNavId = "home";
-    else if (pathname.startsWith("/plots")) activeNavId = "explore";
-    else if (pathname.startsWith("/journal")) activeNavId = "journal";
-    else if (pathname.startsWith("/about")) activeNavId = "about";
-    else if (pathname.startsWith("/my-farm") || pathname.startsWith("/checkout"))
-      activeNavId = "orders";
-  } else if (role === "farmer") {
-    if (pathname === "/farmer" || pathname.startsWith("/farmer/tasks"))
-      activeNavId = "tasks_today";
-    else if (pathname.startsWith("/farmer/plots")) activeNavId = "my_plots";
-  } else if (role === "admin") {
-    if (pathname === "/admin" || pathname === "/admin/dashboard")
-      activeNavId = "overview";
-    else if (pathname.includes("/config")) activeNavId = "tech_config";
-    else if (pathname.startsWith("/admin/plots")) activeNavId = "plots";
-  }
-
-  // 3. Xác định Breadcrumbs linh hoạt
-  const breadcrumbs: TopbarBreadcrumbItem[] = React.useMemo(() => {
-    if (role === "admin") {
-      if (pathname.includes("/config")) {
-        return [
-          { label: "Tổng quan điều hành", href: "/admin" },
-          { label: "Danh mục ô đất", href: "/admin/plots" },
-          { label: "Cấu hình IoT & Cây trồng" },
-        ];
-      }
-      if (pathname.startsWith("/admin/plots")) {
-        return [
-          { label: "Tổng quan điều hành", href: "/admin" },
-          { label: "Danh sách ô đất" },
-        ];
-      }
-      return [];
-    }
-
-    if (role === "farmer") {
-      if (pathname.match(/\/farmer\/tasks\/.+/)) {
-        return [
-          { label: "Nhiệm vụ hôm nay", href: "/farmer" },
-          { label: "Thực hiện nhiệm vụ" },
-        ];
-      }
-      if (pathname.startsWith("/farmer/plots")) {
-        return [
-          { label: "Nhiệm vụ hôm nay", href: "/farmer" },
-          { label: "Quản lý ô đất" },
-        ];
-      }
-      return [];
-    }
-
-    // Customer
-    if (pathname.startsWith("/checkout")) {
-      return [
-        { label: "Khám phá ô đất", href: "/plots" },
-        { label: "Thanh toán & Hợp đồng" },
-      ];
-    }
-    if (pathname.match(/\/plots\/.+/)) {
-      return [
-        { label: "Khám phá ô đất", href: "/plots" },
-        { label: "Chi tiết ô đất" },
-      ];
-    }
-    if (pathname.startsWith("/plots")) {
-      return [{ label: "Trang chủ", href: "/" }, { label: "Khám phá ô đất" }];
-    }
-    if (pathname.startsWith("/my-farm")) {
-      return [{ label: "Trang chủ", href: "/" }, { label: "Vườn của tôi" }];
-    }
-    if (pathname.startsWith("/journal")) {
-      return [{ label: "Trang chủ", href: "/" }, { label: "Nhật ký nông vụ" }];
-    }
-    if (pathname.startsWith("/about")) {
-      return [{ label: "Trang chủ", href: "/" }, { label: "Về chúng tôi" }];
-    }
-    return [{ label: "PlotFarm" }, { label: "Trang chủ" }];
+  const matchedRule = React.useMemo(() => {
+    const rules = ROLE_NAV_RULES[role];
+    return rules.find((r) => r.pattern.test(pathname)) ?? rules[rules.length - 1];
   }, [pathname, role]);
 
-  // 4. Xử lý điều hướng khi bấm icon / nav
-  const handleNavChange = (id: string) => {
-    if (role === "customer") {
-      switch (id) {
-        case "home":
-          navigate("/");
-          break;
-        case "explore":
-          navigate("/plots");
-          break;
-        case "journal":
-        case "camera":
-          navigate("/journal");
-          break;
-        case "about":
-          navigate("/about");
-          break;
-        case "orders":
-          navigate("/my-farm");
-          break;
-        case "profile":
-          if (!user) {
-            navigate(AUTH_ROUTES.LOGIN);
-          } else {
-            navigate("/my-farm");
-          }
-          break;
+  const handleNavChange = React.useCallback(
+    (id: string) => {
+      if (id === "profile") {
+        navigate(user ? "/my-farm" : AUTH_ROUTES.LOGIN);
+        return;
       }
-    } else if (role === "farmer") {
-      switch (id) {
-        case "tasks_today":
-        case "task_journal":
-          navigate("/farmer");
-          break;
-        case "profile":
-          if (!user) {
-            navigate(AUTH_ROUTES.LOGIN);
-          } else {
-            navigate("/farmer");
-          }
-          break;
-        case "my_plots":
-        case "iot_camera":
-          navigate("/farmer/plots");
-          break;
-        case "scan_qr":
-          navigate("/farmer/tasks/TASK-01/execute");
-          break;
+      const target = NAV_TARGETS[id];
+      if (target) {
+        navigate(target);
       }
-    } else if (role === "admin") {
-      switch (id) {
-        case "overview":
-        case "work_orders":
-        case "harvest":
-        case "rbac":
-        case "alerts":
-        case "settings":
-          navigate("/admin");
-          break;
-        case "plots":
-        case "seeds_supply":
-          navigate("/admin/plots");
-          break;
-        case "tech_config":
-          navigate("/admin/plots/p-01/config");
-          break;
-      }
-    }
-  };
+    },
+    [navigate, user]
+  );
 
   return (
     <RootLayout
       role={role}
       user={user}
-      activeNavId={activeNavId}
-      breadcrumbs={breadcrumbs}
+      activeNavId={matchedRule.activeNavId}
+      breadcrumbs={matchedRule.breadcrumbs}
       onNavChange={handleNavChange}
       onLoginClick={() => navigate(AUTH_ROUTES.LOGIN)}
       onLogoutClick={handleLogout}
@@ -234,57 +200,60 @@ export function ShellRouteLayout() {
 }
 
 export const router = createBrowserRouter([
-  // Auth routes — full-screen, NO shell layout
   { path: AUTH_ROUTES.LOGIN.slice(1), element: <LoginPage /> },
   { path: AUTH_ROUTES.FORGOT_PASSWORD.slice(1), element: <Navigate to={AUTH_ROUTES.LOGIN} replace /> },
 
   {
-    path: "/",
-    element: <ShellRouteLayout />,
+    element: <ShellRouteLayout role="customer" />,
     children: [
-      // Public routes — Khách vãng lai xem được
-      { index: true, element: <HomePage /> },
-      { path: "plots", element: <PlotsPage /> },
-      { path: "plots/:id", element: <PlotDetailPage /> },
-      { path: "about", element: <AboutPage /> },
+      { path: "/", element: <HomePage /> },
+      { path: "/plots", element: <PlotsPage /> },
+      { path: "/plots/:id", element: <PlotDetailPage /> },
+      { path: "/about", element: <AboutPage /> },
 
-      // Protected Customer routes — Chưa login thì không có nhật ký nông vụ & thuê đất
       {
         element: <ProtectedRoute />,
         children: [
-          { path: "journal", element: <JournalPage /> },
-          { path: "checkout", element: <CheckoutPage /> },
-          { path: "checkout/:id", element: <CheckoutPage /> },
-          { path: "my-farm", element: <MyFarmPage /> },
-          { path: "my-farm/:id", element: <MyFarmPage /> },
+          { path: "/journal", element: <JournalPage /> },
+          { path: "/checkout", element: <CheckoutPage /> },
+          { path: "/checkout/:id", element: <CheckoutPage /> },
+          { path: "/my-farm", element: <MyFarmPage /> },
+          { path: "/my-farm/:id", element: <MyFarmPage /> },
         ],
       },
-
-      // Protected Farmer routes — Chỉ dành cho STAFF hoặc ADMIN
-      {
-        element: <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]} />,
-        children: [
-          { path: "farmer", element: <FarmerTasksPage /> },
-          { path: "farmer/tasks", element: <Navigate to="/farmer" replace /> },
-          { path: "farmer/tasks/:id", element: <FarmerTaskExecutePage /> },
-          { path: "farmer/tasks/:id/execute", element: <FarmerTaskExecutePage /> },
-          { path: "farmer/plots", element: <FarmerPlotsPage /> },
-        ],
-      },
-
-      // Protected Admin routes — Chỉ dành cho ADMIN
-      {
-        element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
-        children: [
-          { path: "admin", element: <AdminDashboardPage /> },
-          { path: "admin/dashboard", element: <Navigate to="/admin" replace /> },
-          { path: "admin/plots", element: <AdminPlotsPage /> },
-          { path: "admin/plots/:id/config", element: <AdminPlotConfigPage /> },
-        ],
-      },
-
-      // Fallback
-      { path: "*", element: <Navigate to="/" replace /> },
     ],
   },
+
+  {
+    element: <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]} />,
+    children: [
+      {
+        element: <ShellRouteLayout role="farmer" />,
+        children: [
+          { path: "/farmer", element: <FarmerTasksPage /> },
+          { path: "/farmer/tasks", element: <Navigate to="/farmer" replace /> },
+          { path: "/farmer/tasks/:id", element: <FarmerTaskExecutePage /> },
+          { path: "/farmer/tasks/:id/execute", element: <FarmerTaskExecutePage /> },
+          { path: "/farmer/plots", element: <FarmerPlotsPage /> },
+        ],
+      },
+    ],
+  },
+
+  {
+    element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
+    children: [
+      {
+        element: <ShellRouteLayout role="admin" />,
+        children: [
+          { path: "/admin", element: <AdminDashboardPage /> },
+          { path: "/admin/dashboard", element: <Navigate to="/admin" replace /> },
+          { path: "/admin/plots", element: <AdminPlotsPage /> },
+          { path: "/admin/plots/:id/config", element: <AdminPlotConfigPage /> },
+        ],
+      },
+    ],
+  },
+
+  { path: "*", element: <Navigate to="/" replace /> },
 ]);

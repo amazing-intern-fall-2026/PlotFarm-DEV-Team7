@@ -13,18 +13,11 @@ export type BoxElement =
   | "form";
 
 export interface BoxProps extends React.HTMLAttributes<HTMLElement> {
-  /** Thẻ HTML ngữ nghĩa cần render (mặc định là "div") */
   as?: BoxElement;
-  /** Tùy chọn vô hiệu hóa validate mặc định của trình duyệt khi as="form" */
   noValidate?: boolean;
   children?: React.ReactNode;
 }
 
-/**
- * Box — Khối bố cục (Container / Wrapper) chuẩn hóa duy nhất của PlotFarm.
- * Thay thế cho việc viết các thẻ `<div>` thô trong các trang và component.
- * Cho phép linh hoạt chuyển đổi giữa div, section, article, main,...
- */
 export const Box = React.forwardRef<HTMLElement, BoxProps>(
   ({ as = "div", className, children, ...props }, ref) => {
     return React.createElement(
@@ -34,9 +27,9 @@ export const Box = React.forwardRef<HTMLElement, BoxProps>(
         className: cn(className),
         ...props,
       },
-      children
+      children,
     );
-  }
+  },
 );
 
 Box.displayName = "Box";

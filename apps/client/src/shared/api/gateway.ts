@@ -1,4 +1,7 @@
-import { AppError, type ApiResponseEnvelope } from "@/shared/lib/errors/AppError";
+import {
+  AppError,
+  type ApiResponseEnvelope,
+} from "@/shared/lib/errors/AppError";
 import type { ApiErrorResponse } from "@repo/shared";
 import {
   GATEWAY_ENDPOINT,
@@ -23,7 +26,7 @@ export interface GatewayEnvelope<T = unknown> {
  */
 export async function dispatchAction<TReq = unknown, TRes = unknown>(
   action: string,
-  payload?: TReq
+  payload?: TReq,
 ): Promise<TRes> {
   const correlationId = crypto.randomUUID();
   const token = sessionStorage.getItem("access_token");
@@ -52,7 +55,7 @@ export async function dispatchAction<TReq = unknown, TRes = unknown>(
   } catch {
     throw AppError.fromUnknown(
       new Error(GATEWAY_ERROR_MESSAGES.ERR_NETWORK),
-      "ERR_NETWORK"
+      "ERR_NETWORK",
     );
   }
 
@@ -63,7 +66,7 @@ export async function dispatchAction<TReq = unknown, TRes = unknown>(
   } catch {
     throw AppError.fromUnknown(
       new Error(GATEWAY_ERROR_MESSAGES.ERR_PARSE),
-      "ERR_PARSE"
+      "ERR_PARSE",
     );
   }
 

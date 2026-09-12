@@ -47,7 +47,7 @@ export type TopBarProps = TopbarProps;
 const ROLE_COLORS: Record<AppRole, string> = {
   customer: "bg-blue-100 text-blue-700",
   admin: "bg-primary/10 text-primary",
-  farmer: "bg-amber-100 text-amber-700"
+  farmer: "bg-amber-100 text-amber-700",
 };
 
 /**
@@ -66,13 +66,13 @@ export function Topbar({
   onNotificationsClick,
   onLoginClick,
   onLogoutClick,
-  className
+  className,
 }: TopbarProps) {
   return (
     <header
       className={cn(
         "flex h-16 items-center justify-between gap-4 border-b border-border bg-white px-4 sm:px-6 dark:bg-slate-900",
-        className
+        className,
       )}
     >
       {/* ── Left: Hamburger (mobile) + Breadcrumb (desktop) ─────────────── */}
@@ -89,12 +89,17 @@ export function Topbar({
 
         {/* Breadcrumbs — desktop only */}
         {_breadcrumbs.length > 0 && (
-          <nav aria-label="Breadcrumb" className="hidden items-center gap-1.5 text-sm sm:flex">
+          <nav
+            aria-label="Breadcrumb"
+            className="hidden items-center gap-1.5 text-sm sm:flex"
+          >
             {_breadcrumbs.map((crumb, idx) => {
               const isLast = idx === _breadcrumbs.length - 1;
               return (
                 <div key={idx} className="flex items-center gap-1.5">
-                  {idx > 0 && <span className="text-muted-foreground/40">/</span>}
+                  {idx > 0 && (
+                    <span className="text-muted-foreground/40">/</span>
+                  )}
                   {isLast ? (
                     <span className="font-semibold text-foreground">
                       {crumb.label}
@@ -127,7 +132,7 @@ export function Topbar({
             className={cn(
               "w-full rounded-xl border border-input bg-muted/40 pl-9 pr-4 py-1.5",
               "text-sm text-foreground placeholder:text-muted-foreground",
-              "focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-background transition-colors"
+              "focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-background transition-colors",
             )}
           />
         </div>
@@ -167,7 +172,7 @@ export function Topbar({
                 <span
                   className={cn(
                     "mt-0.5 rounded-full px-1.5 py-px text-[10px] font-medium",
-                    ROLE_COLORS[user.role]
+                    ROLE_COLORS[user.role],
                   )}
                 >
                   {roleBadgeLabel}

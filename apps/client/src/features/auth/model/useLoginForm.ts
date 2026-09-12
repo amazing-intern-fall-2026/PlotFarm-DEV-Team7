@@ -20,7 +20,6 @@ export interface LoginFormValues {
   rememberMe: boolean;
 }
 
-/** Tương thích ngược */
 export type LoginFormState = LoginFormValues;
 
 export interface LoginFormErrors {

@@ -37,7 +37,6 @@ import {
 } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 
-// ─── User shape ─────────────────────────────────────────────────────────────
 export interface RootLayoutUser {
   name: string;
   avatarSrc?: string;
@@ -45,7 +44,6 @@ export interface RootLayoutUser {
 
 export type AppShellUser = RootLayoutUser;
 
-// ─── Props ───────────────────────────────────────────────────────────────────
 export interface RootLayoutProps {
   role: AppRole;
   user?: RootLayoutUser;
@@ -61,8 +59,6 @@ export interface RootLayoutProps {
 }
 
 export type AppShellProps = RootLayoutProps;
-
-// ─── Build nav configs ───────────────────────────────────────────────────────
 
 function useCustomerNavItems(
   t: (key: string) => string,
@@ -85,7 +81,6 @@ function useCustomerNavItems(
     },
   ];
 
-  // Chưa đăng nhập thì không có nhật ký nông vụ
   if (isLoggedIn) {
     items.push({
       id: "journal",
@@ -308,17 +303,6 @@ function useFarmerBottomItems(t: (key: string) => string) {
   ];
 }
 
-// ─── Component ───────────────────────────────────────────────────────────────
-
-/**
- * RootLayout — Root layout shell nhận `role` và render đúng layout theo role × breakpoint.
- *
- * | Role     | Desktop (≥1024px)                      | Mobile (<1024px)               |
- * |----------|----------------------------------------|-------------------------------|
- * | customer | CustomerHeader + full-width main        | CustomerHeader + BottomNav     |
- * | admin    | SidebarNav (collapsible) + TopBar + main | TopBar (hamburger) + BottomNav |
- * | farmer   | SidebarNav (collapsible) + TopBar + main | TopBar (hamburger) + BottomNav |
- */
 export function RootLayout({
   role,
   user,
@@ -351,7 +335,6 @@ export function RootLayout({
     [handleNavChange],
   );
 
-  // ─── CUSTOMER ─────────────────────────────────────────────────────────────
   if (role === "customer") {
     const customerNavItems = useCustomerNavItems(
       t,
@@ -377,17 +360,14 @@ export function RootLayout({
           onLogoutClick={onLogoutClick}
         />
 
-        {/* Main content — pb-20 hides content behind BottomNav on mobile */}
         <main className="flex-1 w-full py-6 lg:pb-6 pb-20">
           <Container>
             {children}
           </Container>
         </main>
 
-        {/* Footer */}
         <Footer />
 
-        {/* Bottom Nav — mobile only */}
         <div className="lg:hidden">
           <Navigation
             items={customerBottomItems}
@@ -399,7 +379,6 @@ export function RootLayout({
     );
   }
 
-  // ─── ADMIN / FARMER ───────────────────────────────────────────────────────
   const isAdmin = role === "admin";
   const sidebarSections = isAdmin
     ? useAdminSections(t, handleNavChange)
@@ -454,7 +433,6 @@ export function RootLayout({
 
   return (
     <div className={cn("flex h-screen overflow-hidden bg-muted/30", className)}>
-      {/* ── Sidebar (desktop only) ─────────────────────────────────── */}
       <Sidebar
         sections={sidebarSections}
         activeItemId={activeId}
@@ -463,7 +441,6 @@ export function RootLayout({
         footer={sidebarFooter}
       />
 
-      {/* ── Right column: Topbar + main ─────────────────────────────── */}
       <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar
           user={user ? { ...user, role } : undefined}
@@ -478,7 +455,6 @@ export function RootLayout({
           onLogoutClick={onLogoutClick}
         />
 
-        {/* Scrollable main — pb-20 for mobile bottom nav */}
         <main
           className={cn(
             "flex-1 overflow-y-auto px-4 py-4 sm:px-6",
@@ -488,7 +464,6 @@ export function RootLayout({
           {children}
         </main>
 
-        {/* Bottom Nav — mobile only */}
         <div className="lg:hidden">
           <Navigation
             items={bottomItems}
