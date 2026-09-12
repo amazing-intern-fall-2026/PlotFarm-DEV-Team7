@@ -9,11 +9,14 @@ export type BoxElement =
   | "aside"
   | "header"
   | "footer"
-  | "nav";
+  | "nav"
+  | "form";
 
 export interface BoxProps extends React.HTMLAttributes<HTMLElement> {
   /** Thẻ HTML ngữ nghĩa cần render (mặc định là "div") */
   as?: BoxElement;
+  /** Tùy chọn vô hiệu hóa validate mặc định của trình duyệt khi as="form" */
+  noValidate?: boolean;
   children?: React.ReactNode;
 }
 

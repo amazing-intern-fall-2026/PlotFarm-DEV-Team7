@@ -27,7 +27,8 @@ export type TypographyElement =
   | "div"
   | "label"
   | "small"
-  | "strong";
+  | "strong"
+  | "blockquote";
 
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   /** Thẻ HTML ngữ nghĩa cần render (h1-h6, p, span, div,...) */
