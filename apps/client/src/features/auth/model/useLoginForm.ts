@@ -38,6 +38,7 @@ export function useLoginForm() {
     trigger,
     clearErrors,
     setError,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     defaultValues: {
@@ -126,5 +127,6 @@ export function useLoginForm() {
     formErrors: errors,
     isLoading: isSubmitting,
     debouncedTrigger,
+    setValue,
   };
 }

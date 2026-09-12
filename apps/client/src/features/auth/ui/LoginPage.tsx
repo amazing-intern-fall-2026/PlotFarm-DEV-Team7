@@ -199,7 +199,13 @@ function LoginFormPanel() {
     handleSubmit,
     errors,
     isLoading,
+    setValue,
   } = useLoginForm();
+
+  const fillAccount = (email: string) => {
+    setValue("email", email, { shouldValidate: true });
+    setValue("password", "12345678", { shouldValidate: true });
+  };
 
   return (
     <Box
@@ -221,6 +227,41 @@ function LoginFormPanel() {
         >
           {AUTH_UI_TEXT.LOGIN_SUBTITLE}
         </Text>
+      </Box>
+
+      <Box className="rounded-lg border border-primary/20 bg-primary/5 p-2.5">
+        <Text variant="small" className="text-xs font-semibold text-primary block mb-1.5">
+          Tài khoản mẫu thử nghiệm:
+        </Text>
+        <Box className="flex flex-wrap gap-1.5">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs bg-white dark:bg-slate-800"
+            onClick={() => fillAccount("customer@plotfarm.vn")}
+          >
+            Khách hàng
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs bg-white dark:bg-slate-800"
+            onClick={() => fillAccount("staff@plotfarm.vn")}
+          >
+            Kỹ thuật viên
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs bg-white dark:bg-slate-800"
+            onClick={() => fillAccount("admin@plotfarm.vn")}
+          >
+            Quản trị viên
+          </Button>
+        </Box>
       </Box>
 
       {errors.general && (
