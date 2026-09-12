@@ -8,26 +8,28 @@ import {
   CardFooter,
   Button,
   Badge,
+  Box,
+  Text,
 } from "@/shared/ui";
 
 export function AdminPlotsPage() {
   const navigate = useNavigate();
   return (
-    <div className="max-w-4xl space-y-6">
-      <Card>
+    <Box className="w-full space-y-6">
+      <Card className="w-full">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <CardTitle>Quản lý Ô đất (/admin/plots)</CardTitle>
             <Badge variant="warning">Cảnh báo</Badge>
-          </div>
+          </Box>
           <CardDescription className="text-destructive font-medium">
             ⚠️ Ô A-104 & B-108 đang có cảnh báo nhiệt độ lớn hơn 32°C
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
+          <Text variant="muted" className="text-sm">
             Danh sách các ô đất thử nghiệm đang vận hành hệ sinh thái IoT BioCloud.
-          </p>
+          </Text>
         </CardContent>
         <CardFooter>
           <Button onClick={() => navigate("/admin/plots/A-104/config")}>
@@ -35,6 +37,6 @@ export function AdminPlotsPage() {
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </Box>
   );
 }

@@ -8,27 +8,29 @@ import {
   CardFooter,
   Button,
   Badge,
+  Box,
+  Text,
 } from "@/shared/ui";
 
 export function FarmerTaskExecutePage() {
   const { taskId = "TASK-01" } = useParams();
   const navigate = useNavigate();
   return (
-    <div className="max-w-4xl space-y-6">
-      <Card>
+    <Box className="w-full space-y-6">
+      <Card className="w-full">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <CardTitle>Thực thi Tác vụ #{taskId}</CardTitle>
             <Badge variant="warning">Đang tiến hành</Badge>
-          </div>
+          </Box>
           <CardDescription>
             Tác vụ: Bón 150g phân trùn quế quanh rễ • Chụp ảnh nghiệm thu tại Ô A-104
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
+          <Text variant="muted" className="text-sm">
             Sau khi hoàn thành, ảnh chụp thực tế sẽ được tự động đồng bộ vào nhật ký canh tác của khách hàng.
-          </p>
+          </Text>
         </CardContent>
         <CardFooter className="flex gap-3">
           <Button variant="outline" onClick={() => navigate("/farmer")}>
@@ -39,6 +41,6 @@ export function FarmerTaskExecutePage() {
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </Box>
   );
 }

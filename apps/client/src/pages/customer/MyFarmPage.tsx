@@ -8,27 +8,29 @@ import {
   CardFooter,
   Button,
   Badge,
+  Box,
+  Text,
 } from "@/shared/ui";
 
 export function MyFarmPage() {
   const { plotId = "A-104" } = useParams();
   const navigate = useNavigate();
   return (
-    <div className="max-w-4xl space-y-6">
-      <Card>
+    <Box className="w-full space-y-6">
+      <Card className="w-full">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <CardTitle>Vườn của tôi — Ô #{plotId}</CardTitle>
             <Badge variant="success">Đang canh tác</Badge>
-          </div>
+          </Box>
           <CardDescription>
             Camera Livestream 24/7 • Độ ẩm đất: 68% • Nhiệt độ: 24.5°C
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
+          <Text variant="muted" className="text-sm">
             Lô đất của bạn đang được kỹ thuật viên chăm sóc đạt chuẩn hữu cơ quốc tế.
-          </p>
+          </Text>
         </CardContent>
         <CardFooter className="flex gap-3">
           <Button variant="outline" onClick={() => navigate("/")}>
@@ -39,6 +41,6 @@ export function MyFarmPage() {
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </Box>
   );
 }

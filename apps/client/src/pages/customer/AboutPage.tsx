@@ -5,27 +5,29 @@ import {
   CardDescription,
   CardContent,
   Badge,
+  Box,
+  Text,
 } from "@/shared/ui";
 
 export function AboutPage() {
   return (
-    <div className="max-w-4xl space-y-6">
-      <Card>
+    <Box className="w-full space-y-6">
+      <Card className="w-full">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <CardTitle>Về chúng tôi (/about)</CardTitle>
             <Badge variant="outline">BioCloud</Badge>
-          </div>
+          </Box>
           <CardDescription>
             Giải pháp số hoá nông trại thông minh chuẩn VietGAP & GlobalGAP
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <Text variant="muted" className="text-sm leading-relaxed">
             BioCloud Farming là nền tảng tiên phong kết nối mô hình nông nghiệp số với hệ thống cảm biến IoT, camera HLS truyền phát thời gian thực và nhật ký canh tác minh bạch.
-          </p>
+          </Text>
         </CardContent>
       </Card>
-    </div>
+    </Box>
   );
 }

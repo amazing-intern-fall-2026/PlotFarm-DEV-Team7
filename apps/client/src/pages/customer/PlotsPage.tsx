@@ -8,26 +8,28 @@ import {
   CardFooter,
   Button,
   Badge,
+  Box,
+  Text,
 } from "@/shared/ui";
 
 export function PlotsPage() {
   const navigate = useNavigate();
   return (
-    <div className="max-w-4xl space-y-6">
-      <Card>
+    <Box className="w-full space-y-6">
+      <Card className="w-full">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <CardTitle>Danh sách Ô đất (/plots)</CardTitle>
             <Badge variant="outline">Đà Lạt Prime</Badge>
-          </div>
+          </Box>
           <CardDescription>
             Bộ lọc phân khu: Khu A (Rau ăn lá) • Khu B (Củ quả hữu cơ)
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
+          <Text variant="muted" className="text-sm">
             Lựa chọn ô đất phù hợp để bắt đầu hành trình canh tác nông nghiệp số cùng kỹ sư BioCloud.
-          </p>
+          </Text>
         </CardContent>
         <CardFooter>
           <Button onClick={() => navigate("/plots/A-104")}>
@@ -35,6 +37,6 @@ export function PlotsPage() {
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </Box>
   );
 }

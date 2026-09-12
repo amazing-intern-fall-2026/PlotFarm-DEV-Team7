@@ -7,25 +7,27 @@ import {
   CardFooter,
   Button,
   Badge,
+  Box,
+  Text,
 } from "@/shared/ui";
 
 export function FarmerPlotsPage() {
   return (
-    <div className="max-w-4xl space-y-6">
-      <Card>
+    <Box className="w-full space-y-6">
+      <Card className="w-full">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <CardTitle>Ô đất của tôi — 5 ô (/farmer/plots)</CardTitle>
             <Badge variant="secondary">Kỹ thuật viên</Badge>
-          </div>
+          </Box>
           <CardDescription>
             Phân khu phụ trách: Khu A Đà Lạt (3 ô) • Khu B (2 ô)
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
+          <Text variant="muted" className="text-sm">
             Theo dõi tình trạng đất, độ ẩm và sinh trưởng của các ô đất được phân công phụ trách.
-          </p>
+          </Text>
         </CardContent>
         <CardFooter>
           <Button
@@ -36,6 +38,6 @@ export function FarmerPlotsPage() {
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </Box>
   );
 }

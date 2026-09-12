@@ -8,27 +8,29 @@ import {
   CardFooter,
   Button,
   Badge,
+  Box,
+  Text,
 } from "@/shared/ui";
 
 export function PlotDetailPage() {
   const { plotId = "A-104" } = useParams();
   const navigate = useNavigate();
   return (
-    <div className="max-w-4xl space-y-6">
-      <Card>
+    <Box className="w-full space-y-6">
+      <Card className="w-full">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <CardTitle>Chi tiết Ô đất #{plotId}</CardTitle>
             <Badge variant="default">Có sẵn để thuê</Badge>
-          </div>
+          </Box>
           <CardDescription>
             Diện tích: 20m² • Cây trồng: Cải cầu vồng • Chuẩn VietGAP • HLS Camera 1080p
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <Text variant="muted" className="text-sm leading-relaxed">
             Ô đất bao gồm hệ thống tưới nhỏ giọt tự động, cảm biến độ ẩm đất và kết nối trực tiếp với ứng dụng di động của bạn.
-          </p>
+          </Text>
         </CardContent>
         <CardFooter className="flex gap-3">
           <Button variant="outline" onClick={() => navigate("/plots")}>
@@ -39,6 +41,6 @@ export function PlotDetailPage() {
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </Box>
   );
 }

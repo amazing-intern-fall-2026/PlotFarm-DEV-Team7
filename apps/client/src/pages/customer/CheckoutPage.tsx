@@ -8,27 +8,29 @@ import {
   CardFooter,
   Button,
   Badge,
+  Box,
+  Text,
 } from "@/shared/ui";
 
 export function CheckoutPage() {
   const { plotId = "A-104" } = useParams();
   const navigate = useNavigate();
   return (
-    <div className="max-w-4xl space-y-6">
-      <Card>
+    <Box className="w-full space-y-6">
+      <Card className="w-full">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <CardTitle>Thanh toán VietQR — Ô #{plotId}</CardTitle>
             <Badge variant="secondary">Napas247</Badge>
-          </div>
+          </Box>
           <CardDescription>
             Quét mã QR chuyển khoản tự động • Số tiền: 1.500.000 đ/tháng
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
+          <Text variant="muted" className="text-sm">
             Hợp đồng điện tử và quyền truy cập camera giám sát sẽ được kích hoạt ngay khi giao dịch thành công.
-          </p>
+          </Text>
         </CardContent>
         <CardFooter>
           <Button onClick={() => navigate(`/my-farm/${plotId}`)}>
@@ -36,6 +38,6 @@ export function CheckoutPage() {
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </Box>
   );
 }

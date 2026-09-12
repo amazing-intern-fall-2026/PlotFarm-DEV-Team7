@@ -8,27 +8,29 @@ import {
   CardFooter,
   Button,
   Badge,
+  Box,
+  Text,
 } from "@/shared/ui";
 
 export function AdminPlotConfigPage() {
   const { plotId = "A-104" } = useParams();
   const navigate = useNavigate();
   return (
-    <div className="max-w-4xl space-y-6">
-      <Card>
+    <Box className="w-full space-y-6">
+      <Card className="w-full">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <CardTitle>Cấu hình Kỹ thuật Ô đất #{plotId}</CardTitle>
             <Badge variant="outline">Khu A Đà Lạt</Badge>
-          </div>
+          </Box>
           <CardDescription>
             RTSP / HLS Stream • Cài đặt ngưỡng cảm biến • Gán Kỹ thuật viên (Bác Bảy)
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
+          <Text variant="muted" className="text-sm">
             Thiết lập luồng video giám sát 24/7 và thông số vi khí hậu an toàn cho vụ rau hữu cơ.
-          </p>
+          </Text>
         </CardContent>
         <CardFooter>
           <Button onClick={() => navigate("/admin/plots")}>
@@ -36,6 +38,6 @@ export function AdminPlotConfigPage() {
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </Box>
   );
 }
