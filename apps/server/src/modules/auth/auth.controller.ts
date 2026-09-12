@@ -1,6 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 import { z } from "zod";
+import { LoginRequestSchema } from "@repo/shared";
 import { TokenService } from "./token.service";
+import { getMockLoginResponse } from "./auth.service";
+import { buildSuccessResponse } from "../../common/utils/envelope";
 
 const RefreshSchema = z.object({
   refreshToken: z.string().min(1, "Refresh token là bắt buộc"),
@@ -13,9 +16,7 @@ export class AuthController {
    */
   static async refresh(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      // Validate input với Zod
       const validatedBody = RefreshSchema.parse(req.body);
-
       const result = await TokenService.refreshAccessToken(validatedBody.refreshToken);
 
       res.status(200).json({
@@ -45,4 +46,20 @@ export class AuthController {
       next(error);
     }
   }
+}
+
+export function login(req: Request, res: Response): void {
+  const credentials = req.body?.payload ?? req.body;
+  const parsed = LoginRequestSchema.safeParse(credentials);
+  if (!parsed.success) {
+    res.status(400).json({
+      code: 400,
+      message: "Dữ liệu đăng nhập không hợp lệ.",
+      error: parsed.error.flatten(),
+    });
+    return;
+  }
+
+  const data = getMockLoginResponse(parsed.data.email);
+  res.json(buildSuccessResponse(data, "Đăng nhập thành công (mock)."));
 }
