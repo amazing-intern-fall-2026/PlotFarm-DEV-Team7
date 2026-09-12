@@ -1,7 +1,12 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { errorHandler } from "./middlewares/errorHandler";
+import path from "path";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
+import { plotsRouter } from "./modules/plots/plots.routes";
+import { authRouter } from "./modules/auth/auth.routes";
+import { careRouter } from "./modules/care/care.routes";
 
 dotenv.config();
 
@@ -18,6 +23,13 @@ app.get("/health", (_req: Request, res: Response) => {
     data: { status: "ok", service: "plot-farm-server" },
   });
 });
+const openApiDocument = YAML.load(path.join(__dirname, "docs/openapi.yaml"));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
+
+// Mock endpoints for AC-3 (US-06) — FE can build against these before real BE logic lands.
+app.use("/api/v1", plotsRouter);
+app.use("/api/v1", authRouter);
+app.use("/api/v1", careRouter);
 
 // Register routes here...
 
