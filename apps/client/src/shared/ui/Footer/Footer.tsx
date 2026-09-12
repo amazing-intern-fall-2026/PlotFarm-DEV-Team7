@@ -21,7 +21,7 @@ export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
  * 3. Cột "Phân Hệ Canh Tác"
  * 4. Cột "Tài Khoản & Pháp Lý"
  * 5. Cột "Trang Trại Đà Lạt" (Địa chỉ, Hotline kỹ sư nông học, Email kỹ thuật)
- * 6. Bottom bar: Bản quyền © 2025 BioCloud Farming & liên kết Bảo mật dữ liệu IoT, Tiêu chuẩn nông sản sạch
+ * 6. Bottom bar: Bản quyền © 2026 BioCloud Farming & liên kết Bảo mật dữ liệu IoT, Tiêu chuẩn nông sản sạch
  * 7. Tích hợp Skeleton Loading State có tính tái sử dụng cao thông qua component State
  * 8. Chuẩn hóa i18n toàn diện qua useT(), loại bỏ hoàn toàn việc fix cứng text
  * 9. Bọc trong component Container chuẩn hóa bố cục
