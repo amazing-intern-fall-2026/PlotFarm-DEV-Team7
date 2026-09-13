@@ -6,8 +6,6 @@ import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import { errorHandler } from "./middlewares/errorHandler";
 import { authRoutes } from "./modules/auth/auth.routes";
-import { plotsRouter } from "./modules/plots/plots.routes";
-import { careRouter } from "./modules/care/care.routes";
 import { gatewayController } from "./modules/gateway/gateway.controller";
 
 dotenv.config();
@@ -35,9 +33,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/v1", plotsRouter);
-app.use("/api/v1", authRoutes);
-app.use("/api/v1", careRouter);
 app.post("/api/gateway", gatewayController);
 
 

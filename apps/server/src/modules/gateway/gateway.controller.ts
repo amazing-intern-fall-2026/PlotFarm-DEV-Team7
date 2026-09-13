@@ -1,10 +1,12 @@
 import { randomUUID } from "crypto";
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { ERROR_CODES } from "@repo/shared";
+import { ERROR_CODES, CreateCareRequestSchema } from "@repo/shared";
 import { AppError } from "../../errors/AppError";
 import { buildSuccessResponse } from "../../common/utils/envelope";
 import { loginWithCredentials, loginWithGoogle } from "../auth/auth.service";
+import { getMockPlots } from "../plots/plots.service";
+import { createMockCareRequest } from "../care/care.service";
 import { decryptPayload } from "./jwe";
 
 interface GatewayEnvelope {
@@ -35,7 +37,7 @@ interface ActionConfig {
 
 /**
  * Danh bạ action theo Dispatcher Pattern (docs/GATEWAY_AUTH_SPECIFICATION.md §5.2).
- * Chỉ đăng ký action nào đã có handler thật — action chưa implement (register, google...)
+ * Chỉ đăng ký action nào đã có handler thật — action chưa implement (register...)
  * không được thêm vào đây để tránh trả kết quả giả.
  */
 const actionRegistry: Record<string, ActionConfig> = {
@@ -53,6 +55,30 @@ const actionRegistry: Record<string, ActionConfig> = {
     handler: (payload) => {
       const { idToken } = (payload ?? {}) as { idToken?: string };
       return loginWithGoogle(idToken ?? "");
+    },
+    requireAuth: false,
+  },
+  "plots.list": {
+    handler: async () => getMockPlots(),
+    requireAuth: false,
+  },
+  "care.createRequest": {
+    handler: (payload) => {
+      const { contractCode, ...rest } = (payload ?? {}) as {
+        contractCode?: string;
+        serviceType?: string;
+        customerNote?: string;
+      };
+      const parsed = CreateCareRequestSchema.safeParse(rest);
+      if (!parsed.success) {
+        throw AppError.badRequest(
+          "Dữ liệu yêu cầu chăm sóc không hợp lệ.",
+          ERROR_CODES.VALIDATION,
+        );
+      }
+      return Promise.resolve(
+        createMockCareRequest(contractCode ?? "", parsed.data.serviceType),
+      );
     },
     requireAuth: false,
   },
