@@ -61,43 +61,37 @@ export interface RootLayoutProps {
 export type AppShellProps = RootLayoutProps;
 
 function useCustomerNavItems(
-  t: (key: string) => string,
+  _t: (key: string) => string,
   activeNavId: string,
   onNavChange: (id: string) => void,
-  isLoggedIn: boolean,
+  _isLoggedIn: boolean,
 ): HeaderNavItem[] {
-  const items: HeaderNavItem[] = [
+  return [
     {
       id: "home",
-      label: t("nav.home"),
+      label: "Trang chủ",
       isActive: activeNavId === "home",
       onClick: () => onNavChange("home"),
     },
     {
       id: "explore",
-      label: t("nav.explore"),
+      label: "Khám phá ô đất",
       isActive: activeNavId === "explore",
       onClick: () => onNavChange("explore"),
     },
-  ];
-
-  if (isLoggedIn) {
-    items.push({
+    {
+      id: "camera",
+      label: "Camera 24/7",
+      isActive: activeNavId === "camera",
+      onClick: () => onNavChange("camera"),
+    },
+    {
       id: "journal",
-      label: t("nav.journal"),
+      label: "Nhật ký nông vụ",
       isActive: activeNavId === "journal",
       onClick: () => onNavChange("journal"),
-    });
-  }
-
-  items.push({
-    id: "about",
-    label: t("nav.about"),
-    isActive: activeNavId === "about",
-    onClick: () => onNavChange("about"),
-  });
-
-  return items;
+    },
+  ];
 }
 
 function useCustomerBottomItems(t: (key: string) => string) {
