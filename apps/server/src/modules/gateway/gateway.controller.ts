@@ -1,10 +1,20 @@
 import { randomUUID } from "crypto";
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { ERROR_CODES, CreateCareRequestSchema } from "@repo/shared";
+import {
+  ERROR_CODES,
+  CreateCareRequestSchema,
+  RegisterRequestSchema,
+  VerifyEmailRequestSchema,
+  ResendOtpRequestSchema,
+} from "@repo/shared";
 import { AppError } from "../../errors/AppError";
 import { buildSuccessResponse } from "../../common/utils/envelope";
-import { loginWithCredentials, loginWithGoogle } from "../auth/auth.service";
+import {
+  AuthService,
+  loginWithCredentials,
+  loginWithGoogle,
+} from "../auth/auth.service";
 import { getMockPlots } from "../plots/plots.service";
 import { createMockCareRequest } from "../care/care.service";
 import { decryptPayload } from "./jwe";
@@ -55,6 +65,27 @@ const actionRegistry: Record<string, ActionConfig> = {
     handler: (payload) => {
       const { idToken } = (payload ?? {}) as { idToken?: string };
       return loginWithGoogle(idToken ?? "");
+    },
+    requireAuth: false,
+  },
+  "auth.register": {
+    handler: (payload) => {
+      const parsed = RegisterRequestSchema.parse(payload);
+      return AuthService.register(parsed);
+    },
+    requireAuth: false,
+  },
+  "auth.verifyEmail": {
+    handler: (payload) => {
+      const parsed = VerifyEmailRequestSchema.parse(payload);
+      return AuthService.verifyEmail(parsed);
+    },
+    requireAuth: false,
+  },
+  "auth.resendOtp": {
+    handler: (payload) => {
+      const parsed = ResendOtpRequestSchema.parse(payload);
+      return AuthService.resendOtp(parsed);
     },
     requireAuth: false,
   },

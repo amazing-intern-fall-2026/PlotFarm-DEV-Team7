@@ -75,14 +75,14 @@ export function Topbar({
         className,
       )}
     >
-      {/* ── Left: Hamburger (mobile) + Breadcrumb (desktop) ─────────────── */}
-      <div className="flex items-center gap-3">
+      {/* ── Left: Hamburger (mobile) + Breadcrumb (desktop) + Search bar (flex trái) ── */}
+      <div className="flex flex-1 items-center gap-3 sm:gap-4 min-w-0">
         {/* Mobile menu toggle */}
         <button
           type="button"
           onClick={onMenuClick}
           aria-label={menuLabel}
-          className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground lg:hidden"
+          className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground lg:hidden shrink-0"
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -91,7 +91,7 @@ export function Topbar({
         {_breadcrumbs.length > 0 && (
           <nav
             aria-label="Breadcrumb"
-            className="hidden items-center gap-1.5 text-sm sm:flex"
+            className="hidden items-center gap-1.5 text-sm sm:flex shrink-0 mr-2"
           >
             {_breadcrumbs.map((crumb, idx) => {
               const isLast = idx === _breadcrumbs.length - 1;
@@ -120,11 +120,9 @@ export function Topbar({
             })}
           </nav>
         )}
-      </div>
 
-      {/* ── Center: Search bar ───────────────────────────────────────────── */}
-      <div className="flex flex-1 max-w-md items-center mx-2 sm:mx-4">
-        <div className="relative w-full">
+        {/* Search bar — flex sang trái */}
+        <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <input
             type="search"
@@ -139,7 +137,7 @@ export function Topbar({
       </div>
 
       {/* ── Right: Notification bell + User avatar ──────────────────────── */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0 ml-auto">
         {/* Notifications */}
         <div className="relative">
           <Button

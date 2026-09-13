@@ -9,6 +9,8 @@ import { authRoutes } from "./modules/auth/auth.routes";
 import { gatewayController } from "./modules/gateway/gateway.controller";
 
 dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
@@ -28,8 +30,16 @@ app.get("/health", (_req: Request, res: Response) => {
   });
 });
 
-const openApiDocument = YAML.load(path.join(__dirname, "docs/openapi.yaml"));
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
+import fs from "fs";
+
+const openApiPath = fs.existsSync(path.join(__dirname, "docs/openapi.yaml"))
+  ? path.join(__dirname, "docs/openapi.yaml")
+  : path.join(__dirname, "../src/docs/openapi.yaml");
+
+if (fs.existsSync(openApiPath)) {
+  const openApiDocument = YAML.load(openApiPath);
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
+}
 
 // Routes
 app.use("/api/auth", authRoutes);

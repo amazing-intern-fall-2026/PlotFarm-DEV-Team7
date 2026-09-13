@@ -8,6 +8,7 @@ import {
   Monitor,
   Truck,
   CheckCircle2,
+  X,
 } from "lucide-react";
 import {
   Box,
@@ -59,7 +60,7 @@ function AppleIcon() {
 
 function HeroPanel() {
   return (
-    <Box className="relative flex flex-col justify-between h-full overflow-hidden rounded-2xl bg-[hsl(135,45%,16%)]">
+    <Box className="relative flex flex-col justify-between h-full overflow-hidden bg-[hsl(135,45%,16%)]">
       <Box className="absolute inset-0 bg-gradient-to-b from-[hsl(135,50%,8%)/60%] via-transparent to-[hsl(135,50%,8%)/80%]" />
       <Box className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-[hsl(135,60%,25%)/30%] blur-3xl" />
       <Box className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-[hsl(155,50%,20%)/20%] blur-3xl" />
@@ -72,17 +73,17 @@ function HeroPanel() {
         }}
       />
 
-      <Box className="relative z-10 flex flex-col h-full p-8 gap-6">
+      <Box className="relative z-10 flex flex-col justify-between h-full p-4 lg:p-5 gap-3">
         <Box className="flex items-center justify-between">
-          <Box className="flex items-center gap-2.5">
+          <Box className="flex items-center gap-2">
             <Logo size="sm" />
             <Box>
-              <Text className="text-sm font-semibold text-white leading-none">
+              <Text className="text-xs font-semibold text-white leading-none">
                 CloudFarm
               </Text>
               <Text
                 variant="muted"
-                className="text-[10px] text-[hsl(135,30%,65%)] uppercase tracking-wider"
+                className="text-[8px] text-[hsl(135,30%,65%)] uppercase tracking-wider"
               >
                 {AUTH_UI_TEXT.HERO_BRAND_SUB}
               </Text>
@@ -91,45 +92,45 @@ function HeroPanel() {
           <Badge
             variant="outline"
             icon={
-              <Radio className="h-3 w-3 text-[hsl(135,70%,50%)] animate-pulse" />
+              <Radio className="h-2 w-2 text-[hsl(135,70%,50%)] animate-pulse" />
             }
-            className="rounded-full bg-[hsl(135,40%,12%)/70%] border-[hsl(135,30%,25%)] text-xs text-[hsl(135,30%,70%)] px-3 py-1.5 backdrop-blur-sm"
+            className="rounded-full bg-[hsl(135,40%,12%)/70%] border-[hsl(135,30%,25%)] text-[9px] text-[hsl(135,30%,70%)] px-1.5 py-0.5 backdrop-blur-sm"
           >
             {AUTH_UI_TEXT.HERO_LIVE_BADGE}
           </Badge>
         </Box>
 
-        <Box className="flex-1 flex items-center">
-          <Box className="space-y-6">
+        <Box className="flex-1 flex items-center py-1">
+          <Box className="space-y-2.5">
             <Badge
               variant="outline"
               icon={
-                <ShieldCheck className="h-3.5 w-3.5 text-[hsl(135,55%,45%)]" />
+                <ShieldCheck className="h-2.5 w-2.5 text-[hsl(135,55%,45%)]" />
               }
-              className="rounded-full bg-[hsl(135,40%,12%)/60%] border-[hsl(135,30%,25%)] text-xs text-[hsl(135,30%,70%)] px-3 py-1.5 backdrop-blur-sm"
+              className="rounded-full bg-[hsl(135,40%,12%)/60%] border-[hsl(135,30%,25%)] text-[9px] text-[hsl(135,30%,70%)] px-2 py-0.5 backdrop-blur-sm"
             >
               {AUTH_UI_TEXT.HERO_MODEL_BADGE}
             </Badge>
 
             <Typography
               as="blockquote"
-              className="text-2xl font-semibold leading-snug text-white max-w-sm"
+              className="text-sm lg:text-base font-semibold leading-snug text-white"
             >
               {AUTH_UI_TEXT.HERO_QUOTE}
             </Typography>
 
-            <Box className="flex items-center gap-3">
-              <Box className="flex -space-x-2">
+            <Box className="flex items-center gap-2">
+              <Box className="flex -space-x-1">
                 {["NL", "MA", "TK"].map((initials) => (
                   <Avatar
                     key={initials}
                     name={initials}
                     size="sm"
-                    className="border-2 border-[hsl(135,45%,16%)] bg-[hsl(135,40%,28%)] text-white text-[10px]"
+                    className="border border-[hsl(135,45%,16%)] bg-[hsl(135,40%,28%)] text-white text-[8px] h-5 w-5"
                   />
                 ))}
               </Box>
-              <Text className="text-sm text-[hsl(135,20%,65%)]">
+              <Text className="text-[11px] text-[hsl(135,20%,65%)]">
                 {AUTH_UI_TEXT.HERO_PROOF_PREFIX}{" "}
                 <strong className="text-white">
                   {AUTH_UI_TEXT.HERO_PROOF_COUNT}
@@ -140,7 +141,7 @@ function HeroPanel() {
           </Box>
         </Box>
 
-        <Box className="flex flex-wrap gap-2">
+        <Box className="flex flex-wrap gap-1">
           {[
             { icon: CheckCircle2, label: AUTH_UI_TEXT.HERO_PILL_SOIL },
             { icon: Monitor, label: AUTH_UI_TEXT.HERO_PILL_CAMERA },
@@ -149,8 +150,8 @@ function HeroPanel() {
             <Badge
               key={label}
               variant="outline"
-              icon={<Icon className="h-3.5 w-3.5 text-[hsl(135,55%,45%)]" />}
-              className="rounded-full bg-[hsl(135,40%,12%)/60%] border-[hsl(135,30%,25%)] text-xs text-[hsl(135,20%,70%)] px-3 py-1.5 backdrop-blur-sm"
+              icon={<Icon className="h-2.5 w-2.5 text-[hsl(135,55%,45%)]" />}
+              className="rounded-full bg-[hsl(135,40%,12%)/60%] border-[hsl(135,30%,25%)] text-[9px] text-[hsl(135,20%,70%)] px-1.5 py-0.5 backdrop-blur-sm"
             >
               {label}
             </Badge>
@@ -171,14 +172,14 @@ function TabSwitch({
   onChange: (t: AuthTab) => void;
 }) {
   return (
-    <Box className="flex gap-4 sm:gap-6 border-b border-border">
+    <Box className="flex gap-4 sm:gap-5 border-b border-border">
       {(["login", "register"] as const).map((tab) => (
         <button
           key={tab}
           type="button"
           onClick={() => onChange(tab)}
           className={cn(
-            "pb-3 text-xs sm:text-sm font-medium transition-colors",
+            "pb-2 text-xs sm:text-sm font-medium transition-colors",
             active === tab
               ? "border-b-2 border-primary text-primary font-semibold"
               : "text-muted-foreground hover:text-foreground"
@@ -214,33 +215,33 @@ function LoginFormPanel() {
       as="form"
       onSubmit={handleSubmit}
       noValidate
-      className="space-y-4 sm:space-y-5"
+      className="space-y-2.5 sm:space-y-3"
     >
-      <Box className="space-y-1.5">
+      <Box className="space-y-0.5">
         <Heading
           level={1}
-          className="text-xl sm:text-2xl font-bold text-foreground tracking-tight"
+          className="text-base sm:text-lg font-bold text-foreground tracking-tight"
         >
           {AUTH_UI_TEXT.LOGIN_TITLE}
         </Heading>
         <Text
           variant="muted"
-          className="text-xs sm:text-sm text-muted-foreground leading-relaxed"
+          className="text-[11px] text-muted-foreground leading-snug"
         >
           {AUTH_UI_TEXT.LOGIN_SUBTITLE}
         </Text>
       </Box>
 
-      <Box className="rounded-lg border border-primary/20 bg-primary/5 p-2.5">
-        <Text variant="small" className="text-xs font-semibold text-primary block mb-1.5">
-          Tài khoản mẫu thử nghiệm:
+      <Box className="rounded-lg border border-primary/20 bg-primary/5 p-2">
+        <Text variant="small" className="text-[11px] font-semibold text-primary block mb-1">
+          Tài khoản mẫu:
         </Text>
-        <Box className="flex flex-wrap gap-1.5">
+        <Box className="flex flex-wrap gap-1">
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="h-7 text-xs bg-white dark:bg-slate-800"
+            className="h-6 text-[11px] px-2 bg-white dark:bg-slate-800"
             onClick={() => fillAccount("customer@plotfarm.vn")}
           >
             Khách hàng
@@ -249,7 +250,7 @@ function LoginFormPanel() {
             type="button"
             variant="outline"
             size="sm"
-            className="h-7 text-xs bg-white dark:bg-slate-800"
+            className="h-6 text-[11px] px-2 bg-white dark:bg-slate-800"
             onClick={() => fillAccount("staff@plotfarm.vn")}
           >
             Kỹ thuật viên
@@ -258,7 +259,7 @@ function LoginFormPanel() {
             type="button"
             variant="outline"
             size="sm"
-            className="h-7 text-xs bg-white dark:bg-slate-800"
+            className="h-6 text-[11px] px-2 bg-white dark:bg-slate-800"
             onClick={() => fillAccount("admin@plotfarm.vn")}
           >
             Quản trị viên
@@ -267,7 +268,7 @@ function LoginFormPanel() {
       </Box>
 
       {errors.general && (
-        <Box className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <Box className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
           {errors.general}
         </Box>
       )}
@@ -298,21 +299,21 @@ function LoginFormPanel() {
       />
 
       <Box className="flex items-center justify-between">
-        <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground select-none">
+        <label className="flex cursor-pointer items-center gap-1.5 text-xs text-foreground select-none">
           <input
             id="login-remember"
             type="checkbox"
-            className="h-4 w-4 accent-primary rounded"
+            className="h-3.5 w-3.5 accent-primary rounded"
             disabled={isLoading}
             {...registerRememberMe}
           />
-          <Text as="span" className="text-sm select-none">
+          <Text as="span" className="text-xs select-none">
             {AUTH_UI_TEXT.REMEMBER_ME}
           </Text>
         </label>
         <Link
           to={AUTH_ROUTES.FORGOT_PASSWORD}
-          className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+          className="text-xs font-medium text-primary hover:text-primary/80 transition-colors"
         >
           {AUTH_UI_TEXT.FORGOT_PASSWORD}
         </Link>
@@ -321,29 +322,29 @@ function LoginFormPanel() {
       <Button
         type="submit"
         variant="primary"
-        size="lg"
-        className="w-full"
+        size="default"
+        className="w-full h-9 text-xs"
         isLoading={isLoading}
-        leftIcon={!isLoading ? <ShieldCheck className="h-4 w-4" /> : undefined}
+        leftIcon={!isLoading ? <ShieldCheck className="h-3.5 w-3.5" /> : undefined}
       >
         {AUTH_UI_TEXT.SUBMIT_BUTTON}
       </Button>
 
-      <Box className="relative flex items-center gap-3">
+      <Box className="relative flex items-center gap-2 my-0.5">
         <Separator className="flex-1" />
-        <Text as="span" variant="muted" className="whitespace-nowrap">
+        <Text as="span" variant="muted" className="text-[11px] whitespace-nowrap">
           {AUTH_UI_TEXT.DIVIDER_OR}
         </Text>
         <Separator className="flex-1" />
       </Box>
 
-      <Box className="grid grid-cols-2 gap-3">
+      <Box className="grid grid-cols-2 gap-2">
         <Button
           type="button"
           variant="outline"
-          size="default"
+          size="sm"
           leftIcon={<GoogleIcon />}
-          className="w-full"
+          className="w-full h-8 text-xs"
           disabled={isLoading || isGoogleLoading}
           onClick={() => void loginWithGoogle()}
         >
@@ -352,9 +353,9 @@ function LoginFormPanel() {
         <Button
           type="button"
           variant="outline"
-          size="default"
+          size="sm"
           leftIcon={<AppleIcon />}
-          className="w-full"
+          className="w-full h-8 text-xs"
           disabled={isLoading}
           onClick={() => alert(AUTH_UI_TEXT.APPLE_SOON)}
         >
@@ -362,7 +363,7 @@ function LoginFormPanel() {
         </Button>
       </Box>
 
-      <Text variant="muted" className="text-center text-xs">
+      <Text variant="muted" className="text-center text-[10px] leading-tight pt-0.5">
         {AUTH_UI_TEXT.TERMS_PREFIX}{" "}
         <Link
           to="/terms"
@@ -385,22 +386,22 @@ function LoginFormPanel() {
 
 function RegisterPlaceholder() {
   return (
-    <Box className="space-y-4 sm:space-y-5">
-      <Box className="space-y-1.5">
+    <Box className="space-y-3 sm:space-y-4">
+      <Box className="space-y-1">
         <Heading
           level={1}
-          className="text-xl sm:text-2xl font-bold text-foreground tracking-tight"
+          className="text-lg sm:text-xl font-bold text-foreground tracking-tight"
         >
           {AUTH_UI_TEXT.REGISTER_TITLE}
         </Heading>
         <Text
           variant="muted"
-          className="text-xs sm:text-sm text-muted-foreground leading-relaxed"
+          className="text-xs text-muted-foreground leading-relaxed"
         >
           {AUTH_UI_TEXT.REGISTER_SUBTITLE}
         </Text>
       </Box>
-      <Box className="rounded-lg border border-dashed border-border bg-muted/40 p-6 sm:p-8 text-center text-xs sm:text-sm text-muted-foreground">
+      <Box className="rounded-lg border border-dashed border-border bg-muted/40 p-5 sm:p-6 text-center text-xs text-muted-foreground">
         {AUTH_UI_TEXT.REGISTER_WIP_NOTICE}
         <br />
         {AUTH_UI_TEXT.REGISTER_BACK_TO_LOGIN}{" "}
@@ -420,26 +421,36 @@ export function LoginPage() {
   }
 
   return (
-    <Box className="min-h-screen bg-background flex flex-col items-center justify-center p-3 sm:p-6 lg:p-8">
-      <Box className="w-full max-w-md lg:max-w-4xl my-auto">
-        <Box className="grid lg:grid-cols-[1fr_1fr] gap-0 rounded-2xl border border-border shadow-2xl shadow-black/20 overflow-hidden bg-card">
+    <Box className="min-h-screen bg-muted/20 flex flex-col items-center justify-center p-3 sm:p-4">
+      {/* Main card container */}
+      <Box className="relative w-full max-w-[660px]">
+        {/* Card exit button */}
+        <Link
+          to="/"
+          title="Thoát về trang chủ"
+          className="absolute top-2.5 right-2.5 z-20 p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+        >
+          <X className="h-4 w-4" />
+        </Link>
+
+        <Box className="grid lg:grid-cols-[1fr_1.25fr] gap-0 rounded-2xl border border-border shadow-xl shadow-black/10 overflow-hidden bg-card">
           <Box className="hidden lg:block lg:h-auto">
             <HeroPanel />
           </Box>
 
-          <Box className="flex flex-col justify-center gap-5 sm:gap-6 p-5 sm:p-8 lg:p-10">
-            <Box className="flex lg:hidden items-center justify-center gap-2.5 mb-1">
-              <Logo size="md" />
+          <Box className="flex flex-col justify-center gap-3 p-4 sm:p-5 lg:p-6">
+            <Box className="flex lg:hidden items-center justify-center gap-2 mb-0.5">
+              <Logo size="sm" />
               <Box>
                 <Heading
                   level={3}
-                  className="text-lg font-bold text-foreground tracking-tight leading-tight"
+                  className="text-base font-bold text-foreground tracking-tight leading-tight"
                 >
                   CloudFarm
                 </Heading>
                 <Text
                   variant="muted"
-                  className="text-[10px] font-medium leading-none"
+                  className="text-[9px] font-medium leading-none"
                 >
                   {AUTH_UI_TEXT.HERO_BRAND_SUB}
                 </Text>
