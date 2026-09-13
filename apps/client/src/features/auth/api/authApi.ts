@@ -12,4 +12,12 @@ export const authApi = {
       email,
       password,
     }),
+
+  /**
+   * Đăng nhập bằng Google (nhận ID Token từ Google Identity Services).
+   */
+  loginGoogle: (idToken: string) =>
+    dispatchAction<{ idToken: string }, LoginResponseData>("auth.google", {
+      idToken,
+    }),
 };
