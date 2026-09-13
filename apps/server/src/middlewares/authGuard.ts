@@ -76,7 +76,7 @@ export const authGuard = async (
         id: true,
         email: true,
         role: true,
-        active: true,
+        deletedAt: true,
       },
     });
 
@@ -88,7 +88,7 @@ export const authGuard = async (
       );
     }
 
-    if (!user.active) {
+    if (user.deletedAt !== null) {
       throw new AppError(
         "Tài khoản đã bị khóa",
         403,

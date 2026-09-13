@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import { Search, Mail, Lock, Eye, EyeOff, MapPin, Hash } from "lucide-react";
+import { Search, Mail, Lock, MapPin, Hash } from "lucide-react";
 import { Input } from "./Input";
 
 const meta: Meta<typeof Input> = {
@@ -119,26 +118,19 @@ export const EmailInput: Story = {
 };
 
 export const PasswordWithToggle: Story = {
-  name: "4. Mật Khẩu (Right Icon tương tác)",
+  name: "4. Mật Khẩu (Tích hợp sẵn nút ẩn/hiện showPasswordToggle)",
   render: function PasswordStory() {
-    const [showPassword, setShowPassword] = React.useState(false);
     return (
-      <div className="max-w-sm">
+      <div className="max-w-sm space-y-4">
+        {/* Cách 1: Tích hợp sẵn 1 prop duy nhất showPasswordToggle */}
         <Input
-          label="Mật khẩu tài khoản"
-          type={showPassword ? "text" : "password"}
-          placeholder="••••••••"
+          label="Mật khẩu tài khoản (Tự động toggle)"
+          type="password"
+          placeholder="Nhập mật khẩu..."
           leftIcon={<Lock className="h-4 w-4" />}
-          rightIcon={
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="p-1 hover:text-foreground text-muted-foreground transition-colors"
-              aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          }
+          showPasswordToggle
+          defaultValue="matkhau123"
+          hint="Đã vô hiệu hóa icon mắt mặc định của trình duyệt để chỉ hiển thị đúng 1 icon con mắt duy nhất"
         />
       </div>
     );

@@ -96,7 +96,7 @@ describe("authGuard Middleware Unit Tests", () => {
       id: "usr_disabled",
       email: "disabled@plotfarm.vn",
       role: "CUSTOMER",
-      active: false,
+      deletedAt: new Date(),
     } as unknown as UserQueryResult);
 
     await authGuard(mockReq as Request, mockRes as Response, mockNext);
@@ -123,7 +123,7 @@ describe("authGuard Middleware Unit Tests", () => {
       id: "usr_active_1",
       email: "active@plotfarm.vn",
       role: "CUSTOMER",
-      active: true,
+      deletedAt: null,
     } as unknown as UserQueryResult);
 
     await authGuard(mockReq as Request, mockRes as Response, mockNext);

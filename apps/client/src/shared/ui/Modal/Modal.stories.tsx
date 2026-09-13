@@ -1,3 +1,4 @@
+import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { AlertTriangle, Plus } from "lucide-react";
 import { Modal } from "./Modal";
@@ -22,9 +23,12 @@ const meta: Meta<typeof Modal> = {
 
 #### Cách truyền biến (Props & Usage):
 \`\`\`tsx
+import { useState } from "react";
 import { Modal, Button } from "@/shared/ui";
 
 const [isOpen, setIsOpen] = useState(false);
+
+<Button onClick={() => setIsOpen(true)}>Mở Hộp Thoại</Button>
 
 <Modal
   isOpen={isOpen}
@@ -53,6 +57,13 @@ const [isOpen, setIsOpen] = useState(false);
         defaultValue: { summary: "false" }
       }
     },
+    inline: {
+      control: "boolean",
+      description: "Hiển thị dạng khối nhúng (inline preview) không backdrop cố định, phục vụ tài liệu hoặc xem trước",
+      table: {
+        defaultValue: { summary: "false" }
+      }
+    },
     onClose: {
       description: "Hàm callback kích hoạt khi người dùng nhấn nút đóng, click nền đen hoặc nhấn ESC"
     },
@@ -67,7 +78,7 @@ const [isOpen, setIsOpen] = useState(false);
     size: {
       control: "select",
       options: ["sm", "md", "lg", "xl"],
-      description: "Độ rộng tối đa của khung modal (sm: max-w-sm, md: max-w-lg, lg: max-w-2xl, xl: max-w-4xl)",
+      description: "Độ rộng tối đa của khung modal (sm: max-w-sm, md: max-w-lg, lg: max-w-xl, xl: max-w-2xl)",
       table: {
         defaultValue: { summary: "md" }
       }
@@ -97,6 +108,7 @@ export const ConfirmationDialog: Story = {
   name: "1. Hộp Thoại Xác Nhận Hủy Thuê Đất",
   args: {
     isOpen: true,
+    inline: true,
     title: "Xác nhận hủy hợp đồng thuê",
     description: "Vui lòng xem xét kỹ trước khi xác nhận hành động này.",
     children: (
@@ -124,6 +136,7 @@ export const FormModalExample: Story = {
   name: "2. Hộp Thoại Nhập Liệu / Form Nhanh",
   args: {
     isOpen: true,
+    inline: true,
     title: "Tạo Yêu Cầu Chăm Sóc Đất",
     description: "Gửi chỉ dẫn canh tác cho kỹ thuật viên phụ trách thửa đất của bạn.",
     children: (
@@ -148,5 +161,35 @@ export const FormModalExample: Story = {
         </Button>
       </div>
     )
+  }
+};
+
+export const InteractiveModal: Story = {
+  name: "3. Thử Nghiệm Tương Tác (Mở / Đóng Modal Thật)",
+  render: () => {
+    const [isOpen, setIsOpen] = React.useState(false);
+    return (
+      <div className="flex flex-col items-center justify-center p-8 gap-4">
+        <Button onClick={() => setIsOpen(true)}>
+          Mở Hộp Thoại (Interactive Modal)
+        </Button>
+        <Modal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          title="Thông Báo Hoạt Động"
+          description="Kiểm tra tương tác đóng bằng ESC, nút X hoặc click ngoài nền"
+          footer={
+            <Button variant="default" onClick={() => setIsOpen(false)}>
+              Hoàn Tất
+            </Button>
+          }
+        >
+          <p className="text-foreground">
+            Hộp thoại này đang hiển thị ở chế độ lớp phủ thực tế (Overlay Popup).
+            Bạn có thể thử nhấn phím ESC hoặc click ra ngoài vùng nền mờ để đóng.
+          </p>
+        </Modal>
+      </div>
+    );
   }
 };

@@ -116,7 +116,7 @@ export class TokenService {
       );
     }
 
-    if (!user.active) {
+    if (user.deletedAt !== null) {
       throw new AppError(
         "Tài khoản đã bị khóa",
         403,
