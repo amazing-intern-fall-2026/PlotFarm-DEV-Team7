@@ -32,6 +32,23 @@ export const RegisterResponseDataSchema = z.object({
 });
 export type RegisterResponseData = z.infer<typeof RegisterResponseDataSchema>;
 
+export const VerifyEmailRequestSchema = z.object({
+  email: z.string().email(),
+  otpCode: z.string().length(6, "Mã OTP phải gồm 6 chữ số"),
+});
+export type VerifyEmailRequest = z.infer<typeof VerifyEmailRequestSchema>;
+
+export const ResendOtpRequestSchema = z.object({
+  email: z.string().email(),
+});
+export type ResendOtpRequest = z.infer<typeof ResendOtpRequestSchema>;
+
+export const ResendOtpResponseDataSchema = z.object({
+  emailSent: z.boolean(),
+  cooldownSeconds: z.number(),
+});
+export type ResendOtpResponseData = z.infer<typeof ResendOtpResponseDataSchema>;
+
 export const LoginRequestSchema = z.object({
   email: z.string().email(),
   password: z.string(),

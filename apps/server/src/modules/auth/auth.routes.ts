@@ -7,6 +7,11 @@ const router: Router = Router();
 // Endpoint công khai để gia hạn access token
 router.post("/refresh", AuthController.refresh);
 
+// Endpoint đăng ký & xác thực email OTP
+router.post("/register", AuthController.register);
+router.post("/verify-email", AuthController.verifyEmail);
+router.post("/resend-otp", AuthController.resendOtp);
+
 // Endpoint login
 router.post("/login", login);
 router.post("/auth/login", login);
