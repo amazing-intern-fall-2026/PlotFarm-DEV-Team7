@@ -1,6 +1,18 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Button,
+  Badge,
+  Box,
+  Text,
+} from "@/shared/ui";
+import {
   Search,
   Filter,
   QrCode,
@@ -158,7 +170,7 @@ export function FarmerPlotsPage() {
   const [zoneFilter, setZoneFilter] = React.useState<"ALL" | "Khu A" | "Khu B">("ALL");
   const [statusFilter, setStatusFilter] = React.useState<"ALL" | "need_water" | "growing" | "ready_harvest">("ALL");
 
-  // Selected plot for Detail / Telemetry modal (Screens 4 & 5)
+  // Selected plot for Detail / Telemetry modal
   const [selectedPlotForDetail, setSelectedPlotForDetail] = React.useState<PlotData | null>(null);
   const [selectedLiveCamPlot, setSelectedLiveCamPlot] = React.useState<PlotData | null>(null);
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
@@ -194,503 +206,521 @@ export function FarmerPlotsPage() {
   });
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <Box className="w-full space-y-6 pb-12">
       {/* ─────────────────────────────────────────────────────────────
-          1. HEADER & ACTIONS
+          1. HEADER & ACTIONS (Card with @/shared/ui)
       ───────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/80 shadow-xs">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
-              Ô đất của tôi ({ALL_PLOTS.length} ô)
-            </h1>
-            <span className="rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5">
-              Phân khu A & B
-            </span>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Giám sát vi khí hậu, độ ẩm đất và tiến độ sinh trưởng nông sản theo thời gian thực
-          </p>
-        </div>
+      <Card className="p-0 overflow-hidden shadow-xs border-border">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6">
+          <Box>
+            <Box className="flex items-center gap-2.5">
+              <CardTitle className="text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">
+                Ô đất của tôi ({ALL_PLOTS.length} ô)
+              </CardTitle>
+              <Badge variant="success">Phân khu A & B</Badge>
+            </Box>
+            <CardDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
+              Giám sát vi khí hậu, độ ẩm đất và tiến độ sinh trưởng nông sản theo thời gian thực
+            </CardDescription>
+          </Box>
 
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => showToast("Đang kết nối đầu đọc mã QR máy ảnh...")}
-            className="flex items-center gap-1.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold px-4 py-2.5 transition-colors cursor-pointer"
-          >
-            <QrCode className="h-4 w-4 text-emerald-600" />
-            <span>Quét mã QR</span>
-          </button>
+          <Box className="flex items-center gap-2.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => showToast("Đang kết nối đầu đọc mã QR máy ảnh...")}
+              leftIcon={<QrCode className="h-4 w-4 text-emerald-600" />}
+            >
+              <Text as="span" className="text-xs font-bold">Quét mã QR</Text>
+            </Button>
 
-          <button
-            type="button"
-            onClick={() => navigate("/farmer")}
-            className="flex items-center gap-1.5 rounded-2xl bg-[#1b4332] hover:bg-[#143427] text-white text-xs font-bold px-4 py-2.5 transition-colors cursor-pointer shadow-xs"
-          >
-            <span>← Nhiệm vụ hôm nay</span>
-          </button>
-        </div>
-      </div>
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              onClick={() => navigate("/farmer")}
+            >
+              <Text as="span" className="text-xs font-bold">← Nhiệm vụ hôm nay</Text>
+            </Button>
+          </Box>
+        </CardHeader>
+      </Card>
 
       {/* Toast notification */}
       {toastMessage && (
-        <div className="rounded-2xl bg-slate-900 text-white px-5 py-3 text-sm font-semibold flex items-center justify-between shadow-xl animate-in fade-in">
-          <span>{toastMessage}</span>
-          <button type="button" onClick={() => setToastMessage(null)} className="text-slate-400 hover:text-white">
+        <Card className="rounded-2xl bg-foreground text-background px-5 py-3 text-sm font-semibold flex items-center justify-between shadow-xl animate-in fade-in">
+          <Text as="span" className="text-xs font-medium">{toastMessage}</Text>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setToastMessage(null)}
+            className="h-6 w-6 text-muted-foreground hover:text-background p-0"
+          >
             <X className="h-4 w-4" />
-          </button>
-        </div>
+          </Button>
+        </Card>
       )}
 
       {/* ─────────────────────────────────────────────────────────────
-          2. FILTER TOOLBAR
+          2. FILTER TOOLBAR (Card with @/shared/ui)
       ───────────────────────────────────────────────────────────── */}
-      <div className="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
-        {/* Search and primary zone tabs */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          {/* Search box */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="h-4 w-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Tìm theo mã ô (A-104), tên rau, hoặc tên khách..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
-            />
-          </div>
+      <Card className="p-4 shadow-xs border-border space-y-3">
+        <CardContent className="p-0 space-y-3">
+          {/* Search and primary zone tabs */}
+          <Box className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            {/* Search box */}
+            <Box className="relative flex-1 max-w-md">
+              <Search className="h-4 w-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Tìm theo mã ô (A-104), tên rau, hoặc tên khách..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-10 pl-10 pr-4 rounded-2xl bg-muted/40 border border-border text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+              />
+            </Box>
 
-          {/* Zone tabs */}
-          <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl self-start md:self-auto">
-            <button
-              type="button"
-              onClick={() => setZoneFilter("ALL")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                zoneFilter === "ALL"
-                  ? "bg-white dark:bg-slate-900 text-emerald-800 dark:text-emerald-300 shadow-2xs"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Tất cả (5)
-            </button>
-            <button
-              type="button"
-              onClick={() => setZoneFilter("Khu A")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                zoneFilter === "Khu A"
-                  ? "bg-white dark:bg-slate-900 text-emerald-800 dark:text-emerald-300 shadow-2xs"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Khu A Đà Lạt (3)
-            </button>
-            <button
-              type="button"
-              onClick={() => setZoneFilter("Khu B")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                zoneFilter === "Khu B"
-                  ? "bg-white dark:bg-slate-900 text-emerald-800 dark:text-emerald-300 shadow-2xs"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Khu B (2)
-            </button>
-          </div>
-        </div>
-
-        {/* Sub-filters by status */}
-        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100">
-          <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
-            <Filter className="h-3 w-3" /> Lọc trạng thái:
-          </span>
-
-          <button
-            type="button"
-            onClick={() => setStatusFilter("ALL")}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
-              statusFilter === "ALL"
-                ? "bg-slate-800 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }`}
-          >
-            Tất cả
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setStatusFilter("need_water")}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${
-              statusFilter === "need_water"
-                ? "bg-amber-600 text-white font-bold"
-                : "bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
-            }`}
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-            <span>Cần tưới nước (1)</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setStatusFilter("growing")}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${
-              statusFilter === "growing"
-                ? "bg-emerald-700 text-white font-bold"
-                : "bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
-            }`}
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            <span>Đang sinh trưởng (3)</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setStatusFilter("ready_harvest")}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${
-              statusFilter === "ready_harvest"
-                ? "bg-orange-600 text-white font-bold"
-                : "bg-orange-50 text-orange-800 border border-orange-200 hover:bg-orange-100"
-            }`}
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-            <span>Chuẩn bị thu hoạch (1)</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ─────────────────────────────────────────────────────────────
-          3. PARCEL CARDS GRID (3 Columns on Desktop)
-      ───────────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredPlots.map((plot) => (
-          <div
-            key={plot.id}
-            className={`flex flex-col rounded-3xl border bg-white dark:bg-slate-900 p-5 shadow-xs hover:shadow-xl transition-all duration-300 relative overflow-hidden ${
-              plot.readyForHarvest
-                ? "border-orange-300 ring-2 ring-orange-400/20"
-                : plot.status === "need_water"
-                ? "border-amber-300"
-                : "border-slate-200/90"
-            }`}
-          >
-            {/* Top Row: Plot code & Progress Badge */}
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
-                  {plot.code}
-                </h3>
-                <p className="text-xs text-slate-500">
-                  {plot.area} • {plot.bed} ({plot.zone})
-                </p>
-              </div>
-
-              <span
-                className={`rounded-full px-3 py-1 text-xs font-bold ${
-                  plot.readyForHarvest
-                    ? "bg-orange-100 text-orange-800 border border-orange-200"
-                    : plot.status === "need_water"
-                    ? "bg-amber-100 text-amber-800 border border-amber-200"
-                    : "bg-slate-100 text-slate-700 border border-slate-200"
-                }`}
-              >
-                {plot.readyForHarvest ? "Đạt 60/60 ngày" : `Ngày ${plot.currentDay}/${plot.totalDays}`}
-              </span>
-            </div>
-
-            {/* Crop name & Customer */}
-            <div className="space-y-1 mb-4">
-              <h4 className="text-sm sm:text-base font-bold text-emerald-800 dark:text-emerald-400 flex items-center gap-1.5">
-                <Sprout className="h-4 w-4 shrink-0" />
-                <span>{plot.cropName}</span>
-              </h4>
-              <p className="text-xs text-slate-500 flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5 text-slate-400" />
-                <span>{plot.customerName}</span>
-              </p>
-            </div>
-
-            {/* IoT Telemetry Stats Bar */}
-            <div className="grid grid-cols-2 gap-2 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 mb-4 text-xs">
-              <div className="flex items-center gap-2">
-                <Droplets
-                  className={`h-4 w-4 ${
-                    plot.soilMoisture < 50 ? "text-amber-500" : "text-cyan-600"
-                  }`}
-                />
-                <div>
-                  <span className="text-[11px] text-slate-400">Độ ẩm:</span>{" "}
-                  <strong className="text-slate-800 dark:text-slate-200 font-bold">
-                    {plot.soilMoisture}%
-                  </strong>{" "}
-                  <span
-                    className={`text-[10px] ${
-                      plot.soilStatus === "Đạt" ? "text-emerald-600" : "text-amber-600 font-bold"
-                    }`}
-                  >
-                    ({plot.soilStatus})
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Thermometer className="h-4 w-4 text-amber-600" />
-                <div>
-                  <span className="text-[11px] text-slate-400">Luống:</span>{" "}
-                  <strong className="text-slate-800 dark:text-slate-200 font-bold">
-                    {plot.temperature}°C
-                  </strong>
-                </div>
-              </div>
-            </div>
-
-            {/* Growth Progress Bar */}
-            <div className="space-y-1.5 mb-5 mt-auto">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Tiến độ vụ:</span>
-                <strong className="text-slate-900 dark:text-white">{plot.progressPercent}%</strong>
-              </div>
-              <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    plot.readyForHarvest
-                      ? "bg-orange-500"
-                      : plot.status === "need_water"
-                      ? "bg-amber-500"
-                      : "bg-emerald-600"
-                  }`}
-                  style={{ width: `${plot.progressPercent}%` }}
-                />
-              </div>
-              <p className="text-[11px] text-slate-400 pt-0.5">
-                Thu hoạch dự kiến: <strong>{plot.harvestDate}</strong>
-              </p>
-            </div>
-
-            {/* Actions */}
-            {plot.readyForHarvest ? (
-              <button
+            {/* Zone tabs */}
+            <Box className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-2xl self-start md:self-auto">
+              <Button
                 type="button"
-                onClick={() => showToast(`Đã xuất lệnh thu hoạch nông sản cho ${plot.code}!`)}
-                className="w-full rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white py-3 text-xs font-bold flex items-center justify-center gap-2 shadow-md transition-all active:scale-98 cursor-pointer"
+                variant={zoneFilter === "ALL" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setZoneFilter("ALL")}
+                className="h-8 text-xs font-bold"
               >
-                <span>🚜 Tạo lệnh thu hoạch ngay</span>
-              </button>
-            ) : (
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectedLiveCamPlot(plot)}
-                  className="rounded-2xl bg-blue-50/80 hover:bg-blue-100 text-blue-700 py-2.5 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Video className="h-3.5 w-3.5" />
-                  <span>Xem camera</span>
-                </button>
+                Tất cả ({ALL_PLOTS.length})
+              </Button>
+              <Button
+                type="button"
+                variant={zoneFilter === "Khu A" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setZoneFilter("Khu A")}
+                className="h-8 text-xs font-bold"
+              >
+                Khu A Đà Lạt (3)
+              </Button>
+              <Button
+                type="button"
+                variant={zoneFilter === "Khu B" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setZoneFilter("Khu B")}
+                className="h-8 text-xs font-bold"
+              >
+                Khu B (2)
+              </Button>
+            </Box>
+          </Box>
 
-                <button
-                  type="button"
-                  onClick={() => setSelectedPlotForDetail(plot)}
-                  className="rounded-2xl bg-[#1b4332] hover:bg-[#143427] text-white py-2.5 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <BookOpen className="h-3.5 w-3.5" />
-                  <span>Nhật ký</span>
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+          {/* Sub-filters by status */}
+          <Box className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
+            <Text variant="muted" className="text-xs font-medium flex items-center gap-1">
+              <Filter className="h-3 w-3" /> Lọc trạng thái:
+            </Text>
+
+            <Button
+              type="button"
+              variant={statusFilter === "ALL" ? "primary" : "outline"}
+              size="sm"
+              onClick={() => setStatusFilter("ALL")}
+              className="h-7 rounded-full px-3 text-xs"
+            >
+              Tất cả
+            </Button>
+
+            <Button
+              type="button"
+              variant={statusFilter === "need_water" ? "destructive" : "ghost"}
+              size="sm"
+              onClick={() => setStatusFilter("need_water")}
+              className="h-7 rounded-full px-3 text-xs flex items-center gap-1.5"
+            >
+              <Box className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+              <Text as="span">Cần tưới nước (1)</Text>
+            </Button>
+
+            <Button
+              type="button"
+              variant={statusFilter === "growing" ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setStatusFilter("growing")}
+              className="h-7 rounded-full px-3 text-xs flex items-center gap-1.5"
+            >
+              <Box className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <Text as="span">Đang sinh trưởng (3)</Text>
+            </Button>
+
+            <Button
+              type="button"
+              variant={statusFilter === "ready_harvest" ? "outline" : "ghost"}
+              size="sm"
+              onClick={() => setStatusFilter("ready_harvest")}
+              className="h-7 rounded-full px-3 text-xs flex items-center gap-1.5"
+            >
+              <Box className="h-1.5 w-1.5 rounded-full bg-orange-500" />
+              <Text as="span">Chuẩn bị thu hoạch (1)</Text>
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
 
       {/* ─────────────────────────────────────────────────────────────
-          MODAL 1: LIVE CAMERA VIEW (Screen 4 Camera Frame)
+          3. PARCEL CARDS GRID (3 Columns on Desktop with @/shared/ui)
+      ───────────────────────────────────────────────────────────── */}
+      <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredPlots.map((plot) => (
+          <Card
+            key={plot.id}
+            className={`flex flex-col p-0 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 relative border ${
+              plot.readyForHarvest
+                ? "border-orange-400 ring-2 ring-orange-400/20 bg-gradient-to-b from-orange-50/20 to-transparent"
+                : plot.status === "need_water"
+                ? "border-amber-300 bg-gradient-to-b from-amber-50/20 to-transparent"
+                : "border-border"
+            }`}
+          >
+            {/* Card Header: Plot code & Progress Badge */}
+            <CardHeader className="p-5 pb-3">
+              <Box className="flex items-center justify-between">
+                <Box>
+                  <CardTitle className="text-base sm:text-lg font-extrabold text-foreground">
+                    {plot.code}
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {plot.area} • {plot.bed} ({plot.zone})
+                  </CardDescription>
+                </Box>
+
+                <Badge
+                  variant={
+                    plot.readyForHarvest
+                      ? "destructive"
+                      : plot.status === "need_water"
+                      ? "warning"
+                      : "secondary"
+                  }
+                  className="font-bold text-xs"
+                >
+                  {plot.readyForHarvest ? "Đạt 60/60 ngày" : `Ngày ${plot.currentDay}/${plot.totalDays}`}
+                </Badge>
+              </Box>
+
+              {/* Crop name & Customer */}
+              <Box className="space-y-1 mt-3">
+                <Text as="h4" className="text-sm sm:text-base font-bold text-emerald-800 dark:text-emerald-400 flex items-center gap-1.5">
+                  <Sprout className="h-4 w-4 shrink-0" />
+                  <span>{plot.cropName}</span>
+                </Text>
+                <CardDescription className="text-xs flex items-center gap-1.5">
+                  <User className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span>{plot.customerName}</span>
+                </CardDescription>
+              </Box>
+            </CardHeader>
+
+            {/* Card Content: IoT Stats & Progress Bar */}
+            <CardContent className="p-5 pt-0 space-y-4 flex-1 flex flex-col justify-between">
+              {/* IoT Telemetry Stats Bar */}
+              <Box className="grid grid-cols-2 gap-2 p-2.5 rounded-2xl bg-muted/40 border border-border text-xs">
+                <Box className="flex items-center gap-2">
+                  <Droplets
+                    className={`h-4 w-4 ${
+                      plot.soilMoisture < 50 ? "text-amber-500" : "text-cyan-600"
+                    }`}
+                  />
+                  <Box>
+                    <Text variant="muted" className="text-[11px]">Độ ẩm: </Text>
+                    <Text as="strong" className="font-bold text-foreground">
+                      {plot.soilMoisture}%
+                    </Text>{" "}
+                    <Text
+                      as="span"
+                      className={`text-[10px] ${
+                        plot.soilStatus === "Đạt" ? "text-emerald-600 font-semibold" : "text-amber-600 font-bold"
+                      }`}
+                    >
+                      ({plot.soilStatus})
+                    </Text>
+                  </Box>
+                </Box>
+
+                <Box className="flex items-center gap-2">
+                  <Thermometer className="h-4 w-4 text-amber-600" />
+                  <Box>
+                    <Text variant="muted" className="text-[11px]">Luống: </Text>
+                    <Text as="strong" className="font-bold text-foreground">
+                      {plot.temperature}°C
+                    </Text>
+                  </Box>
+                </Box>
+              </Box>
+
+              {/* Growth Progress Bar */}
+              <Box className="space-y-1.5 mt-auto">
+                <Box className="flex items-center justify-between text-xs">
+                  <Text variant="muted" className="font-medium">Tiến độ vụ:</Text>
+                  <Text as="strong" className="text-foreground font-bold">{plot.progressPercent}%</Text>
+                </Box>
+                <Box className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                  <Box
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      plot.readyForHarvest
+                        ? "bg-orange-500"
+                        : plot.status === "need_water"
+                        ? "bg-amber-500"
+                        : "bg-emerald-600"
+                    }`}
+                    style={{ width: `${plot.progressPercent}%` }}
+                  />
+                </Box>
+                <Text variant="muted" className="text-[11px] pt-0.5">
+                  Thu hoạch dự kiến: <Text as="strong" className="text-foreground">{plot.harvestDate}</Text>
+                </Text>
+              </Box>
+            </CardContent>
+
+            {/* Card Footer: Action Buttons */}
+            <CardFooter className="p-5 pt-0">
+              {plot.readyForHarvest ? (
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={() => showToast(`Đã xuất lệnh thu hoạch nông sản cho ${plot.code}!`)}
+                  className="w-full bg-[#ea580c] hover:bg-[#c2410c] text-white py-2.5 text-xs font-bold"
+                >
+                  🚜 Tạo lệnh thu hoạch ngay
+                </Button>
+              ) : (
+                <Box className="grid grid-cols-2 gap-2 w-full">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedLiveCamPlot(plot)}
+                    leftIcon={<Video className="h-3.5 w-3.5" />}
+                    className="text-xs"
+                  >
+                    Xem camera
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="sm"
+                    onClick={() => setSelectedPlotForDetail(plot)}
+                    leftIcon={<BookOpen className="h-3.5 w-3.5" />}
+                    className="text-xs"
+                  >
+                    Nhật ký
+                  </Button>
+                </Box>
+              )}
+            </CardFooter>
+          </Card>
+        ))}
+      </Box>
+
+      {/* ─────────────────────────────────────────────────────────────
+          MODAL 1: LIVE CAMERA VIEW (Card with @/shared/ui)
       ───────────────────────────────────────────────────────────── */}
       {selectedLiveCamPlot && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-3xl rounded-3xl overflow-hidden bg-slate-950 text-white shadow-2xl border border-white/20">
+        <Box className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <Card className="relative w-full max-w-3xl rounded-3xl overflow-hidden bg-slate-950 text-white shadow-2xl border border-white/20 p-0">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 bg-slate-900 border-b border-white/10">
-              <div className="flex items-center gap-3">
-                <span className="h-2.5 w-2.5 rounded-full bg-rose-500 animate-ping" />
-                <h3 className="text-sm font-bold">
+            <CardHeader className="flex flex-row items-center justify-between p-4 bg-slate-900 border-b border-white/10">
+              <Box className="flex items-center gap-3">
+                <Box className="h-2.5 w-2.5 rounded-full bg-rose-500 animate-ping" />
+                <CardTitle className="text-sm font-bold text-white">
                   Camera Trực Tiếp {selectedLiveCamPlot.code} ({selectedLiveCamPlot.bed})
-                </h3>
-                <span className="rounded-full bg-emerald-500/20 text-emerald-400 px-2 py-0.5 text-[10px] font-mono">
+                </CardTitle>
+                <Badge variant="success" className="font-mono text-[10px]">
                   1080P HD
-                </span>
-              </div>
-              <button
+                </Badge>
+              </Box>
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setSelectedLiveCamPlot(null)}
-                className="rounded-full p-1 text-slate-400 hover:text-white"
+                className="rounded-full text-slate-400 hover:text-white h-8 w-8"
               >
                 <X className="h-5 w-5" />
-              </button>
-            </div>
+              </Button>
+            </CardHeader>
 
             {/* Video representation */}
-            <div className="relative aspect-video w-full overflow-hidden bg-black">
-              <img
-                src={selectedLiveCamPlot.image}
-                alt={selectedLiveCamPlot.code}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute top-4 left-4 rounded-full bg-black/60 px-3 py-1 font-mono text-xs backdrop-blur-md">
-                Cam góc 01 • {selectedLiveCamPlot.bed} (Trực tiếp)
-              </div>
-            </div>
+            <CardContent className="p-0">
+              <Box className="relative aspect-video w-full overflow-hidden bg-black">
+                <img
+                  src={selectedLiveCamPlot.image}
+                  alt={selectedLiveCamPlot.code}
+                  className="w-full h-full object-cover"
+                />
+                <Badge variant="secondary" className="absolute top-4 left-4 bg-black/60 px-3 py-1 font-mono text-xs backdrop-blur-md text-white">
+                  Cam góc 01 • {selectedLiveCamPlot.bed} (Trực tiếp)
+                </Badge>
+              </Box>
+            </CardContent>
 
             {/* Footer Bar */}
-            <div className="flex flex-wrap items-center justify-between p-4 bg-slate-900 text-xs text-slate-300 gap-3">
-              <div className="flex items-center gap-4">
-                <span>🌱 Cây trồng: <strong>{selectedLiveCamPlot.cropName}</strong></span>
-                <span>💧 Độ ẩm đất: <strong>{selectedLiveCamPlot.soilMoisture}%</strong></span>
-                <span>🌡 Nhiệt độ: <strong>{selectedLiveCamPlot.temperature}°C</strong></span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
+            <CardFooter className="flex flex-wrap items-center justify-between p-4 bg-slate-900 text-xs text-slate-300 gap-3 border-t border-white/10">
+              <Box className="flex items-center gap-4">
+                <Text as="span">🌱 Cây trồng: <Text as="strong" className="text-white font-bold">{selectedLiveCamPlot.cropName}</Text></Text>
+                <Text as="span">💧 Độ ẩm đất: <Text as="strong" className="text-white font-bold">{selectedLiveCamPlot.soilMoisture}%</Text></Text>
+                <Text as="span">🌡 Nhiệt độ: <Text as="strong" className="text-white font-bold">{selectedLiveCamPlot.temperature}°C</Text></Text>
+              </Box>
+              <Box className="flex items-center gap-2">
+                <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={() => showToast("Đã chụp và lưu ảnh vào kho minh chứng!")}
-                  className="rounded-xl bg-white/10 hover:bg-white/20 text-white px-3 py-2 font-bold flex items-center gap-1.5"
+                  leftIcon={<Camera className="h-3.5 w-3.5" />}
+                  className="text-white border-white/20 hover:bg-white/10 text-xs"
                 >
-                  <Camera className="h-3.5 w-3.5" />
-                  <span>Chụp ảnh lưu kho</span>
-                </button>
-                <button
+                  Chụp ảnh lưu kho
+                </Button>
+                <Button
                   type="button"
+                  variant="primary"
+                  size="sm"
                   onClick={() => {
                     const current = selectedLiveCamPlot;
                     setSelectedLiveCamPlot(null);
                     setSelectedPlotForDetail(current);
                   }}
-                  className="rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 font-bold"
+                  className="text-xs"
                 >
                   Mở nhật ký ô đất
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+                </Button>
+              </Box>
+            </CardFooter>
+          </Card>
+        </Box>
       )}
 
       {/* ─────────────────────────────────────────────────────────────
-          MODAL 2: PARCEL DETAIL & CROP TELEMETRY (Screens 4 & 5)
+          MODAL 2: PARCEL DETAIL & CROP TELEMETRY (Card with @/shared/ui)
       ───────────────────────────────────────────────────────────── */}
       {selectedPlotForDetail && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto animate-in fade-in">
-          <div className="relative w-full max-w-4xl rounded-3xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
+        <Box className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto animate-in fade-in">
+          <Card className="relative w-full max-w-4xl rounded-3xl bg-background shadow-2xl border border-border overflow-hidden my-auto max-h-[92vh] flex flex-col p-0">
             {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 shrink-0">
-              <div className="flex items-center gap-3">
-                <button
+            <CardHeader className="flex flex-row items-center justify-between p-5 border-b border-border bg-muted/30 shrink-0">
+              <Box className="flex items-center gap-3">
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setSelectedPlotForDetail(null)}
-                  className="p-1.5 rounded-full hover:bg-slate-200 text-slate-500"
+                  className="rounded-full h-8 w-8 text-muted-foreground"
                 >
                   <X className="h-5 w-5" />
-                </button>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                </Button>
+                <Box>
+                  <Box className="flex items-center gap-2">
+                    <CardTitle className="text-lg font-bold text-foreground">
                       Chi tiết & Nhật ký • {selectedPlotForDetail.code}
-                    </h2>
-                    <span className="rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5">
-                      Đang sinh trưởng
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-500">
+                    </CardTitle>
+                    <Badge variant="success">Đang sinh trưởng</Badge>
+                  </Box>
+                  <CardDescription className="text-xs text-muted-foreground">
                     {selectedPlotForDetail.cropName} • Chủ hộ: {selectedPlotForDetail.customerName} ({selectedPlotForDetail.customerPhone})
-                  </p>
-                </div>
-              </div>
+                  </CardDescription>
+                </Box>
+              </Box>
 
-              <div className="text-xs text-slate-500 hidden sm:block">
-                Lần tưới: <strong>{selectedPlotForDetail.lastWatered}</strong>
-              </div>
-            </div>
+              <Text variant="muted" className="text-xs hidden sm:block">
+                Lần tưới: <Text as="strong" className="text-foreground">{selectedPlotForDetail.lastWatered}</Text>
+              </Text>
+            </CardHeader>
 
             {/* Modal Body: 2 Columns */}
-            <div className="overflow-y-auto p-5 space-y-6 flex-1">
+            <CardContent className="overflow-y-auto p-5 space-y-6 flex-1">
               {/* Stepper vụ mùa: Gieo hạt > Nảy mầm > Bung lá > Thu hoạch */}
-              <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 text-xs">
-                <div className="flex items-center gap-1.5 text-emerald-700 font-bold">
+              <Box className="flex items-center justify-between p-3 rounded-2xl bg-muted/40 border border-border text-xs">
+                <Box className="flex items-center gap-1.5 text-emerald-700 font-bold">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  <span>Gieo hạt</span>
-                </div>
-                <span className="text-slate-300">›</span>
-                <div className="flex items-center gap-1.5 text-emerald-700 font-bold">
+                  <Text as="span">Gieo hạt</Text>
+                </Box>
+                <Text as="span" className="text-muted-foreground">›</Text>
+                <Box className="flex items-center gap-1.5 text-emerald-700 font-bold">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  <span>Nảy mầm</span>
-                </div>
-                <span className="text-slate-300">›</span>
-                <div className="flex items-center gap-1.5 rounded-full bg-blue-100 text-blue-800 px-2.5 py-1 font-bold">
-                  <span className="h-2 w-2 rounded-full bg-blue-600" />
-                  <span>Bung lá</span>
-                </div>
-                <span className="text-slate-300">›</span>
-                <div className="flex items-center gap-1.5 text-slate-400 font-medium">
-                  <span className="h-2 w-2 rounded-full bg-slate-300" />
-                  <span>Thu hoạch</span>
-                </div>
-              </div>
+                  <Text as="span">Nảy mầm</Text>
+                </Box>
+                <Text as="span" className="text-muted-foreground">›</Text>
+                <Badge variant="secondary" className="gap-1.5 font-bold">
+                  <Box className="h-2 w-2 rounded-full bg-blue-600" />
+                  <Text as="span">Bung lá</Text>
+                </Badge>
+                <Text as="span" className="text-muted-foreground">›</Text>
+                <Box className="flex items-center gap-1.5 text-muted-foreground font-medium">
+                  <Box className="h-2 w-2 rounded-full bg-muted-foreground/40" />
+                  <Text as="span">Thu hoạch</Text>
+                </Box>
+              </Box>
 
               {/* 3 Telemetry Cards */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-2xl border border-slate-200 p-3.5 text-center bg-slate-50/50">
+              <Box className="grid grid-cols-3 gap-3">
+                <Card className="p-3.5 text-center bg-muted/30 border-border shadow-none">
                   <Droplets className="h-5 w-5 text-cyan-600 mx-auto mb-1" />
-                  <p className="text-[11px] text-slate-500">Độ ẩm đất</p>
-                  <p className="text-base font-extrabold text-slate-900">
+                  <CardDescription className="text-[11px]">Độ ẩm đất</CardDescription>
+                  <CardTitle className="text-base font-extrabold text-foreground">
                     {selectedPlotForDetail.soilMoisture}%
-                  </p>
-                  <span className="text-[10px] text-emerald-600 font-semibold">Chuẩn 60-75%</span>
-                </div>
+                  </CardTitle>
+                  <Badge variant="success" className="mt-1 text-[10px]">Chuẩn 60-75%</Badge>
+                </Card>
 
-                <div className="rounded-2xl border border-slate-200 p-3.5 text-center bg-slate-50/50">
+                <Card className="p-3.5 text-center bg-muted/30 border-border shadow-none">
                   <Thermometer className="h-5 w-5 text-amber-600 mx-auto mb-1" />
-                  <p className="text-[11px] text-slate-500">Nhiệt độ luống</p>
-                  <p className="text-base font-extrabold text-slate-900">
+                  <CardDescription className="text-[11px]">Nhiệt độ luống</CardDescription>
+                  <CardTitle className="text-base font-extrabold text-foreground">
                     {selectedPlotForDetail.temperature}°C
-                  </p>
-                  <span className="text-[10px] text-emerald-600 font-semibold">Chuẩn 18-26°C</span>
-                </div>
+                  </CardTitle>
+                  <Badge variant="success" className="mt-1 text-[10px]">Chuẩn 18-26°C</Badge>
+                </Card>
 
-                <div className="rounded-2xl border border-slate-200 p-3.5 text-center bg-slate-50/50">
+                <Card className="p-3.5 text-center bg-muted/30 border-border shadow-none">
                   <Cloud className="h-5 w-5 text-blue-600 mx-auto mb-1" />
-                  <p className="text-[11px] text-slate-500">Độ ẩm không khí</p>
-                  <p className="text-base font-extrabold text-slate-900">
+                  <CardDescription className="text-[11px]">Độ ẩm không khí</CardDescription>
+                  <CardTitle className="text-base font-extrabold text-foreground">
                     {selectedPlotForDetail.airHumidity}%
-                  </p>
-                  <span className="text-[10px] text-blue-600 font-semibold">Ổn định</span>
-                </div>
-              </div>
+                  </CardTitle>
+                  <Badge variant="secondary" className="mt-1 text-[10px]">Ổn định</Badge>
+                </Card>
+              </Box>
 
-              {/* Real Crop Image & Growth update form (Screen 5) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Real Crop Image & Growth update form */}
+              <Box className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* Left: Crop photo */}
-                <div className="space-y-2">
-                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <Box className="space-y-2">
+                  <Text as="h4" className="text-xs font-bold text-foreground uppercase tracking-wider">
                     Ảnh chụp kiểm định luống thực tế
-                  </h4>
-                  <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
+                  </Text>
+                  <Box className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-muted border border-border">
                     <img
                       src={selectedPlotForDetail.image}
                       alt={selectedPlotForDetail.code}
                       className="w-full h-full object-cover"
                     />
-                    <span className="absolute top-2 left-2 rounded-full bg-black/60 px-2.5 py-1 text-[10px] text-emerald-300 backdrop-blur-md">
+                    <Badge variant="secondary" className="absolute top-2 left-2 bg-black/60 text-emerald-300 backdrop-blur-md text-[10px]">
                       Cloudinary Synced (1.2 MB)
-                    </span>
-                    <span className="absolute bottom-2 left-2 rounded-full bg-black/60 px-2.5 py-1 text-[10px] text-white backdrop-blur-md">
+                    </Badge>
+                    <Badge variant="secondary" className="absolute bottom-2 left-2 bg-black/60 text-white backdrop-blur-md text-[10px]">
                       📅 Hôm nay • 08:35
-                    </span>
-                  </div>
-                </div>
+                    </Badge>
+                  </Box>
+                </Box>
 
                 {/* Right: Quick tags & log submission */}
-                <div className="space-y-3">
-                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <Box className="space-y-3">
+                  <Text as="h4" className="text-xs font-bold text-foreground uppercase tracking-wider">
                     Ghi chú nhanh nông vụ hôm nay
-                  </h4>
+                  </Text>
 
-                  <div className="flex flex-wrap gap-2">
+                  <Box className="flex flex-wrap gap-2">
                     {[
                       "Tưới vi sinh",
                       "Cây bung lá khỏe",
@@ -700,51 +730,53 @@ export function FarmerPlotsPage() {
                     ].map((tag) => {
                       const isSelected = activeTags.includes(tag);
                       return (
-                        <button
+                        <Button
                           key={tag}
                           type="button"
+                          variant={isSelected ? "primary" : "outline"}
+                          size="sm"
                           onClick={() => toggleTag(tag)}
-                          className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
-                            isSelected
-                              ? "bg-emerald-700 text-white shadow-2xs"
-                              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                          }`}
+                          className="rounded-xl text-xs font-semibold h-8"
                         >
                           {isSelected ? `✓ ${tag}` : `+ ${tag}`}
-                        </button>
+                        </Button>
                       );
                     })}
-                  </div>
+                  </Box>
 
-                  <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-900 space-y-1">
-                    <div className="flex items-center gap-2 font-bold">
+                  <Card className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 text-xs text-emerald-900 dark:text-emerald-200 space-y-1">
+                    <Box className="flex items-center gap-2 font-bold">
                       <Sun className="h-4 w-4 text-amber-500" />
-                      <span>Vi khí hậu lý tưởng cho đợt bung lá</span>
-                    </div>
-                    <p className="text-[11px] text-emerald-800 leading-relaxed">
+                      <Text as="span">Vi khí hậu lý tưởng cho đợt bung lá</Text>
+                    </Box>
+                    <CardDescription className="text-[11px] text-emerald-800 dark:text-emerald-300 leading-relaxed">
                       Độ ẩm {selectedPlotForDetail.soilMoisture}% và quang năng đạt tiêu chuẩn VietGAP giúp rễ cây hút dinh dưỡng tối đa.
-                    </p>
-                  </div>
+                    </CardDescription>
+                  </Card>
+                </Box>
+              </Box>
+            </CardContent>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      showToast(
-                        `Đã lưu nhật ký và tự động gửi thông báo SMS/Zalo cho khách hàng ${selectedPlotForDetail.customerName}!`
-                      );
-                      setSelectedPlotForDetail(null);
-                    }}
-                    className="w-full rounded-2xl bg-[#1b4332] hover:bg-[#143427] text-white py-3 text-xs font-bold flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
-                  >
-                    <Send className="h-3.5 w-3.5" />
-                    <span>Lưu nhật ký & Gửi thông báo đến khách</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+            {/* Footer */}
+            <CardFooter className="p-5 border-t border-border bg-muted/20">
+              <Button
+                type="button"
+                variant="primary"
+                onClick={() => {
+                  showToast(
+                    `Đã lưu nhật ký và tự động gửi thông báo SMS/Zalo cho khách hàng ${selectedPlotForDetail.customerName}!`
+                  );
+                  setSelectedPlotForDetail(null);
+                }}
+                className="w-full"
+                leftIcon={<Send className="h-3.5 w-3.5" />}
+              >
+                Lưu nhật ký & Gửi thông báo đến khách
+              </Button>
+            </CardFooter>
+          </Card>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }

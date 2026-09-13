@@ -242,6 +242,19 @@ Thiết kế và nâng cấp từ các bản phác thảo di động sang giao d
     - Chỉ số vi khí hậu tức thời (Độ ẩm 58%, Nhiệt độ 24°C).
     - Camera trực tiếp luống B-205 để đối chiếu trước khi hoàn tất.
 
+### 3.4. Chuẩn hóa 100% Giao diện Staff/Farmer bằng Hệ Thống Component `@/shared/ui`
+- **Yêu cầu & Ràng buộc**: Tuyệt đối không sử dụng các thẻ HTML thô (`div`, `button`, `span`) cho các khối giao diện nền tảng, mà kế thừa và phát triển từ toàn bộ hệ thống component của Design System `@/shared/ui`:
+  - `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`: Khung bao thẻ tác vụ, thống kê KPI, bộ lọc và các modal.
+  - `Button`: Tất cả nút hành động (Quét QR, Xem camera, Nhật ký, Thu hoạch, Báo sự cố, Đóng phiếu) hỗ trợ đầy đủ variant (`primary`, `secondary`, `outline`, `destructive`, `ghost`).
+  - `Badge`: Thẻ hiển thị trạng thái sinh trưởng, đếm ngược thời gian, cảnh báo độ ẩm và phân khu.
+  - `Box`: Thành phần bao bọc đa hình (polymorphic layout container) thay thế hoàn toàn các thẻ layout vô nghĩa.
+  - `Text`: Đồng bộ typographic variants (`h1-h6`, `muted`, `p`, `span`, `strong`) đảm bảo đồng nhất font chữ Outfit/Inter.
+- **Các trang đã chuẩn hóa**:
+  1. [`apps/client/src/pages/farmer/FarmerTasksPage.tsx`](file:///d:/Project/plot-farm/apps/client/src/pages/farmer/FarmerTasksPage.tsx)
+  2. [`apps/client/src/pages/farmer/FarmerTaskExecutePage.tsx`](file:///d:/Project/plot-farm/apps/client/src/pages/farmer/FarmerTaskExecutePage.tsx)
+  3. [`apps/client/src/pages/farmer/FarmerPlotsPage.tsx`](file:///d:/Project/plot-farm/apps/client/src/pages/farmer/FarmerPlotsPage.tsx)
+
+
 ---
 
 ## 4. Kiến Trúc Xử Lý Lỗi Toàn Diện (US-11 Error Handling Envelope)

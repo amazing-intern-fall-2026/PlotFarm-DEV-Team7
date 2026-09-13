@@ -1,6 +1,18 @@
 import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Button,
+  Badge,
+  Box,
+  Text,
+} from "@/shared/ui";
+import {
   ArrowLeft,
   Clock,
   CheckCircle2,
@@ -68,418 +80,442 @@ export function FarmerTaskExecutePage() {
   };
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <Box className="w-full space-y-6 pb-12">
       {/* ─────────────────────────────────────────────────────────────
           1. HEADER WITH BREADCRUMB & COUNTDOWN
       ───────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/80 shadow-xs">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => navigate("/farmer")}
-            className="p-2 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
-            aria-label="Quay lại"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
-                Phiếu chăm sóc #{id}
-              </h1>
-              <span className="rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5">
-                Bón phân vi sinh
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Ô đất B-205 (15m²) • Luống 5 (Khu B) • KTV: Bác Bảy (Lê Hoàng Ân)
-            </p>
-          </div>
-        </div>
+      <Card className="p-0 overflow-hidden">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6">
+          <Box className="flex items-center gap-3.5">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => navigate("/farmer")}
+              aria-label="Quay lại danh sách nhiệm vụ"
+              className="h-10 w-10 rounded-xl"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <Box>
+              <Box className="flex items-center gap-2.5">
+                <CardTitle className="text-xl sm:text-2xl font-extrabold tracking-tight">
+                  Phiếu chăm sóc #{id}
+                </CardTitle>
+                <Badge variant="success">Bón phân vi sinh</Badge>
+              </Box>
+              <CardDescription className="text-xs text-muted-foreground mt-0.5">
+                Ô đất B-205 (15m²) • Luống 5 (Khu B) • KTV: Bác Bảy (Lê Hoàng Ân)
+              </CardDescription>
+            </Box>
+          </Box>
 
-        {/* Countdown Badge */}
-        <div className="flex items-center gap-2 rounded-2xl bg-orange-50 border border-orange-200 px-4 py-2 text-xs font-bold text-orange-900 self-start sm:self-auto">
-          <Clock className="h-4 w-4 text-orange-600 animate-spin" />
-          <span>Hạn hoàn thành: Trước 09:30 (Còn 35 phút)</span>
-        </div>
-      </div>
+          {/* Countdown Badge */}
+          <Badge
+            variant="warning"
+            className="flex items-center gap-2 px-3.5 py-2 text-xs font-bold self-start sm:self-auto rounded-xl"
+          >
+            <Clock className="h-4 w-4 text-amber-600 animate-spin" />
+            <Text as="span" className="text-xs font-bold text-amber-900 dark:text-amber-200">
+              Hạn hoàn thành: Trước 09:30 (Còn 35 phút)
+            </Text>
+          </Badge>
+        </CardHeader>
+      </Card>
 
       {/* ─────────────────────────────────────────────────────────────
           2. STEPPER PROGRESS BAR (Horizontal Web Stepper)
       ───────────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4 p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 shadow-xs text-xs sm:text-sm">
-        {/* Step 1 */}
-        <div className="flex items-center gap-2 sm:gap-3 text-emerald-700 font-bold">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-xs shrink-0">
-            ✓
-          </div>
-          <div>
-            <p className="font-bold">1. Đã tiếp nhận</p>
-            <p className="text-[11px] text-slate-400 font-normal hidden md:block">
-              08:30 sáng nay
-            </p>
-          </div>
-        </div>
+      <Card className="p-4 sm:p-5">
+        <Box className="grid grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
+          {/* Step 1 */}
+          <Box className="flex items-center gap-2 sm:gap-3 text-emerald-700 font-bold">
+            <Box className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-xs shrink-0">
+              ✓
+            </Box>
+            <Box>
+              <Text as="p" className="font-bold text-xs sm:text-sm text-foreground">
+                1. Đã tiếp nhận
+              </Text>
+              <Text variant="muted" className="text-[11px] hidden md:block">
+                08:30 sáng nay
+              </Text>
+            </Box>
+          </Box>
 
-        {/* Step 2 */}
-        <div className="flex items-center gap-2 sm:gap-3 text-emerald-900 dark:text-emerald-300 font-bold">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-white font-extrabold text-xs shrink-0 shadow-xs">
-            2
-          </div>
-          <div>
-            <p className="font-bold">2. Minh chứng (Đang làm)</p>
-            <p className="text-[11px] text-emerald-600 font-normal hidden md:block">
-              Tải ảnh & Ghi chú
-            </p>
-          </div>
-        </div>
+          {/* Step 2 */}
+          <Box className="flex items-center gap-2 sm:gap-3 text-emerald-900 dark:text-emerald-300 font-bold">
+            <Box className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-white font-extrabold text-xs shrink-0 shadow-xs">
+              2
+            </Box>
+            <Box>
+              <Text as="p" className="font-bold text-xs sm:text-sm text-foreground">
+                2. Minh chứng (Đang làm)
+              </Text>
+              <Text as="p" className="text-[11px] text-emerald-600 font-semibold hidden md:block">
+                Tải ảnh & Ghi chú
+              </Text>
+            </Box>
+          </Box>
 
-        {/* Step 3 */}
-        <div
-          className={`flex items-center gap-2 sm:gap-3 ${
-            currentStep === 3 ? "text-emerald-700 font-bold" : "text-slate-400 font-medium"
-          }`}
-        >
-          <div
-            className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-extrabold shrink-0 ${
-              currentStep === 3
-                ? "bg-emerald-600 text-white"
-                : "bg-slate-100 text-slate-500"
+          {/* Step 3 */}
+          <Box
+            className={`flex items-center gap-2 sm:gap-3 ${
+              currentStep === 3 ? "text-emerald-700 font-bold" : "text-muted-foreground"
             }`}
           >
-            3
-          </div>
-          <div>
-            <p className="font-bold">3. Đóng phiếu & Đồng bộ</p>
-            <p className="text-[11px] text-slate-400 font-normal hidden md:block">
-              Gửi SMS/Zalo cho khách
-            </p>
-          </div>
-        </div>
-      </div>
+            <Box
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-extrabold shrink-0 ${
+                currentStep === 3
+                  ? "bg-emerald-600 text-white"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              3
+            </Box>
+            <Box>
+              <Text as="p" className="font-bold text-xs sm:text-sm">
+                3. Đóng phiếu & Đồng bộ
+              </Text>
+              <Text variant="muted" className="text-[11px] hidden md:block">
+                Gửi SMS/Zalo cho khách
+              </Text>
+            </Box>
+          </Box>
+        </Box>
+      </Card>
 
       {/* ─────────────────────────────────────────────────────────────
           3. MAIN 2-COLUMN DESKTOP WORKSPACE
       ───────────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <Box className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* ── LEFT COLUMN: PROOF OF WORK & FORM (7 COLS) ── */}
-        <div className="lg:col-span-7 space-y-6">
+        <Box className="lg:col-span-7 space-y-6">
           {/* Card: Minh chứng hiện trường bắt buộc */}
-          <div className="rounded-3xl border border-slate-200/90 bg-white dark:bg-slate-900 p-5 sm:p-6 shadow-xs space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+          <Card className="p-0 overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between p-5 pb-3">
+              <Box>
+                <CardTitle className="text-base sm:text-lg font-bold">
                   Minh chứng hiện trường bắt buộc
-                </h3>
-                <p className="text-xs text-slate-500">
+                </CardTitle>
+                <CardDescription className="text-xs">
                   Ảnh chụp luống thực tế để gửi kèm vào nhật ký canh tác của khách
-                </p>
-              </div>
-              <span className="rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5">
-                1/1 ảnh đã tải
-              </span>
-            </div>
+                </CardDescription>
+              </Box>
+              <Badge variant="success">1/1 ảnh đã tải</Badge>
+            </CardHeader>
 
-            {/* Proof Image Preview with Watermark */}
-            <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 group">
-              <img
-                src={proofImage}
-                alt="Minh chứng hiện trường"
-                className="w-full h-full object-cover"
-              />
+            <CardContent className="p-5 pt-0 space-y-4">
+              {/* Proof Image Preview with Watermark */}
+              <Box className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-900 border border-border group">
+                <img
+                  src={proofImage}
+                  alt="Minh chứng hiện trường"
+                  className="w-full h-full object-cover"
+                />
 
-              {/* Top Watermark & Valid Status Badge */}
-              <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                <span className="rounded-full bg-black/60 backdrop-blur-md px-3 py-1 text-xs text-white font-medium border border-white/20">
-                  📍 Lô B-205 • 09:12 AM
-                </span>
-                <span className="rounded-full bg-emerald-600 text-white px-2.5 py-1 text-xs font-bold flex items-center gap-1 shadow-xs">
-                  ✓ Ảnh hợp lệ
-                </span>
-              </div>
+                {/* Top Watermark & Valid Status Badge */}
+                <Box className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                  <Badge variant="secondary" className="bg-black/60 text-white border border-white/20 backdrop-blur-md">
+                    📍 Lô B-205 • 09:12 AM
+                  </Badge>
+                  <Badge variant="success" className="bg-emerald-600 text-white font-bold shadow-xs">
+                    ✓ Ảnh hợp lệ
+                  </Badge>
+                </Box>
 
-              {/* Change photo button */}
-              <div className="absolute bottom-3 right-3 flex items-center gap-2">
-                <label className="cursor-pointer rounded-xl bg-white/90 hover:bg-white text-slate-900 px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-md transition-all">
-                  <Camera className="h-3.5 w-3.5 text-emerald-600" />
-                  <span>Chụp lại góc khác / Đổi ảnh</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) {
-                        const file = e.target.files[0];
-                        setProofImage(URL.createObjectURL(file));
-                      }
-                    }}
-                  />
-                </label>
-              </div>
-            </div>
+                {/* Change photo button */}
+                <Box className="absolute bottom-3 right-3 flex items-center gap-2">
+                  <label className="cursor-pointer rounded-xl bg-white/95 hover:bg-white text-slate-900 px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-md transition-all">
+                    <Camera className="h-3.5 w-3.5 text-emerald-600" />
+                    <span>Chụp lại góc khác / Đổi ảnh</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                          const file = e.target.files[0];
+                          setProofImage(URL.createObjectURL(file));
+                        }
+                      }}
+                    />
+                  </label>
+                </Box>
+              </Box>
 
-            {/* Result Note Field */}
-            <div className="space-y-2 pt-2">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
-                Ghi chú kết quả xử lý kỹ thuật
+              {/* Result Note Field */}
+              <Box className="space-y-2 pt-2">
+                <Text variant="small" className="font-bold text-foreground uppercase tracking-wider block">
+                  Ghi chú kết quả xử lý kỹ thuật
+                </Text>
+                <textarea
+                  rows={3}
+                  value={resultNote}
+                  onChange={(e) => setResultNote(e.target.value)}
+                  placeholder="Nhập chi tiết quá trình bón phân, tưới nước hoặc chăm sóc..."
+                  className="w-full p-3.5 rounded-2xl bg-muted/40 border border-border text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground leading-relaxed"
+                />
+              </Box>
+
+              {/* Quick Action Chips */}
+              <Box className="space-y-1.5">
+                <Text variant="muted" className="text-[11px] font-medium">Gắn thẻ nhanh vào nhật ký:</Text>
+                <Box className="flex flex-wrap gap-2">
+                  {[
+                    "Tưới vi sinh",
+                    "Cây bung lá khỏe",
+                    "Đã xới thoáng đất",
+                    "Đã diệt sâu sinh học",
+                    "Nắng ấm",
+                  ].map((chip) => {
+                    const isSelected = selectedChips.includes(chip);
+                    return (
+                      <button
+                        key={chip}
+                        type="button"
+                        onClick={() => toggleChip(chip)}
+                        className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
+                          isSelected
+                            ? "bg-emerald-700 text-white shadow-2xs"
+                            : "bg-muted text-muted-foreground hover:bg-accent"
+                        }`}
+                      >
+                        {isSelected ? `✓ ${chip}` : `+ ${chip}`}
+                      </button>
+                    );
+                  })}
+                </Box>
+              </Box>
+
+              {/* Dosage Confirmation Checkbox */}
+              <label className="flex items-start gap-3 p-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={isDosageChecked}
+                  onChange={(e) => setIsDosageChecked(e.target.checked)}
+                  className="h-4 w-4 mt-0.5 accent-emerald-700 rounded"
+                />
+                <Box className="text-xs text-emerald-950 dark:text-emerald-200">
+                  <Text as="strong" className="font-bold block text-emerald-900 dark:text-emerald-100">
+                    Xác nhận định lượng chuẩn VietGAP:
+                  </Text>
+                  Liều lượng: 200g phân trùn quế đã được cân và bón đúng bán kính quanh gốc theo chỉ dẫn của chuyên gia.
+                </Box>
               </label>
-              <textarea
-                rows={3}
-                value={resultNote}
-                onChange={(e) => setResultNote(e.target.value)}
-                placeholder="Nhập chi tiết quá trình bón phân, tưới nước hoặc chăm sóc..."
-                className="w-full p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-slate-900 leading-relaxed"
-              />
-            </div>
+            </CardContent>
 
-            {/* Quick Action Chips */}
-            <div className="space-y-1.5">
-              <span className="text-[11px] text-slate-400 font-medium">Gắn thẻ nhanh vào nhật ký:</span>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  "Tưới vi sinh",
-                  "Cây bung lá khỏe",
-                  "Đã xới thoáng đất",
-                  "Đã diệt sâu sinh học",
-                  "Nắng ấm",
-                ].map((chip) => {
-                  const isSelected = selectedChips.includes(chip);
-                  return (
-                    <button
-                      key={chip}
-                      type="button"
-                      onClick={() => toggleChip(chip)}
-                      className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
-                        isSelected
-                          ? "bg-emerald-700 text-white shadow-2xs"
-                          : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                      }`}
-                    >
-                      {isSelected ? `✓ ${chip}` : `+ ${chip}`}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Dosage Confirmation Checkbox */}
-            <label className="flex items-start gap-3 p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={isDosageChecked}
-                onChange={(e) => setIsDosageChecked(e.target.checked)}
-                className="h-4 w-4 mt-0.5 accent-emerald-700 rounded"
-              />
-              <div className="text-xs text-emerald-950">
-                <strong className="font-bold block">
-                  Xác nhận định lượng chuẩn VietGAP:
-                </strong>
-                Liều lượng: 200g phân trùn quế đã được cân và bón đúng bán kính quanh gốc theo chỉ dẫn của chuyên gia.
-              </div>
-            </label>
-
-            {/* Bottom Form Actions */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <button
+            <CardFooter className="p-5 pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 border-t border-border">
+              <Button
                 type="button"
+                variant="outline"
                 onClick={() => setIsIncidentModalOpen(true)}
-                className="w-full rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 py-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                leftIcon={<AlertTriangle className="h-4 w-4 text-destructive" />}
+                className="w-full text-destructive hover:bg-destructive/10 border-destructive/30"
               >
-                <AlertTriangle className="h-4 w-4" />
-                <span>Báo sự cố</span>
-              </button>
+                Báo sự cố luống
+              </Button>
 
-              <button
+              <Button
                 type="button"
+                variant="primary"
                 onClick={handleFinishTask}
-                disabled={isSubmitting}
-                className="w-full rounded-2xl bg-[#1b4332] hover:bg-[#143427] text-white py-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-98 cursor-pointer disabled:opacity-50"
+                isLoading={isSubmitting}
+                leftIcon={<CheckCircle2 className="h-4 w-4" />}
+                className="w-full"
               >
-                <CheckCircle2 className="h-4 w-4" />
-                <span>{isSubmitting ? "Đang đồng bộ..." : "Hoàn tất & Đóng phiếu"}</span>
-              </button>
-            </div>
-          </div>
-        </div>
+                Hoàn tất & Đóng phiếu
+              </Button>
+            </CardFooter>
+          </Card>
+        </Box>
 
         {/* ── RIGHT COLUMN: TASK DETAILS & BED TELEMETRY (5 COLS) ── */}
-        <div className="lg:col-span-5 space-y-6">
+        <Box className="lg:col-span-5 space-y-6">
           {/* Task Info & Customer Instruction */}
-          <div className="rounded-3xl border border-slate-200/90 bg-white dark:bg-slate-900 p-5 shadow-xs space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <Card className="p-0 overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between p-5 pb-2">
+              <Text variant="muted" className="text-xs font-bold uppercase tracking-wider">
                 Chi tiết chỉ định kỹ thuật
-              </span>
-              <span className="rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold px-2 py-0.5 border border-emerald-200">
-                Gói sinh thái
-              </span>
-            </div>
+              </Text>
+              <Badge variant="outline">Gói sinh thái</Badge>
+            </CardHeader>
 
-            <div className="space-y-1">
-              <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">
-                Bón phân hữu cơ vi sinh
-              </h3>
-              <p className="text-xs text-slate-500">
-                Vị trí: <strong>Ô đất B-205 (15m²) • Luống 5</strong>
-              </p>
-              <p className="text-xs text-slate-500">
-                Chủ vườn: <strong>Anh Trần Quang</strong> (HĐ #CF-9023)
-              </p>
-            </div>
+            <CardContent className="p-5 pt-0 space-y-4">
+              <Box className="space-y-1">
+                <CardTitle className="text-lg font-extrabold text-foreground">
+                  Bón phân hữu cơ vi sinh
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Vị trí: <strong>Ô đất B-205 (15m²) • Luống 5</strong>
+                </CardDescription>
+                <CardDescription className="text-xs">
+                  Chủ vườn: <strong>Anh Trần Quang</strong> (HĐ #CF-9023)
+                </CardDescription>
+              </Box>
 
-            {/* Customer Special Note Box */}
-            <div className="rounded-2xl border-l-4 border-amber-500 bg-amber-50/80 p-3.5 text-xs text-amber-950 space-y-1">
-              <div className="flex items-center gap-1.5 font-bold text-amber-900">
-                <FileText className="h-4 w-4 text-amber-600" />
-                <span>Dặn dò từ khách:</span>
-              </div>
-              <p className="leading-relaxed">
-                Khách yêu cầu bón 200g phân trùn quế quanh rễ và xới nhẹ đất thoáng, không làm đứt rễ non.
-              </p>
-            </div>
+              {/* Customer Special Note Box */}
+              <Box className="rounded-2xl border-l-4 border-amber-500 bg-amber-50/80 dark:bg-amber-950/30 p-3.5 text-xs text-amber-950 dark:text-amber-200 space-y-1">
+                <Box className="flex items-center gap-1.5 font-bold text-amber-900 dark:text-amber-100">
+                  <FileText className="h-4 w-4 text-amber-600" />
+                  <Text as="span" className="font-bold">Dặn dò từ khách:</Text>
+                </Box>
+                <Text className="text-xs text-amber-900 dark:text-amber-100 leading-relaxed">
+                  Khách yêu cầu bón 200g phân trùn quế quanh rễ và xới nhẹ đất thoáng, không làm đứt rễ non.
+                </Text>
+              </Box>
+            </CardContent>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
-              <span className="flex items-center gap-1 text-emerald-700 font-semibold">
-                <ShieldCheck className="h-3.5 w-3.5" /> Lần chăm sóc miễn phí 2/2 trong tháng
-              </span>
-            </div>
-          </div>
+            <CardFooter className="p-5 pt-2 border-t border-border">
+              <Box className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 font-semibold">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                <Text as="span" className="text-xs font-semibold">Lần chăm sóc miễn phí 2/2 trong tháng</Text>
+              </Box>
+            </CardFooter>
+          </Card>
 
           {/* IoT Telemetry of Bed B-205 */}
-          <div className="rounded-3xl border border-slate-200/90 bg-white dark:bg-slate-900 p-5 shadow-xs space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+          <Card className="p-0 overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between p-5 pb-2">
+              <CardTitle className="text-xs font-bold text-foreground uppercase tracking-wider">
                 Chỉ số vi khí hậu luống 5 (Hiện thời)
-              </h4>
+              </CardTitle>
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            </div>
+            </CardHeader>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 rounded-2xl bg-cyan-50/70 border border-cyan-100">
-                <div className="flex items-center gap-1.5 text-xs text-cyan-800 font-medium mb-1">
-                  <Droplets className="h-3.5 w-3.5 text-cyan-600" />
-                  <span>Độ ẩm đất</span>
-                </div>
-                <p className="text-lg font-extrabold text-slate-900">58%</p>
-                <span className="text-[10px] text-amber-600 font-semibold">
-                  Hơi khô (Cần tưới bù)
-                </span>
-              </div>
+            <CardContent className="p-5 pt-0">
+              <Box className="grid grid-cols-2 gap-3">
+                <Box className="p-3 rounded-2xl bg-cyan-50/70 dark:bg-cyan-950/30 border border-cyan-100 dark:border-cyan-900">
+                  <Box className="flex items-center gap-1.5 text-xs text-cyan-800 dark:text-cyan-200 font-medium mb-1">
+                    <Droplets className="h-3.5 w-3.5 text-cyan-600" />
+                    <Text as="span" className="text-xs">Độ ẩm đất</Text>
+                  </Box>
+                  <Text as="p" className="text-lg font-extrabold text-foreground">58%</Text>
+                  <Badge variant="warning" className="text-[10px] px-2 py-0">
+                    Hơi khô (Cần tưới bù)
+                  </Badge>
+                </Box>
 
-              <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-100">
-                <div className="flex items-center gap-1.5 text-xs text-amber-800 font-medium mb-1">
-                  <Thermometer className="h-3.5 w-3.5 text-amber-600" />
-                  <span>Nhiệt độ luống</span>
-                </div>
-                <p className="text-lg font-extrabold text-slate-900">24.0°C</p>
-                <span className="text-[10px] text-emerald-600 font-semibold">Lý tưởng</span>
-              </div>
-            </div>
-          </div>
+                <Box className="p-3 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900">
+                  <Box className="flex items-center gap-1.5 text-xs text-amber-800 dark:text-amber-200 font-medium mb-1">
+                    <Thermometer className="h-3.5 w-3.5 text-amber-600" />
+                    <Text as="span" className="text-xs">Nhiệt độ luống</Text>
+                  </Box>
+                  <Text as="p" className="text-lg font-extrabold text-foreground">24.0°C</Text>
+                  <Badge variant="success" className="text-[10px] px-2 py-0">
+                    Lý tưởng
+                  </Badge>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
 
           {/* Live Camera Feed of Bed */}
-          <div className="rounded-3xl border border-slate-200/90 bg-white dark:bg-slate-900 p-4 shadow-xs space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-slate-700 flex items-center gap-1.5">
+          <Card className="p-0 overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
+              <CardTitle className="text-xs font-bold text-foreground flex items-center gap-1.5">
                 <Video className="h-3.5 w-3.5 text-emerald-600" /> Camera giám sát Luống 5
-              </span>
-              <span className="text-slate-400">Trực tiếp</span>
-            </div>
+              </CardTitle>
+              <Badge variant="outline" className="text-[10px]">Trực tiếp</Badge>
+            </CardHeader>
 
-            <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-black">
-              <img
-                src="/images/greenhouse_camera_live.jpg"
-                alt="Camera Luống 5"
-                className="w-full h-full object-cover"
-              />
-              <span className="absolute top-2 left-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] text-white">
-                Cam góc 01 • Luống 5
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+            <CardContent className="p-4 pt-0">
+              <Box className="relative aspect-video w-full rounded-2xl overflow-hidden bg-black border border-border">
+                <img
+                  src="/images/greenhouse_camera_live.jpg"
+                  alt="Camera Luống 5"
+                  className="w-full h-full object-cover"
+                />
+                <Badge variant="secondary" className="absolute top-2 left-2 bg-black/60 text-white text-[10px]">
+                  Cam góc 01 • Luống 5
+                </Badge>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+      </Box>
 
       {/* ─────────────────────────────────────────────────────────────
           MODAL: SUCCESS REPORT & CLOSE
       ───────────────────────────────────────────────────────────── */}
       {isSuccessModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in">
-          <div className="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 p-6 text-center shadow-2xl border border-slate-200 space-y-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mx-auto">
+        <Box className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in">
+          <Card className="w-full max-w-md p-6 text-center shadow-2xl border border-border space-y-4">
+            <Box className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mx-auto">
               <CheckCircle2 className="h-9 w-9" />
-            </div>
+            </Box>
 
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+            <CardTitle className="text-lg font-bold text-foreground">
               Hoàn tất phiếu chăm sóc #{id}!
-            </h3>
+            </CardTitle>
 
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <CardDescription className="text-xs text-muted-foreground leading-relaxed">
               Minh chứng hiện trường đã được đồng bộ an toàn lên Cloudinary. Hệ thống vừa gửi thông báo xác nhận kèm ảnh tới Zalo/SMS của khách hàng <strong>Anh Trần Quang</strong>.
-            </p>
+            </CardDescription>
 
-            <button
+            <Button
               type="button"
+              variant="primary"
               onClick={() => navigate("/farmer")}
-              className="w-full rounded-2xl bg-[#1b4332] hover:bg-[#143427] text-white py-3 text-xs font-bold shadow-md transition-colors cursor-pointer"
+              className="w-full"
             >
               Về danh sách nhiệm vụ hôm nay
-            </button>
-          </div>
-        </div>
+            </Button>
+          </Card>
+        </Box>
       )}
 
       {/* ─────────────────────────────────────────────────────────────
           MODAL: REPORT INCIDENT
       ───────────────────────────────────────────────────────────── */}
       {isIncidentModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in">
-          <div className="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-2xl border border-slate-200 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-rose-700 flex items-center gap-2">
+        <Box className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in">
+          <Card className="w-full max-w-md p-6 shadow-2xl border border-border space-y-4">
+            <Box className="flex items-center justify-between">
+              <CardTitle className="text-base font-bold text-destructive flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5" />
                 <span>Báo cáo sự cố tại Ô đất B-205</span>
-              </h3>
-              <button
-                type="button"
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setIsIncidentModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-700"
+                className="h-8 w-8 text-muted-foreground"
               >
                 <X className="h-4 w-4" />
-              </button>
-            </div>
+              </Button>
+            </Box>
 
-            <p className="text-xs text-slate-500">
+            <CardDescription className="text-xs">
               Mô tả tình trạng bất thường (sâu bọ, rệp, rò rỉ ống nhỏ giọt, v.v.) để Kỹ sư trưởng hỗ trợ xử lý.
-            </p>
+            </CardDescription>
 
             <textarea
               rows={4}
               value={incidentText}
               onChange={(e) => setIncidentText(e.target.value)}
               placeholder="Nhập mô tả sự cố thực tế..."
-              className="w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500/40"
+              className="w-full p-3 rounded-2xl bg-muted/40 border border-border text-xs focus:outline-none focus:ring-2 focus:ring-destructive/40 text-foreground"
             />
 
-            <div className="grid grid-cols-2 gap-2">
-              <button
+            <Box className="grid grid-cols-2 gap-2">
+              <Button
                 type="button"
+                variant="outline"
                 onClick={() => setIsIncidentModalOpen(false)}
-                className="rounded-xl bg-slate-100 text-slate-700 py-2.5 text-xs font-bold"
               >
                 Hủy
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="destructive"
                 onClick={handleReportIncident}
-                className="rounded-xl bg-rose-600 text-white py-2.5 text-xs font-bold hover:bg-rose-500"
               >
                 Gửi cảnh báo
-              </button>
-            </div>
-          </div>
-        </div>
+              </Button>
+            </Box>
+          </Card>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
