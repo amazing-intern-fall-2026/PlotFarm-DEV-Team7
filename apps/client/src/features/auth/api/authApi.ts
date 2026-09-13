@@ -20,6 +20,14 @@ export const authApi = {
     }),
 
   /**
+   * Đăng nhập bằng Google (nhận ID Token từ Google Identity Services).
+   */
+  loginGoogle: (idToken: string) =>
+    dispatchAction<{ idToken: string }, LoginResponseData>("auth.google", {
+      idToken,
+    }),
+
+  /**
    * Đăng ký tài khoản người dùng mới.
    */
   register: (data: RegisterRequest) =>

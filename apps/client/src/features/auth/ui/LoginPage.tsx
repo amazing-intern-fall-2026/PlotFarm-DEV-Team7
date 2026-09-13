@@ -8,6 +8,8 @@ import {
   Monitor,
   Truck,
   CheckCircle2,
+  ArrowLeft,
+  X,
 } from "lucide-react";
 import {
   Box,
@@ -20,6 +22,7 @@ import {
   Separator,
   Logo,
   Avatar,
+  Footer,
 } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 import { AUTH_ROUTES, AUTH_UI_TEXT, ROLE_HOME_ROUTES } from "../constants";
@@ -59,7 +62,7 @@ function AppleIcon() {
 
 function HeroPanel() {
   return (
-    <Box className="relative flex flex-col justify-between h-full overflow-hidden rounded-2xl bg-[hsl(135,45%,16%)]">
+    <Box className="relative flex flex-col justify-between h-full overflow-hidden bg-[hsl(135,45%,16%)]">
       <Box className="absolute inset-0 bg-gradient-to-b from-[hsl(135,50%,8%)/60%] via-transparent to-[hsl(135,50%,8%)/80%]" />
       <Box className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-[hsl(135,60%,25%)/30%] blur-3xl" />
       <Box className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-[hsl(155,50%,20%)/20%] blur-3xl" />
@@ -72,9 +75,9 @@ function HeroPanel() {
         }}
       />
 
-      <Box className="relative z-10 flex flex-col h-full p-8 gap-6">
+      <Box className="relative z-10 flex flex-col justify-between h-full p-5 lg:p-6 gap-4">
         <Box className="flex items-center justify-between">
-          <Box className="flex items-center gap-2.5">
+          <Box className="flex items-center gap-2">
             <Logo size="sm" />
             <Box>
               <Text className="text-sm font-semibold text-white leading-none">
@@ -82,7 +85,7 @@ function HeroPanel() {
               </Text>
               <Text
                 variant="muted"
-                className="text-[10px] text-[hsl(135,30%,65%)] uppercase tracking-wider"
+                className="text-[9px] text-[hsl(135,30%,65%)] uppercase tracking-wider"
               >
                 {AUTH_UI_TEXT.HERO_BRAND_SUB}
               </Text>
@@ -91,45 +94,45 @@ function HeroPanel() {
           <Badge
             variant="outline"
             icon={
-              <Radio className="h-3 w-3 text-[hsl(135,70%,50%)] animate-pulse" />
+              <Radio className="h-2.5 w-2.5 text-[hsl(135,70%,50%)] animate-pulse" />
             }
-            className="rounded-full bg-[hsl(135,40%,12%)/70%] border-[hsl(135,30%,25%)] text-xs text-[hsl(135,30%,70%)] px-3 py-1.5 backdrop-blur-sm"
+            className="rounded-full bg-[hsl(135,40%,12%)/70%] border-[hsl(135,30%,25%)] text-[10px] text-[hsl(135,30%,70%)] px-2 py-1 backdrop-blur-sm"
           >
             {AUTH_UI_TEXT.HERO_LIVE_BADGE}
           </Badge>
         </Box>
 
-        <Box className="flex-1 flex items-center">
-          <Box className="space-y-6">
+        <Box className="flex-1 flex items-center py-2">
+          <Box className="space-y-3.5">
             <Badge
               variant="outline"
               icon={
-                <ShieldCheck className="h-3.5 w-3.5 text-[hsl(135,55%,45%)]" />
+                <ShieldCheck className="h-3 w-3 text-[hsl(135,55%,45%)]" />
               }
-              className="rounded-full bg-[hsl(135,40%,12%)/60%] border-[hsl(135,30%,25%)] text-xs text-[hsl(135,30%,70%)] px-3 py-1.5 backdrop-blur-sm"
+              className="rounded-full bg-[hsl(135,40%,12%)/60%] border-[hsl(135,30%,25%)] text-[10px] text-[hsl(135,30%,70%)] px-2 py-0.5 backdrop-blur-sm"
             >
               {AUTH_UI_TEXT.HERO_MODEL_BADGE}
             </Badge>
 
             <Typography
               as="blockquote"
-              className="text-2xl font-semibold leading-snug text-white max-w-sm"
+              className="text-base lg:text-lg font-semibold leading-snug text-white"
             >
               {AUTH_UI_TEXT.HERO_QUOTE}
             </Typography>
 
-            <Box className="flex items-center gap-3">
-              <Box className="flex -space-x-2">
+            <Box className="flex items-center gap-2.5">
+              <Box className="flex -space-x-1.5">
                 {["NL", "MA", "TK"].map((initials) => (
                   <Avatar
                     key={initials}
                     name={initials}
                     size="sm"
-                    className="border-2 border-[hsl(135,45%,16%)] bg-[hsl(135,40%,28%)] text-white text-[10px]"
+                    className="border-2 border-[hsl(135,45%,16%)] bg-[hsl(135,40%,28%)] text-white text-[9px] h-6 w-6"
                   />
                 ))}
               </Box>
-              <Text className="text-sm text-[hsl(135,20%,65%)]">
+              <Text className="text-xs text-[hsl(135,20%,65%)]">
                 {AUTH_UI_TEXT.HERO_PROOF_PREFIX}{" "}
                 <strong className="text-white">
                   {AUTH_UI_TEXT.HERO_PROOF_COUNT}
@@ -140,7 +143,7 @@ function HeroPanel() {
           </Box>
         </Box>
 
-        <Box className="flex flex-wrap gap-2">
+        <Box className="flex flex-wrap gap-1.5">
           {[
             { icon: CheckCircle2, label: AUTH_UI_TEXT.HERO_PILL_SOIL },
             { icon: Monitor, label: AUTH_UI_TEXT.HERO_PILL_CAMERA },
@@ -149,8 +152,8 @@ function HeroPanel() {
             <Badge
               key={label}
               variant="outline"
-              icon={<Icon className="h-3.5 w-3.5 text-[hsl(135,55%,45%)]" />}
-              className="rounded-full bg-[hsl(135,40%,12%)/60%] border-[hsl(135,30%,25%)] text-xs text-[hsl(135,20%,70%)] px-3 py-1.5 backdrop-blur-sm"
+              icon={<Icon className="h-3 w-3 text-[hsl(135,55%,45%)]" />}
+              className="rounded-full bg-[hsl(135,40%,12%)/60%] border-[hsl(135,30%,25%)] text-[10px] text-[hsl(135,20%,70%)] px-2 py-0.5 backdrop-blur-sm"
             >
               {label}
             </Badge>
@@ -214,18 +217,18 @@ function LoginFormPanel() {
       as="form"
       onSubmit={handleSubmit}
       noValidate
-      className="space-y-4 sm:space-y-5"
+      className="space-y-3.5 sm:space-y-4"
     >
-      <Box className="space-y-1.5">
+      <Box className="space-y-1">
         <Heading
           level={1}
-          className="text-xl sm:text-2xl font-bold text-foreground tracking-tight"
+          className="text-lg sm:text-xl font-bold text-foreground tracking-tight"
         >
           {AUTH_UI_TEXT.LOGIN_TITLE}
         </Heading>
         <Text
           variant="muted"
-          className="text-xs sm:text-sm text-muted-foreground leading-relaxed"
+          className="text-xs text-muted-foreground leading-relaxed"
         >
           {AUTH_UI_TEXT.LOGIN_SUBTITLE}
         </Text>
@@ -420,38 +423,64 @@ export function LoginPage() {
   }
 
   return (
-    <Box className="min-h-screen bg-background flex flex-col items-center justify-center p-3 sm:p-6 lg:p-8">
-      <Box className="w-full max-w-md lg:max-w-4xl my-auto">
-        <Box className="grid lg:grid-cols-[1fr_1fr] gap-0 rounded-2xl border border-border shadow-2xl shadow-black/20 overflow-hidden bg-card">
-          <Box className="hidden lg:block lg:h-auto">
-            <HeroPanel />
-          </Box>
+    <Box className="min-h-screen bg-muted/20 flex flex-col justify-between">
+      {/* Top back navigation bar */}
+      <Box className="w-full max-w-[800px] mx-auto px-4 pt-4 sm:pt-6 flex items-center justify-between">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+          <span>Về trang chủ</span>
+        </Link>
+      </Box>
 
-          <Box className="flex flex-col justify-center gap-5 sm:gap-6 p-5 sm:p-8 lg:p-10">
-            <Box className="flex lg:hidden items-center justify-center gap-2.5 mb-1">
-              <Logo size="md" />
-              <Box>
-                <Heading
-                  level={3}
-                  className="text-lg font-bold text-foreground tracking-tight leading-tight"
-                >
-                  CloudFarm
-                </Heading>
-                <Text
-                  variant="muted"
-                  className="text-[10px] font-medium leading-none"
-                >
-                  {AUTH_UI_TEXT.HERO_BRAND_SUB}
-                </Text>
-              </Box>
+      {/* Main card container */}
+      <Box className="flex-1 flex items-center justify-center p-3 sm:p-5 py-6 sm:py-8">
+        <Box className="relative w-full max-w-sm sm:max-w-md lg:max-w-[780px]">
+          {/* Card exit button */}
+          <Link
+            to="/"
+            title="Thoát về trang chủ"
+            className="absolute top-3 right-3 z-20 p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+          >
+            <X className="h-4 w-4" />
+          </Link>
+
+          <Box className="grid lg:grid-cols-[1fr_1.15fr] gap-0 rounded-2xl border border-border shadow-xl shadow-black/10 overflow-hidden bg-card">
+            <Box className="hidden lg:block lg:h-auto">
+              <HeroPanel />
             </Box>
 
-            <TabSwitch active={tab} onChange={setTab} />
+            <Box className="flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-6 lg:p-7">
+              <Box className="flex lg:hidden items-center justify-center gap-2.5 mb-1">
+                <Logo size="md" />
+                <Box>
+                  <Heading
+                    level={3}
+                    className="text-lg font-bold text-foreground tracking-tight leading-tight"
+                  >
+                    CloudFarm
+                  </Heading>
+                  <Text
+                    variant="muted"
+                    className="text-[10px] font-medium leading-none"
+                  >
+                    {AUTH_UI_TEXT.HERO_BRAND_SUB}
+                  </Text>
+                </Box>
+              </Box>
 
-            {tab === "login" ? <LoginFormPanel /> : <RegisterPlaceholder />}
+              <TabSwitch active={tab} onChange={setTab} />
+
+              {tab === "login" ? <LoginFormPanel /> : <RegisterPlaceholder />}
+            </Box>
           </Box>
         </Box>
       </Box>
+
+      {/* Attached Footer */}
+      <Footer />
     </Box>
   );
 }
