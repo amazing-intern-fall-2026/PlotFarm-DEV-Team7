@@ -110,6 +110,7 @@ model User {
   userCode        String?   @unique @map("user_code")
   email           String    @unique
   phone           String?   @unique
+  googleId        String?   @unique @map("google_id")
   passwordHash    String    @map("password_hash")
   fullName        String    @map("full_name")
   avatarUrl       String?   @map("avatar_url")
