@@ -110,6 +110,7 @@ model User {
   userCode        String?   @unique @map("user_code")
   email           String    @unique
   phone           String?   @unique
+  googleId        String?   @unique @map("google_id")
   passwordHash    String    @map("password_hash")
   fullName        String    @map("full_name")
   avatarUrl       String?   @map("avatar_url")
@@ -149,6 +150,20 @@ model RefreshToken {
 
   @@map("refresh_tokens")
 }
+
+model VerificationCode {
+  id         String    @id @default(uuid())
+  email      String
+  codeHash   String    @map("code_hash")
+  attempts   Int       @default(0)
+  expiresAt  DateTime  @map("expires_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  consumedAt DateTime? @map("consumed_at")
+
+  @@index([email])
+  @@map("verification_codes")
+}
+
 
 model UserBankAccount {
   id                String   @id @default(uuid())
