@@ -4,12 +4,15 @@ import {
   Box,
 } from "@/shared/ui";
 import { FarmingLogForm } from "./FarmingLogForm";
+import { type ContractStatus } from "../model/farmingLog.types";
 import { X } from "lucide-react";
 
 interface CreateFarmingLogModalProps {
   isOpen: boolean;
   onClose: () => void;
   contractId?: string;
+  contractStatus?: ContractStatus;
+  isAssignedToFarmer?: boolean;
   plotCode?: string;
   cropName?: string;
   customerName?: string;
@@ -20,6 +23,8 @@ export function CreateFarmingLogModal({
   isOpen,
   onClose,
   contractId = "CONTRACT-A104",
+  contractStatus = "ACTIVE",
+  isAssignedToFarmer = true,
   plotCode = "Ô đất A-104",
   cropName = "Cải cầu vồng Thụy Sĩ",
   customerName = "Chị Thu Hà",
@@ -47,6 +52,8 @@ export function CreateFarmingLogModal({
         <Box className="overflow-y-auto p-4 sm:p-6 flex-1">
           <FarmingLogForm
             contractId={contractId}
+            contractStatus={contractStatus}
+            isAssignedToFarmer={isAssignedToFarmer}
             plotCode={plotCode}
             cropName={cropName}
             customerName={customerName}
@@ -61,3 +68,4 @@ export function CreateFarmingLogModal({
     </Box>
   );
 }
+

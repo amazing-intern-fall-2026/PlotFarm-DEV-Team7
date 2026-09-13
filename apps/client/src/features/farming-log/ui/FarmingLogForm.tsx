@@ -12,6 +12,7 @@ import {
   Text,
 } from "@/shared/ui";
 import { useFarmingLogForm } from "../model/useFarmingLogForm";
+import { type ContractStatus } from "../model/farmingLog.types";
 import { GrowthStageSelector } from "./GrowthStageSelector";
 import { ImageDropzoneUploader } from "./ImageDropzoneUploader";
 import { EnvironmentalInputs } from "./EnvironmentalInputs";
@@ -21,13 +22,18 @@ import {
   ArrowLeft,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   Sparkles,
   MapPin,
   User,
+  WifiOff,
+  Trash2,
 } from "lucide-react";
 
 interface FarmingLogFormProps {
   contractId?: string;
+  contractStatus?: ContractStatus;
+  isAssignedToFarmer?: boolean;
   plotCode?: string;
   cropName?: string;
   customerName?: string;
@@ -37,6 +43,8 @@ interface FarmingLogFormProps {
 
 export function FarmingLogForm({
   contractId = "CONTRACT-A104",
+  contractStatus = "ACTIVE",
+  isAssignedToFarmer = true,
   plotCode = "Ô đất A-104",
   cropName = "Cải cầu vồng Thụy Sĩ",
   customerName = "Chị Thu Hà",
@@ -56,13 +64,20 @@ export function FarmingLogForm({
     isSubmitting,
     isSuccessModalOpen,
     setIsSuccessModalOpen,
+    isOffline,
+    hasRestoredDraft,
+    eligibility,
+    canSubmit,
     handleSelectStage,
     handleAddFiles,
     handleRemoveImage,
     handleSyncSensors,
     handleSubmitForm,
+    handleClearDraft,
   } = useFarmingLogForm({
     contractId,
+    contractStatus,
+    isAssignedToFarmer,
     onSuccess: () => {
       onSuccess?.();
     },
@@ -112,7 +127,17 @@ export function FarmingLogForm({
                 <CardTitle className="text-lg sm:text-xl font-extrabold tracking-tight text-foreground">
                   Đăng Nhật Ký Sinh Trưởng
                 </CardTitle>
-                <Badge variant="success">Hợp đồng ACTIVE</Badge>
+                {!isAssignedToFarmer ? (
+                  <Badge variant="destructive">Ngoài quyền quản lý</Badge>
+                ) : contractStatus === "ACTIVE" ? (
+                  <Badge variant="success">Hợp đồng ACTIVE</Badge>
+                ) : contractStatus === "EXPIRED" ? (
+                  <Badge variant="destructive">Hợp đồng HẾT HẠN</Badge>
+                ) : contractStatus === "HARVESTED" ? (
+                  <Badge variant="warning">Đã thu hoạch</Badge>
+                ) : (
+                  <Badge variant="secondary">Đã hủy</Badge>
+                )}
               </Box>
               <CardDescription className="text-xs text-muted-foreground mt-0.5 flex flex-wrap items-center gap-2">
                 <span className="flex items-center gap-1 font-semibold text-foreground">
@@ -135,6 +160,58 @@ export function FarmingLogForm({
           </Badge>
         </CardHeader>
       </Card>
+
+      {/* Business Ineligibility Banner (Rule 1 & Rule 2) */}
+      {!eligibility.eligible && (
+        <Card className="p-4 bg-amber-500/10 border-amber-500/40 text-amber-900 dark:text-amber-200 flex items-start gap-3 rounded-2xl animate-in fade-in">
+          <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+          <Box className="space-y-1">
+            <Text as="p" className="text-xs font-bold leading-none">
+              Cảnh báo quy tắc nghiệp vụ: Vô hiệu hóa chức năng đăng bài
+            </Text>
+            <Text as="p" className="text-xs text-muted-foreground leading-relaxed">
+              {eligibility.message}
+            </Text>
+          </Box>
+        </Card>
+      )}
+
+      {/* Offline Alert Banner (Rule 5) */}
+      {isOffline && (
+        <Card className="p-3.5 bg-yellow-500/10 border-yellow-500/40 text-yellow-800 dark:text-yellow-200 flex items-center justify-between gap-3 rounded-2xl animate-in fade-in">
+          <Box className="flex items-center gap-2.5">
+            <WifiOff className="h-4 w-4 shrink-0 text-yellow-600" />
+            <Text as="span" className="text-xs font-medium">
+              Bạn đang ngoại tuyến (Mất mạng). Bản nháp đang được lưu tạm trên máy và sẽ tự động đồng bộ khi có mạng.
+            </Text>
+          </Box>
+          <Badge variant="secondary" className="text-[10px] uppercase font-bold tracking-wider">
+            Chế độ Offline
+          </Badge>
+        </Card>
+      )}
+
+      {/* Draft Restored Banner (Rule 5) */}
+      {hasRestoredDraft && (
+        <Card className="p-3.5 bg-emerald-500/10 border-emerald-500/30 text-emerald-900 dark:text-emerald-200 flex items-center justify-between gap-3 rounded-2xl animate-in fade-in">
+          <Box className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 shrink-0 text-emerald-600" />
+            <Text as="span" className="text-xs font-medium">
+              Đã khôi phục bản nháp chưa gửi từ bộ nhớ thiết bị của bạn.
+            </Text>
+          </Box>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleClearDraft}
+            leftIcon={<Trash2 className="h-3.5 w-3.5 text-muted-foreground" />}
+            className="text-[11px] h-7 px-2.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl"
+          >
+            Xóa bản nháp
+          </Button>
+        </Card>
+      )}
 
       {/* Global Error Banner */}
       {submitError && (
@@ -167,14 +244,14 @@ export function FarmingLogForm({
                   <span>Ghi chú hiện trạng cây trồng <Text as="span" className="text-destructive">*</Text></span>
                 </Text>
                 <Text variant="muted" className="text-[11px]">
-                  {notesValue.length}/1000 ký tự
+                  {notesValue.length}/10 ký tự tối thiểu (tối đa 1000)
                 </Text>
               </Box>
 
               <textarea
                 rows={4}
                 {...register("notes")}
-                placeholder="Mô tả chi tiết tình trạng lá, độ ẩm đất, các biện pháp chăm sóc vừa thực hiện..."
+                placeholder="Mô tả chi tiết tình trạng lá, độ ẩm đất, các biện pháp chăm sóc vừa thực hiện (tối thiểu 10 ký tự)..."
                 className={`w-full p-4 rounded-2xl bg-muted/30 border text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 transition-all ${
                   errors.notes
                     ? "border-destructive focus:ring-destructive/40"
@@ -246,11 +323,15 @@ export function FarmingLogForm({
               type="submit"
               variant="primary"
               isLoading={isSubmitting}
-              disabled={isSubmitting || isUploading}
+              disabled={!canSubmit || isOffline}
               leftIcon={<Send className="h-4 w-4" />}
-              className="w-full sm:w-auto min-w-[200px]"
+              className="w-full sm:w-auto min-w-[220px]"
             >
-              Đăng nhật ký tiến độ
+              {!eligibility.eligible
+                ? "Không đủ điều kiện đăng bài"
+                : isOffline
+                ? "Ngoại tuyến (Đã lưu nháp)"
+                : "Đăng nhật ký tiến độ"}
             </Button>
           </CardFooter>
         </Card>

@@ -6,13 +6,21 @@ import {
   type FarmingLogFormData,
   type UploadedImageItem,
   type GrowthStageId,
+  type ContractStatus,
+  type FarmingLogDraft,
   GROWTH_STAGES,
+  validateFarmingLogEligibility,
 } from "./farmingLog.types";
 import { compressImage } from "./compressImage";
 import { farmingLogApi } from "../api/farmingLogApi";
 
+const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+const ALLOWED_IMAGE_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+
 interface UseFarmingLogFormProps {
   contractId?: string;
+  contractStatus?: ContractStatus;
+  isAssignedToFarmer?: boolean;
   initialStage?: GrowthStageId;
   initialTemperature?: number;
   initialAirHumidity?: number;
@@ -22,6 +30,8 @@ interface UseFarmingLogFormProps {
 
 export function useFarmingLogForm({
   contractId = "CONTRACT-A104",
+  contractStatus = "ACTIVE",
+  isAssignedToFarmer = true,
   initialStage,
   initialTemperature = 24.5,
   initialAirHumidity = 72,
@@ -34,6 +44,16 @@ export function useFarmingLogForm({
   const [uploadProgress, setUploadProgress] = React.useState<number>(0);
   const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = React.useState(false);
+  const [isOffline, setIsOffline] = React.useState(!navigator.onLine);
+  const [hasRestoredDraft, setHasRestoredDraft] = React.useState(false);
+
+  const draftKey = `farming_log_draft_${contractId}`;
+
+  // Evaluate business eligibility
+  const eligibility = React.useMemo(
+    () => validateFarmingLogEligibility(contractStatus, isAssignedToFarmer),
+    [contractStatus, isAssignedToFarmer]
+  );
 
   const form = useForm<FarmingLogFormData>({
     resolver: zodResolver(FarmingLogFormSchema),
@@ -48,9 +68,94 @@ export function useFarmingLogForm({
     mode: "onTouched",
   });
 
-  const { setValue, watch, trigger, formState } = form;
+  const { setValue, watch, trigger, reset, formState } = form;
   const currentStage = watch("selectedStage");
   const currentPhotoUrls = watch("photoUrls");
+  const notes = watch("notes");
+  const temperature = watch("temperature");
+  const airHumidity = watch("airHumidity");
+  const soilMoisture = watch("soilMoisture");
+
+  // Monitor online / offline state
+  React.useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  // Restore draft from LocalStorage on mount if available
+  React.useEffect(() => {
+    try {
+      const savedDraftRaw = localStorage.getItem(draftKey);
+      if (savedDraftRaw) {
+        const draft: FarmingLogDraft = JSON.parse(savedDraftRaw);
+        if (draft.notes || draft.selectedStage || (draft.uploadedImages && draft.uploadedImages.length > 0)) {
+          reset({
+            selectedStage: draft.selectedStage as GrowthStageId | undefined,
+            notes: draft.notes || "",
+            photoUrls: (draft.uploadedImages || []).map((img) => img.url),
+            temperature: draft.temperature ?? initialTemperature,
+            airHumidity: draft.airHumidity ?? initialAirHumidity,
+            soilMoisture: draft.soilMoisture ?? initialSoilMoisture,
+          });
+          if (draft.uploadedImages && draft.uploadedImages.length > 0) {
+            setUploadedImages(draft.uploadedImages);
+          }
+          setHasRestoredDraft(true);
+        }
+      }
+    } catch {
+      // Ignore JSON parse errors in localStorage
+    }
+  }, [draftKey, initialTemperature, initialAirHumidity, initialSoilMoisture, reset]);
+
+  // Auto-save draft to LocalStorage when user makes changes
+  React.useEffect(() => {
+    if (!notes && !currentStage && uploadedImages.length === 0) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      try {
+        const draft: FarmingLogDraft = {
+          contractId,
+          selectedStage: currentStage,
+          notes: notes || "",
+          uploadedImages,
+          temperature,
+          airHumidity,
+          soilMoisture,
+          savedAt: new Date().toISOString(),
+        };
+        localStorage.setItem(draftKey, JSON.stringify(draft));
+      } catch {
+        // Ignore localStorage quota errors
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [contractId, currentStage, notes, uploadedImages, temperature, airHumidity, soilMoisture, draftKey]);
+
+  const handleClearDraft = React.useCallback(() => {
+    localStorage.removeItem(draftKey);
+    setHasRestoredDraft(false);
+    setUploadedImages([]);
+    reset({
+      selectedStage: undefined,
+      notes: "",
+      photoUrls: [],
+      temperature: initialTemperature,
+      airHumidity: initialAirHumidity,
+      soilMoisture: initialSoilMoisture,
+    });
+  }, [draftKey, initialTemperature, initialAirHumidity, initialSoilMoisture, reset]);
 
   // Keep form's photoUrls in sync with uploadedImages
   React.useEffect(() => {
@@ -65,8 +170,22 @@ export function useFarmingLogForm({
 
   // Image Upload handler with client-side compression (US-23)
   const handleAddFiles = async (files: FileList | File[]) => {
-    const fileArray = Array.from(files).filter((f) => f.type.startsWith("image/"));
-    if (fileArray.length === 0) return;
+    const rawFiles = Array.from(files);
+    if (rawFiles.length === 0) return;
+
+    // Validate mime types
+    const invalidType = rawFiles.find((f) => !ALLOWED_IMAGE_MIME_TYPES.includes(f.type.toLowerCase()));
+    if (invalidType) {
+      setSubmitError("Định dạng ảnh không hợp lệ. Vui lòng chọn ảnh PNG, JPG hoặc WEBP.");
+      return;
+    }
+
+    // Validate size limit (< 10MB)
+    const oversizedFile = rawFiles.find((f) => f.size > MAX_IMAGE_SIZE_BYTES);
+    if (oversizedFile) {
+      setSubmitError(`Tệp ảnh "${oversizedFile.name}" vượt quá giới hạn 10MB (${(oversizedFile.size / (1024 * 1024)).toFixed(1)} MB).`);
+      return;
+    }
 
     setSubmitError(null);
     setIsCompressing(true);
@@ -74,9 +193,9 @@ export function useFarmingLogForm({
     setUploadProgress(10);
 
     try {
-      for (let i = 0; i < fileArray.length; i++) {
-        const file = fileArray[i];
-        
+      for (let i = 0; i < rawFiles.length; i++) {
+        const file = rawFiles[i];
+
         // 1. Client-side compression
         const compression = await compressImage(file, 1600, 0.8);
         setIsCompressing(false);
@@ -86,7 +205,7 @@ export function useFarmingLogForm({
           compression.file,
           (percent) => {
             const overallProgress = Math.round(
-              ((i + percent / 100) / fileArray.length) * 100
+              ((i + percent / 100) / rawFiles.length) * 100
             );
             setUploadProgress(overallProgress);
           }
@@ -131,6 +250,18 @@ export function useFarmingLogForm({
   const handleSubmitForm = form.handleSubmit(async (data) => {
     setSubmitError(null);
 
+    // Business check: contract status & assignment
+    if (!eligibility.eligible) {
+      setSubmitError(eligibility.message || "Bạn không đủ điều kiện đăng nhật ký cho ô đất này.");
+      return;
+    }
+
+    // Offline check: allow local saving
+    if (isOffline) {
+      setSubmitError("Đang ngoại tuyến (Offline). Bản nháp đã được lưu vào thiết bị. Vui lòng kết nối Internet để gửi bài viết lên hệ thống.");
+      return;
+    }
+
     const stageDef = GROWTH_STAGES.find((s) => s.id === data.selectedStage);
     const progress = stageDef?.progressPercent ?? 50;
 
@@ -149,6 +280,10 @@ export function useFarmingLogForm({
         },
       });
 
+      // Clear draft on successful submission
+      localStorage.removeItem(draftKey);
+      setHasRestoredDraft(false);
+
       setIsSuccessModalOpen(true);
       onSuccess?.(result);
     } catch (err: unknown) {
@@ -159,6 +294,8 @@ export function useFarmingLogForm({
       setSubmitError(msg);
     }
   });
+
+  const canSubmit = eligibility.eligible && !formState.isSubmitting && !isUploading;
 
   return {
     form,
@@ -172,10 +309,16 @@ export function useFarmingLogForm({
     isSubmitting: formState.isSubmitting,
     isSuccessModalOpen,
     setIsSuccessModalOpen,
+    isOffline,
+    hasRestoredDraft,
+    eligibility,
+    canSubmit,
     handleSelectStage,
     handleAddFiles,
     handleRemoveImage,
     handleSyncSensors,
     handleSubmitForm,
+    handleClearDraft,
   };
 }
+

@@ -53,9 +53,129 @@ interface PlotData {
   readyForHarvest?: boolean;
   image: string;
   lastWatered: string;
+  contractStatus: "ACTIVE" | "EXPIRED" | "HARVESTED" | "CANCELLED";
+  isAssignedToFarmer: boolean;
 }
 
-const ALL_PLOTS: PlotData[] = [];
+const ALL_PLOTS: PlotData[] = [
+  {
+    id: "CONTRACT-A104",
+    code: "Ô đất A-104",
+    area: "20m²",
+    bed: "Luống 2",
+    zone: "Khu A",
+    cropName: "Cải cầu vồng Thụy Sĩ",
+    customerName: "Chị Thu Hà",
+    customerPhone: "0912 345 678",
+    currentDay: 32,
+    totalDays: 60,
+    progressPercent: 53,
+    soilMoisture: 68,
+    soilStatus: "Đạt",
+    temperature: 24.5,
+    airHumidity: 72,
+    harvestDate: "24/12/2026",
+    status: "growing",
+    contractStatus: "ACTIVE",
+    isAssignedToFarmer: true,
+    image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&auto=format&fit=crop&q=60",
+    lastWatered: "Hôm nay • 06:30",
+  },
+  {
+    id: "CONTRACT-B205",
+    code: "Ô đất B-205",
+    area: "15m²",
+    bed: "Luống 5",
+    zone: "Khu B",
+    cropName: "Cải bó xôi Nhật",
+    customerName: "Anh Trần Quang",
+    customerPhone: "0988 765 432",
+    currentDay: 18,
+    totalDays: 60,
+    progressPercent: 30,
+    soilMoisture: 72,
+    soilStatus: "Đạt",
+    temperature: 23.0,
+    airHumidity: 75,
+    harvestDate: "08/01/2027",
+    status: "growing",
+    contractStatus: "ACTIVE",
+    isAssignedToFarmer: true,
+    image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=800&auto=format&fit=crop&q=60",
+    lastWatered: "Hôm qua • 16:45",
+  },
+  {
+    id: "CONTRACT-B206",
+    code: "Ô đất B-206",
+    area: "18m²",
+    bed: "Luống 6",
+    zone: "Khu B",
+    cropName: "Xà lách lolo tím",
+    customerName: "Chị Mai Lan",
+    customerPhone: "0903 112 233",
+    currentDay: 60,
+    totalDays: 60,
+    progressPercent: 100,
+    soilMoisture: 45,
+    soilStatus: "Cần tưới",
+    temperature: 25.0,
+    airHumidity: 65,
+    harvestDate: "15/01/2027",
+    status: "need_water",
+    contractStatus: "EXPIRED",
+    isAssignedToFarmer: true,
+    image: "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=800&auto=format&fit=crop&q=60",
+    lastWatered: "2 ngày trước",
+  },
+  {
+    id: "CONTRACT-A101",
+    code: "Ô đất A-101",
+    area: "25m²",
+    bed: "Luống 1",
+    zone: "Khu A",
+    cropName: "Xà lách búp mỡ",
+    customerName: "Bác Hoàng Nam",
+    customerPhone: "0934 567 890",
+    currentDay: 60,
+    totalDays: 60,
+    progressPercent: 100,
+    soilMoisture: 65,
+    soilStatus: "Đạt",
+    temperature: 22.8,
+    airHumidity: 70,
+    harvestDate: "Hôm nay (Đã thu hoạch)",
+    status: "ready_harvest",
+    readyForHarvest: true,
+    contractStatus: "HARVESTED",
+    isAssignedToFarmer: true,
+    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=60",
+    lastWatered: "Hôm nay • 05:00",
+  },
+  {
+    id: "CONTRACT-C301",
+    code: "Ô đất C-301",
+    area: "30m²",
+    bed: "Luống ngoại vi",
+    zone: "Khu A",
+    cropName: "Cà chua cherry",
+    customerName: "Anh Đức Thắng",
+    customerPhone: "0977 123 999",
+    currentDay: 40,
+    totalDays: 75,
+    progressPercent: 53,
+    soilMoisture: 62,
+    soilStatus: "Đạt",
+    temperature: 25.5,
+    airHumidity: 68,
+    harvestDate: "28/01/2027",
+    status: "growing",
+    contractStatus: "ACTIVE",
+    isAssignedToFarmer: false,
+    image: "https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=800&auto=format&fit=crop&q=60",
+    lastWatered: "Hôm qua • 17:00",
+  },
+];
+
 
 
 export function FarmerPlotsPage() {
@@ -327,18 +447,29 @@ export function FarmerPlotsPage() {
                   </CardDescription>
                 </Box>
 
-                <Badge
-                  variant={
-                    plot.readyForHarvest
-                      ? "destructive"
-                      : plot.status === "need_water"
-                      ? "warning"
-                      : "secondary"
-                  }
-                  className="font-bold text-xs"
-                >
-                  {plot.readyForHarvest ? "Đạt 60/60 ngày" : `Ngày ${plot.currentDay}/${plot.totalDays}`}
-                </Badge>
+                <Box className="flex flex-col items-end gap-1">
+                  <Badge
+                    variant={
+                      plot.readyForHarvest
+                        ? "destructive"
+                        : plot.status === "need_water"
+                        ? "warning"
+                        : "secondary"
+                    }
+                    className="font-bold text-xs"
+                  >
+                    {plot.readyForHarvest ? "Đạt 60/60 ngày" : `Ngày ${plot.currentDay}/${plot.totalDays}`}
+                  </Badge>
+                  {!plot.isAssignedToFarmer ? (
+                    <Badge variant="destructive" className="text-[10px]">Ngoài quyền quản lý</Badge>
+                  ) : plot.contractStatus === "ACTIVE" ? (
+                    <Badge variant="success" className="text-[10px]">HĐ ACTIVE</Badge>
+                  ) : plot.contractStatus === "EXPIRED" ? (
+                    <Badge variant="destructive" className="text-[10px]">HĐ Hết hạn</Badge>
+                  ) : (
+                    <Badge variant="warning" className="text-[10px]">Đã thu hoạch</Badge>
+                  )}
+                </Box>
               </Box>
 
               {/* Crop name & Customer */}
@@ -418,14 +549,26 @@ export function FarmerPlotsPage() {
             {/* Card Footer: Action Buttons */}
             <CardFooter className="p-5 pt-0">
               {plot.readyForHarvest ? (
-                <Button
-                  type="button"
-                  variant="primary"
-                  onClick={() => navigate(`/farmer/harvest/${plot.id}`)}
-                  className="w-full bg-[#ea580c] hover:bg-[#c2410c] text-white py-2.5 text-xs font-bold"
-                >
-                  🚜 Tạo lệnh thu hoạch ngay
-                </Button>
+                <Box className="grid grid-cols-2 gap-2 w-full">
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={() => navigate(`/farmer/harvest/${plot.id}`)}
+                    className="bg-[#ea580c] hover:bg-[#c2410c] text-white py-2 text-xs font-bold"
+                  >
+                    🚜 Thu hoạch
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCreateLogPlot(plot)}
+                    leftIcon={<BookOpen className="h-3.5 w-3.5" />}
+                    className="text-xs"
+                  >
+                    Nhật ký
+                  </Button>
+                </Box>
               ) : (
                 <Box className="grid grid-cols-2 gap-2 w-full">
                   <Button
@@ -443,7 +586,7 @@ export function FarmerPlotsPage() {
                     type="button"
                     variant="primary"
                     size="sm"
-                    onClick={() => setSelectedPlotForDetail(plot)}
+                    onClick={() => setCreateLogPlot(plot)}
                     leftIcon={<BookOpen className="h-3.5 w-3.5" />}
                     className="text-xs"
                   >
@@ -719,6 +862,8 @@ export function FarmerPlotsPage() {
         isOpen={Boolean(createLogPlot)}
         onClose={() => setCreateLogPlot(null)}
         contractId={createLogPlot?.id}
+        contractStatus={createLogPlot?.contractStatus}
+        isAssignedToFarmer={createLogPlot?.isAssignedToFarmer}
         plotCode={createLogPlot?.code}
         cropName={createLogPlot?.cropName}
         customerName={createLogPlot?.customerName}

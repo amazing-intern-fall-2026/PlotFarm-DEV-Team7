@@ -63,7 +63,7 @@ export function ImageDropzoneUploader({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/png, image/jpeg, image/jpg, image/webp"
         multiple
         className="hidden"
         onChange={(e) => {
@@ -76,7 +76,7 @@ export function ImageDropzoneUploader({
       <input
         ref={cameraInputRef}
         type="file"
-        accept="image/*"
+        accept="image/png, image/jpeg, image/jpg, image/webp"
         capture="environment"
         className="hidden"
         onChange={(e) => {
@@ -124,7 +124,7 @@ export function ImageDropzoneUploader({
               Kéo thả ảnh vào đây hoặc bấm chọn từ thiết bị
             </Text>
             <Text variant="muted" className="text-[11px] leading-relaxed">
-              Tự động nén ảnh chất lượng cao để tiết kiệm 4G trước khi đồng bộ Cloudinary
+              Hỗ trợ PNG, JPG, WEBP (Tối đa 10MB/ảnh) • Tự động nén trước khi đồng bộ Cloudinary
             </Text>
           </Box>
 

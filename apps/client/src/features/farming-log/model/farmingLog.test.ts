@@ -93,10 +93,10 @@ describe("Farming Progress Log Test Suite (US-23 & US-24)", () => {
       }
     });
 
-    it("should fail validation when notes is shorter than 5 characters", () => {
+    it("should fail validation when notes is shorter than 10 characters", () => {
       const shortNotesPayload = {
         selectedStage: "STAGE_3",
-        notes: "Ok",
+        notes: "Cây tốt", // 7 chars, less than 10
         photoUrls: ["https://res.cloudinary.com/plotfarm/image/upload/v1/photo.jpg"],
         temperature: 24,
         airHumidity: 70,
@@ -109,7 +109,7 @@ describe("Farming Progress Log Test Suite (US-23 & US-24)", () => {
         const notesError = result.error.errors.find(
           (err) => err.path[0] === "notes"
         );
-        expect(notesError?.message).toContain("ít nhất 5 ký tự");
+        expect(notesError?.message).toContain("ít nhất 10 ký tự");
       }
     });
   });
@@ -159,4 +159,42 @@ describe("Farming Progress Log Test Suite (US-23 & US-24)", () => {
       expect(result.compressedSize).toBeGreaterThan(0);
     });
   });
+
+  describe("Quy tắc Nghiệp vụ & Điều kiện Đăng Nhật ký (US-23 Business Rules)", () => {
+    it("should approve eligibility when contract is ACTIVE and assigned to farmer", async () => {
+      const { validateFarmingLogEligibility } = await import("./farmingLog.types");
+      const check = validateFarmingLogEligibility("ACTIVE", true);
+      expect(check.eligible).toBe(true);
+      expect(check.message).toBeUndefined();
+    });
+
+    it("should reject eligibility when plot is NOT assigned to farmer", async () => {
+      const { validateFarmingLogEligibility } = await import("./farmingLog.types");
+      const check = validateFarmingLogEligibility("ACTIVE", false);
+      expect(check.eligible).toBe(false);
+      expect(check.message).toContain("không thuộc quyền quản lý");
+    });
+
+    it("should reject eligibility when contract is EXPIRED", async () => {
+      const { validateFarmingLogEligibility } = await import("./farmingLog.types");
+      const check = validateFarmingLogEligibility("EXPIRED", true);
+      expect(check.eligible).toBe(false);
+      expect(check.message).toContain("HẾT HẠN");
+    });
+
+    it("should reject eligibility when contract is HARVESTED", async () => {
+      const { validateFarmingLogEligibility } = await import("./farmingLog.types");
+      const check = validateFarmingLogEligibility("HARVESTED", true);
+      expect(check.eligible).toBe(false);
+      expect(check.message).toContain("ĐÃ THU HOẠCH");
+    });
+
+    it("should reject eligibility when contract is CANCELLED", async () => {
+      const { validateFarmingLogEligibility } = await import("./farmingLog.types");
+      const check = validateFarmingLogEligibility("CANCELLED", true);
+      expect(check.eligible).toBe(false);
+      expect(check.message).toContain("BỊ HỦY");
+    });
+  });
 });
+
