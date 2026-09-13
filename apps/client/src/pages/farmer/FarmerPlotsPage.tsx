@@ -59,126 +59,7 @@ interface PlotData {
 
 const STORAGE_KEY_PLOTS = "farmer_managed_plots_data";
 
-const INITIAL_PLOTS: PlotData[] = [
-  {
-    id: "CONTRACT-A104",
-    code: "Ô đất A-104",
-    area: "20m²",
-    bed: "Luống 2",
-    zone: "Khu A",
-    cropName: "Cải cầu vồng Thụy Sĩ",
-    customerName: "Chị Thu Hà",
-    customerPhone: "0912 345 678",
-    currentDay: 32,
-    totalDays: 60,
-    progressPercent: 53,
-    soilMoisture: 68,
-    soilStatus: "Đạt",
-    temperature: 24.5,
-    airHumidity: 72,
-    harvestDate: "24/12/2026",
-    status: "growing",
-    contractStatus: "ACTIVE",
-    isAssignedToFarmer: true,
-    image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&auto=format&fit=crop&q=60",
-    lastWatered: "Hôm nay • 06:30",
-  },
-  {
-    id: "CONTRACT-B205",
-    code: "Ô đất B-205",
-    area: "15m²",
-    bed: "Luống 5",
-    zone: "Khu B",
-    cropName: "Cải bó xôi Nhật",
-    customerName: "Anh Trần Quang",
-    customerPhone: "0988 765 432",
-    currentDay: 18,
-    totalDays: 60,
-    progressPercent: 30,
-    soilMoisture: 72,
-    soilStatus: "Đạt",
-    temperature: 23.0,
-    airHumidity: 75,
-    harvestDate: "08/01/2027",
-    status: "growing",
-    contractStatus: "ACTIVE",
-    isAssignedToFarmer: true,
-    image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=800&auto=format&fit=crop&q=60",
-    lastWatered: "Hôm qua • 16:45",
-  },
-  {
-    id: "CONTRACT-B206",
-    code: "Ô đất B-206",
-    area: "18m²",
-    bed: "Luống 6",
-    zone: "Khu B",
-    cropName: "Xà lách lolo tím",
-    customerName: "Chị Mai Lan",
-    customerPhone: "0903 112 233",
-    currentDay: 60,
-    totalDays: 60,
-    progressPercent: 100,
-    soilMoisture: 45,
-    soilStatus: "Cần tưới",
-    temperature: 25.0,
-    airHumidity: 65,
-    harvestDate: "15/01/2027",
-    status: "need_water",
-    contractStatus: "EXPIRED",
-    isAssignedToFarmer: true,
-    image: "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=800&auto=format&fit=crop&q=60",
-    lastWatered: "2 ngày trước",
-  },
-  {
-    id: "CONTRACT-A101",
-    code: "Ô đất A-101",
-    area: "25m²",
-    bed: "Luống 1",
-    zone: "Khu A",
-    cropName: "Xà lách búp mỡ",
-    customerName: "Bác Hoàng Nam",
-    customerPhone: "0934 567 890",
-    currentDay: 60,
-    totalDays: 60,
-    progressPercent: 100,
-    soilMoisture: 65,
-    soilStatus: "Đạt",
-    temperature: 22.8,
-    airHumidity: 70,
-    harvestDate: "Hôm nay (Đã thu hoạch)",
-    status: "ready_harvest",
-    readyForHarvest: true,
-    contractStatus: "HARVESTED",
-    isAssignedToFarmer: true,
-    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=60",
-    lastWatered: "Hôm nay • 05:00",
-  },
-  {
-    id: "CONTRACT-C301",
-    code: "Ô đất C-301",
-    area: "30m²",
-    bed: "Luống ngoại vi",
-    zone: "Khu A",
-    cropName: "Cà chua cherry",
-    customerName: "Anh Đức Thắng",
-    customerPhone: "0977 123 999",
-    currentDay: 40,
-    totalDays: 75,
-    progressPercent: 53,
-    soilMoisture: 62,
-    soilStatus: "Đạt",
-    temperature: 25.5,
-    airHumidity: 68,
-    harvestDate: "28/01/2027",
-    status: "growing",
-    contractStatus: "ACTIVE",
-    isAssignedToFarmer: false,
-    image: "https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=800&auto=format&fit=crop&q=60",
-    lastWatered: "Hôm qua • 17:00",
-  },
-];
-
-
+const INITIAL_PLOTS: PlotData[] = [];
 
 export function FarmerPlotsPage() {
   const navigate = useNavigate();
@@ -189,11 +70,22 @@ export function FarmerPlotsPage() {
       const saved = localStorage.getItem(STORAGE_KEY_PLOTS);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) {
+          // If stored data contains the old mock IDs, reset to empty
+          const hasOldMocks = parsed.some((p: PlotData) =>
+            ["CONTRACT-A104", "CONTRACT-B205", "CONTRACT-B206", "CONTRACT-A101", "CONTRACT-C301"].includes(p?.id)
+          );
+          if (hasOldMocks) {
+            localStorage.setItem(STORAGE_KEY_PLOTS, JSON.stringify([]));
+            return [];
+          }
+          return parsed;
+        }
       }
     } catch {
       // fallback
     }
+    localStorage.setItem(STORAGE_KEY_PLOTS, JSON.stringify([]));
     return INITIAL_PLOTS;
   });
 

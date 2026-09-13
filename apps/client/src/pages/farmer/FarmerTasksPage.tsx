@@ -59,48 +59,7 @@ interface RawPlotData {
   temperature?: number;
 }
 
-const FALLBACK_PLOTS: ManagedPlot[] = [
-  {
-    id: "CONTRACT-A104",
-    code: "Ô đất A-104",
-    cropName: "Cải cầu vồng Thụy Sĩ",
-    currentDay: 32,
-    totalDays: 60,
-    progressPercent: 53,
-    readyForHarvest: false,
-    image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    id: "CONTRACT-B205",
-    code: "Ô đất B-205",
-    cropName: "Cải bó xôi Nhật",
-    currentDay: 18,
-    totalDays: 60,
-    progressPercent: 30,
-    readyForHarvest: false,
-    image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    id: "CONTRACT-B206",
-    code: "Ô đất B-206",
-    cropName: "Xà lách lolo tím",
-    currentDay: 60,
-    totalDays: 60,
-    progressPercent: 100,
-    readyForHarvest: false,
-    image: "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    id: "CONTRACT-A101",
-    code: "Ô đất A-101",
-    cropName: "Xà lách búp mỡ",
-    currentDay: 60,
-    totalDays: 60,
-    progressPercent: 100,
-    readyForHarvest: true,
-    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=60",
-  },
-];
+const FALLBACK_PLOTS: ManagedPlot[] = [];
 
 const loadManagedPlots = (): ManagedPlot[] => {
   try {
@@ -139,50 +98,9 @@ interface SecondaryTask {
   status: "pending" | "in_progress" | "done";
 }
 
-const DEFAULT_ACTIVE_TASK: PriorityTask = {
-  id: "CARE-782",
-  type: "Bón phân vi sinh & Tưới gốc",
-  zone: "Khu A",
-  bed: "Luống 2",
-  deadline: "Trước 10:30 (Ưu tiên)",
-  plotCode: "Ô đất A-104",
-  cropName: "Cải cầu vồng Thụy Sĩ",
-  customerName: "Chị Thu Hà",
-  contractCode: "HD-2026-A104",
-  soilMoisture: "58%",
-  temperature: "24.5°C",
-  customerNote: "Tưới vi sinh hữu cơ theo đúng tỉ lệ 1:500, nhớ chụp ảnh cập nhật nhật ký cho mình xem với nhé!",
-};
+const DEFAULT_ACTIVE_TASK: PriorityTask | null = null;
 
-const DEFAULT_UPCOMING_TASKS: SecondaryTask[] = [
-  {
-    id: "CARE-783",
-    type: "Kiểm tra sâu bệnh & Bấm ngọn",
-    plotCode: "Ô đất B-205",
-    bed: "Luống 5 (Khu B)",
-    deadline: "11:45 Hôm nay",
-    customerName: "Anh Trần Quang",
-    status: "pending",
-  },
-  {
-    id: "CARE-784",
-    type: "Kiểm định chất lượng & Chuẩn bị thu hoạch",
-    plotCode: "Ô đất A-101",
-    bed: "Luống 1 (Khu A)",
-    deadline: "14:30 Hôm nay",
-    customerName: "Bác Hoàng Nam",
-    status: "pending",
-  },
-  {
-    id: "LOG-104",
-    type: "Đăng bài viết nhật ký tiến độ vụ mùa",
-    plotCode: "Ô đất A-104",
-    bed: "Luống 2 (Khu A)",
-    deadline: "16:00 Hôm nay",
-    customerName: "Chị Thu Hà",
-    status: "pending",
-  },
-];
+const DEFAULT_UPCOMING_TASKS: SecondaryTask[] = [];
 
 interface ManagedPlot {
   id: string;
