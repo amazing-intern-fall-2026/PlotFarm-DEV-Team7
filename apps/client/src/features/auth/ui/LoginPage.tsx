@@ -24,8 +24,8 @@ import {
   Logo,
   Avatar,
 } from "@/shared/ui";
-import { cn } from "@/shared/lib/utils";
 import { AUTH_ROUTES, AUTH_UI_TEXT, ROLE_HOME_ROUTES } from "../constants";
+
 import { getStoredUser, isAuthenticated } from "../model/authSession";
 import { useLoginForm } from "../model/useLoginForm";
 import { useRegisterForm } from "../model/useRegisterForm";
@@ -168,35 +168,7 @@ function HeroPanel() {
 
 type AuthTab = "login" | "register";
 
-function TabSwitch({
-  active,
-  onChange,
-}: {
-  active: AuthTab;
-  onChange: (t: AuthTab) => void;
-}) {
-  return (
-    <Box className="flex gap-4 sm:gap-6 border-b border-border">
-      {(["login", "register"] as const).map((tab) => (
-        <button
-          key={tab}
-          type="button"
-          onClick={() => onChange(tab)}
-          className={cn(
-            "pb-3 text-xs sm:text-sm font-medium transition-colors",
-            active === tab
-              ? "border-b-2 border-primary text-primary font-semibold"
-              : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          {tab === "login" ? AUTH_UI_TEXT.TAB_LOGIN : AUTH_UI_TEXT.TAB_REGISTER}
-        </button>
-      ))}
-    </Box>
-  );
-}
-
-function LoginFormPanel() {
+function LoginFormPanel({ onSwitchToRegister }: { onSwitchToRegister: () => void }) {
   const {
     registerEmail,
     registerPassword,
@@ -206,6 +178,7 @@ function LoginFormPanel() {
     isLoading,
     setValue,
   } = useLoginForm();
+
 
   const fillAccount = (email: string) => {
     setValue("email", email, { shouldValidate: true });
@@ -382,9 +355,21 @@ function LoginFormPanel() {
         </Link>{" "}
         {AUTH_UI_TEXT.TERMS_SUFFIX}
       </Text>
+
+      <Box className="text-center text-xs text-muted-foreground pt-1">
+        Chưa có tài khoản nông trại?{" "}
+        <button
+          type="button"
+          onClick={onSwitchToRegister}
+          className="font-semibold text-primary hover:underline transition-colors"
+        >
+          Đăng ký tài khoản mới
+        </button>
+      </Box>
     </Box>
   );
 }
+
 
 function RegisterFormPanel({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
   const {
@@ -558,13 +543,12 @@ export function LoginPage({ initialTab = "login" }: LoginPageProps) {
               </Box>
             </Box>
 
-            <TabSwitch active={tab} onChange={setTab} />
-
             {tab === "login" ? (
-              <LoginFormPanel />
+              <LoginFormPanel onSwitchToRegister={() => setTab("register")} />
             ) : (
               <RegisterFormPanel onSwitchToLogin={() => setTab("login")} />
             )}
+
           </Box>
         </Box>
       </Box>
