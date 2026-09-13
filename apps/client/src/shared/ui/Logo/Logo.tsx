@@ -4,11 +4,13 @@ import { cn } from "@/shared/lib/utils";
 export interface LogoProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: "sm" | "md" | "lg" | "xl";
   showText?: boolean;
+  brandText?: string;
 }
 
 export function Logo({
   size = "md",
   showText = false,
+  brandText = "CloudFarm",
   className,
   ...props
 }: LogoProps) {
@@ -19,6 +21,24 @@ export function Logo({
     xl: { icon: "h-16 w-16 rounded-3xl", text: "text-3xl", svgSize: 38 }
   }[size];
 
+  const renderBrandText = () => {
+    if (brandText === "CloudFarm") {
+      return (
+        <>
+          Cloud<span className="text-[#23a54f]">Farm</span>
+        </>
+      );
+    }
+    if (brandText === "PlotFarm") {
+      return (
+        <>
+          Plot<span className="text-[#23a54f]">Farm</span>
+        </>
+      );
+    }
+    return brandText;
+  };
+
   return (
     <div className={cn("inline-flex items-center gap-2.5 select-none", className)} {...props}>
       <div
@@ -27,7 +47,7 @@ export function Logo({
           sizeMap.icon
         )}
       >
-        {/* Seedling Sprout in Ground Icon matching PlotFarm Brand */}
+        {/* Seedling Sprout in Ground Icon matching PlotFarm/CloudFarm Brand */}
         <svg
           viewBox="0 0 24 24"
           width={sizeMap.svgSize}
@@ -46,7 +66,7 @@ export function Logo({
       </div>
       {showText && (
         <span className={cn("font-bold tracking-tight text-foreground", sizeMap.text)}>
-          Plot<span className="text-[#23a54f]">Farm</span>
+          {renderBrandText()}
         </span>
       )}
     </div>

@@ -5,7 +5,6 @@ import { State } from "../State";
 import { Box } from "../Box";
 import { Container } from "../Container";
 import { Typography } from "../Typography";
-import { useT } from "@/shared/lib/i18n";
 
 export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
   brandName?: string;
@@ -28,12 +27,10 @@ export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
  */
 export function Footer({
   className,
-  brandName = "BioCloud Farming",
+  brandName = "CloudFarm",
   isLoading = false,
   ...props
 }: FooterProps) {
-  const { t } = useT();
-
   if (isLoading) {
     return (
       <footer
@@ -53,123 +50,129 @@ export function Footer({
   return (
     <footer
       className={cn(
-        "border-t border-border bg-muted/40 text-foreground font-sans mt-auto",
+        "border-t border-border bg-slate-50/70 text-foreground font-sans mt-auto",
         className,
       )}
       {...props}
     >
       <Container className="pt-12 pb-8">
         <Box className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
-          {/* Cột 1: BioCloud Farming & Tiêu chuẩn */}
+          {/* Cột 1: CloudFarm & Tiêu chuẩn */}
           <Box className="space-y-4">
             <Box className="flex items-center gap-2.5">
-              <Box className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shrink-0 shadow-xs">
+              <Box className="flex h-8 w-8 items-center justify-center rounded-full bg-[#23a54f] text-white shrink-0 shadow-xs">
                 <Sprout className="h-4 w-4" />
               </Box>
-              <Typography.H4 className="text-lg font-bold tracking-tight text-primary">
-                {brandName}
+              <Typography.H4 className="text-lg font-bold tracking-tight text-foreground">
+                {brandName === "CloudFarm" ? (
+                  <>
+                    Cloud<span className="text-[#23a54f]">Farm</span>
+                  </>
+                ) : (
+                  brandName
+                )}
               </Typography.H4>
             </Box>
 
-            <Typography.P className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-              {t("footer.desc")}
+            <Typography.P className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-sm">
+              Nền tảng tiên phong kết nối gia đình thành thị sở hữu và canh tác nông trại hữu cơ chuẩn sinh thái trực tiếp tại Đà Lạt.
             </Typography.P>
 
             {/* Badges: Row 1 & Row 2 */}
             <Box className="space-y-2 pt-1">
               <Box className="flex flex-wrap items-center gap-2">
-                <Typography.Small className="rounded-full bg-background border border-border px-3 py-1 text-xs font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
+                <span className="rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 shadow-2xs hover:border-emerald-500/40 hover:text-foreground transition-colors">
                   VietGAP Certified
-                </Typography.Small>
-                <Typography.Small className="rounded-full bg-background border border-border px-3 py-1 text-xs font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
+                </span>
+                <span className="rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 shadow-2xs hover:border-emerald-500/40 hover:text-foreground transition-colors">
                   GlobalGAP 100%
-                </Typography.Small>
+                </span>
               </Box>
               <Box>
-                <Typography.Small className="inline-block rounded-full bg-background border border-border px-3 py-1 text-xs font-medium text-muted-foreground shadow-2xs hover:border-primary/40 hover:text-foreground transition-colors">
+                <span className="inline-block rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 shadow-2xs hover:border-emerald-500/40 hover:text-foreground transition-colors">
                   Organic Bio
-                </Typography.Small>
+                </span>
               </Box>
             </Box>
           </Box>
 
-          {/* Cột 2: Phân Hệ Canh Tác */}
+          {/* Cột 2: Quy Trình & Canh Tác */}
           <Box className="space-y-3.5">
-            <Typography.H5 className="text-xs font-bold uppercase tracking-wider text-foreground">
-              {t("footer.col_farming")}
+            <Typography.H5 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+              Quy Trình & Canh Tác
             </Typography.H5>
-            <ul className="space-y-2.5 text-sm text-muted-foreground">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-500">
               <li>
                 <a
                   href="/plots"
-                  className="hover:text-primary transition-colors inline-block"
+                  className="hover:text-emerald-700 transition-colors inline-block"
                 >
-                  {t("footer.link_explore_plots")}
+                  Chọn đất & canh tác
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/plots"
+                  className="hover:text-emerald-700 transition-colors inline-block"
+                >
+                  Lập lịch gieo trồng thông minh
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/journal"
+                  className="hover:text-emerald-700 transition-colors inline-block"
+                >
+                  Giám sát cảm biến IoT & Cam 24/7
                 </a>
               </li>
               <li>
                 <a
                   href="/my-farm"
-                  className="hover:text-primary transition-colors inline-block"
+                  className="hover:text-emerald-700 transition-colors inline-block"
                 >
-                  {t("footer.link_my_farm")}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/journal"
-                  className="hover:text-primary transition-colors inline-block"
-                >
-                  {t("footer.link_crop_journal")}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/journal"
-                  className="hover:text-primary transition-colors inline-block"
-                >
-                  {t("footer.link_gallery")}
+                  Thu hoạch & Giao hàng tận nhà
                 </a>
               </li>
             </ul>
           </Box>
 
-          {/* Cột 3: Tài Khoản & Pháp Lý */}
+          {/* Cột 3: Hỗ Trợ & Chính Sách */}
           <Box className="space-y-3.5">
-            <Typography.H5 className="text-xs font-bold uppercase tracking-wider text-foreground">
-              {t("footer.col_legal")}
+            <Typography.H5 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+              Hỗ Trợ & Chính Sách
             </Typography.H5>
-            <ul className="space-y-2.5 text-sm text-muted-foreground">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-500">
               <li>
                 <a
-                  href="/my-farm"
-                  className="hover:text-primary transition-colors inline-block"
+                  href="/about"
+                  className="hover:text-emerald-700 transition-colors inline-block"
                 >
-                  {t("footer.link_account_settings")}
+                  Chính sách bảo hiểm mùa vụ
                 </a>
               </li>
               <li>
                 <a
                   href="/about"
-                  className="hover:text-primary transition-colors inline-block"
+                  className="hover:text-emerald-700 transition-colors inline-block"
                 >
-                  {t("footer.link_contracts")}
+                  Tiêu chuẩn kiểm nghiệm đất & nước
                 </a>
               </li>
               <li>
                 <a
                   href="/about"
-                  className="hover:text-primary transition-colors inline-block"
+                  className="hover:text-emerald-700 transition-colors inline-block"
                 >
-                  {t("footer.link_organic_commitment")}
+                  Trải nghiệm tham quan nông trại
                 </a>
               </li>
               <li>
                 <a
                   href="/about"
-                  className="hover:text-primary transition-colors inline-block"
+                  className="hover:text-emerald-700 transition-colors inline-block"
                 >
-                  {t("footer.link_crop_insurance")}
+                  Điều khoản thuê đất canh tác
                 </a>
               </li>
             </ul>
@@ -177,35 +180,35 @@ export function Footer({
 
           {/* Cột 4: Trang Trại Đà Lạt */}
           <Box className="space-y-3.5">
-            <Typography.H5 className="text-xs font-bold uppercase tracking-wider text-foreground">
-              {t("footer.col_farm_dalat")}
+            <Typography.H5 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+              Trang Trại Đà Lạt
             </Typography.H5>
-            <ul className="space-y-3 text-sm text-muted-foreground">
+            <ul className="space-y-3 text-xs sm:text-sm text-slate-500">
               <li className="flex items-start gap-2.5">
-                <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                <Typography.Text className="text-sm leading-relaxed text-muted-foreground">
-                  {t("footer.address_dalat")}
-                </Typography.Text>
+                <MapPin className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span className="leading-relaxed">
+                  Tiểu khu 158, Đạ Sar, Huyện Lạc Dương, TP. Đà Lạt, Lâm Đồng
+                </span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Phone className="h-4 w-4 text-secondary shrink-0" />
-                <Typography.Text className="text-sm text-muted-foreground">
-                  {t("footer.hotline_label")}{" "}
+                <Phone className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span>
+                  Hotline kỹ sư:{" "}
                   <a
-                    href="tel:19006868"
-                    className="font-bold text-foreground hover:text-secondary transition-colors"
+                    href="tel:19006068"
+                    className="font-bold text-slate-800 hover:text-emerald-700 transition-colors"
                   >
-                    1900 6868
+                    1900 6068
                   </a>
-                </Typography.Text>
+                </span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Mail className="h-4 w-4 text-primary shrink-0" />
+                <Mail className="h-4 w-4 text-emerald-600 shrink-0" />
                 <a
-                  href="mailto:kythuat@biocloud.dalat.vn"
-                  className="hover:text-primary transition-colors text-sm"
+                  href="mailto:kythuat@cloudfarm.dalat.vn"
+                  className="hover:text-emerald-700 transition-colors"
                 >
-                  kythuat@biocloud.dalat.vn
+                  kythuat@cloudfarm.dalat.vn
                 </a>
               </li>
             </ul>
@@ -213,22 +216,28 @@ export function Footer({
         </Box>
 
         {/* Thanh bản quyền & pháp lý dưới đáy */}
-        <Box className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <Typography.P className="text-center sm:text-left text-xs text-muted-foreground">
-            {t("footer.copyright")}
-          </Typography.P>
+        <Box className="mt-12 pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+          <p className="text-center sm:text-left">
+            © 2026 CloudFarm Đà Lạt. Bản quyền thuộc Công ty CP Nông nghiệp Công nghệ cao Đà Lạt.
+          </p>
           <Box className="flex flex-wrap items-center justify-center gap-6 font-medium">
             <a
               href="/about"
-              className="hover:text-primary transition-colors"
+              className="hover:text-emerald-700 transition-colors"
             >
-              {t("footer.privacy_iot")}
+              Bảo mật thông tin
             </a>
             <a
               href="/about"
-              className="hover:text-primary transition-colors"
+              className="hover:text-emerald-700 transition-colors"
             >
-              {t("footer.clean_agri_standards")}
+              Cam kết hữu cơ
+            </a>
+            <a
+              href="/about"
+              className="hover:text-emerald-700 transition-colors"
+            >
+              Quy chế hoạt động
             </a>
           </Box>
         </Box>

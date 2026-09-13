@@ -21,6 +21,10 @@ import {
   FarmerTasksPage,
   FarmerTaskExecutePage,
   FarmerPlotsPage,
+  FarmerNewLogPage,
+  FarmerHarvestPage,
+  FarmerIncidentsPage,
+  FarmerHistoryPage,
   AdminDashboardPage,
   AdminPlotsPage,
   AdminPlotConfigPage,
@@ -80,6 +84,21 @@ const FARMER_NAV_RULES: RouteNavRule[] = [
     pattern: /^\/farmer\/plots/,
     breadcrumbs: [{ label: "Nhiệm vụ hôm nay", href: "/farmer" }, { label: "Quản lý ô đất" }],
     activeNavId: "my_plots",
+  },
+  {
+    pattern: /^\/farmer\/harvest/,
+    breadcrumbs: [{ label: "Nhiệm vụ hôm nay", href: "/farmer" }, { label: "Thu hoạch & Xuất kho" }],
+    activeNavId: "harvest",
+  },
+  {
+    pattern: /^\/farmer\/incidents/,
+    breadcrumbs: [{ label: "Nhiệm vụ hôm nay", href: "/farmer" }, { label: "Báo cáo sự cố" }],
+    activeNavId: "alerts",
+  },
+  {
+    pattern: /^\/farmer\/history/,
+    breadcrumbs: [{ label: "Nhiệm vụ hôm nay", href: "/farmer" }, { label: "Lịch sử công việc" }],
+    activeNavId: "task_journal",
   },
   {
     pattern: /.*/,
@@ -176,12 +195,26 @@ export function ShellRouteLayout({ role = "customer" }: { role?: AppRole }) {
         navigate(user ? "/my-farm" : AUTH_ROUTES.LOGIN);
         return;
       }
+      if (role === "farmer") {
+        if (id === "harvest") {
+          navigate("/farmer/harvest");
+          return;
+        }
+        if (id === "task_journal") {
+          navigate("/farmer/history");
+          return;
+        }
+        if (id === "alerts") {
+          navigate("/farmer/incidents");
+          return;
+        }
+      }
       const target = NAV_TARGETS[id];
       if (target) {
         navigate(target);
       }
     },
-    [navigate, user]
+    [navigate, user, role]
   );
 
   return (
@@ -201,6 +234,8 @@ export function ShellRouteLayout({ role = "customer" }: { role?: AppRole }) {
 
 export const router = createBrowserRouter([
   { path: AUTH_ROUTES.LOGIN.slice(1), element: <LoginPage /> },
+  { path: "register", element: <LoginPage initialTab="register" /> },
+  { path: "signup", element: <LoginPage initialTab="register" /> },
   { path: AUTH_ROUTES.FORGOT_PASSWORD.slice(1), element: <Navigate to={AUTH_ROUTES.LOGIN} replace /> },
 
   {
@@ -235,6 +270,14 @@ export const router = createBrowserRouter([
           { path: "/farmer/tasks/:id", element: <FarmerTaskExecutePage /> },
           { path: "/farmer/tasks/:id/execute", element: <FarmerTaskExecutePage /> },
           { path: "/farmer/plots", element: <FarmerPlotsPage /> },
+          { path: "/farmer/harvest", element: <FarmerHarvestPage /> },
+          { path: "/farmer/harvest/:id", element: <FarmerHarvestPage /> },
+          { path: "/farmer/incidents", element: <FarmerIncidentsPage /> },
+          { path: "/farmer/plots/:id/incident", element: <FarmerIncidentsPage /> },
+          { path: "/farmer/history", element: <FarmerHistoryPage /> },
+          { path: "/farmer/contracts/:id/new-log", element: <FarmerNewLogPage /> },
+          { path: "/farmer/plots/:id/new-log", element: <FarmerNewLogPage /> },
+          { path: "/farmer/new-log", element: <FarmerNewLogPage /> },
         ],
       },
     ],

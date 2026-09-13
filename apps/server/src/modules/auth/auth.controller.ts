@@ -146,4 +146,3 @@ export class AuthController {
 export function login(req: Request, res: Response, next: NextFunction): void {
   AuthController.login(req, res, next).catch(next);
 }
-
