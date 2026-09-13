@@ -1,7 +1,7 @@
 # 🔐 Tài Liệu Đặc Tả & Hướng Dẫn Kỹ Thuật: Login, Register & Verify (PlotFarm)
 
 > **Tài liệu hệ thống**: Quản lý Xác thực (Authentication), Cấp quyền (Authorization), và Kiểm tra dữ liệu (Verification) của dự án **PlotFarm**.  
-> **Cập nhật lần cuối**: Ngày 11 tháng 09, 2026.  
+> **Cập nhật lần cuối**: Ngày 13 tháng 09, 2026.  
 > **Phạm vi áp dụng**: Monorepo (`apps/client`, `apps/server`, `packages/shared`, `packages/database`).
 
 ---
@@ -48,26 +48,27 @@ Hệ thống Authentication của PlotFarm được thiết kế đồng bộ th
 
 ### 2.1. Phía Frontend (`apps/client`)
 * **Giao diện & Form**:
-  - File: [`apps/client/src/features/auth/ui/SignupForm.tsx`](file:///d:/Project/plot-farm/apps/client/src/features/auth/ui/SignupForm.tsx)
-  - Route: `/signup`
-  - Các trường dữ liệu:
+  - File: [`apps/client/src/features/auth/ui/RegisterFormPanel.tsx`](file:///d:/Project/plot-farm/apps/client/src/features/auth/ui/RegisterFormPanel.tsx) & [`LoginPage.tsx`](file:///d:/Project/plot-farm/apps/client/src/features/auth/ui/LoginPage.tsx)
+  - Routes: `/register`, `/signup`
+  - Các trường dữ liệu (sắp xếp 1 cột dọc duy nhất, trực quan trên mọi thiết bị):
     - `fullName`: Họ và tên đầy đủ.
     - `email`: Địa chỉ email (định dạng chuẩn RFC).
-    - `role`: Loại tài khoản người dùng (`CUSTOMER` - Khách thuê vườn hoặc `STAFF` - Kỹ thuật viên nông trại).
     - `password`: Mật khẩu đăng nhập (tối thiểu 6 ký tự).
+    - `confirmPassword`: Xác nhận lại mật khẩu (phải khớp với mật khẩu trên).
+  - **Tối ưu hóa UX**: Đã loại bỏ khối chọn vai trò (`role selector`), mặc định toàn bộ tài khoản đăng ký mới có vai trò `CUSTOMER`. Tiêu đề đặt trực tiếp trên đầu form, loại bỏ thanh TabSwitch trên đỉnh.
 * **Xử lý sự kiện**:
-  - Gửi request `POST http://localhost:5000/api/auth/register`.
-  - Nhận kết quả thành công: Tự động lưu thông tin vào `AuthContext` và chuyển hướng về trang chủ `/`.
+  - Gửi request `POST /api/auth/register` (hoặc action `auth.register` qua `/api/gateway`).
+  - Nhận kết quả thành công: Tự động lưu thông tin vào `sessionStorage` (`authSession`) và chuyển hướng về trang chủ `/`.
 
 ### 2.2. Phía Backend (`apps/server`)
-* **Endpoint**: `POST /api/auth/register` (hoặc alias `POST /api/auth/signup`)
+* **Endpoint**: `POST /api/auth/register` (hỗ trợ cả qua API Gateway `/api/gateway` với action `auth.register`)
 * **Controller**: [`AuthController.register`](file:///d:/Project/plot-farm/apps/server/src/modules/auth/auth.controller.ts)
 * **Quy trình xử lý nghiệp vụ**:
   1. **Validation**: Kiểm tra body bằng `RegisterSchema` (Zod).
-  2. **Kiểm tra trùng lặp**: Tra cứu trong DB xem `email` đã được đăng ký chưa; nếu có trả về `409 Conflict` (`ERROR_CODES.DUPLICATE`).
+  2. **Kiểm tra trùng lặp**: Tra cứu trong DB (hoặc `memoryUsers` cache) xem `email` đã được đăng ký chưa; nếu có trả về `409 Conflict` (`ERROR_CODES.DUPLICATE`).
   3. **Mã hóa mật khẩu**: Sử dụng `bcryptjs` với hệ số làm tròn `saltRounds = 10`.
   4. **Tạo mã người dùng**: Sinh tự động `userCode` chuẩn định dạng `USR-xxxxxx`.
-  5. **Lưu trữ DB**: Thêm bản ghi mới vào bảng `User` thông qua Prisma Client.
+  5. **Lưu trữ DB & Dev In-Memory Fallback**: Thêm bản ghi mới vào bảng `User` thông qua Prisma Client; nếu DB chưa kết nối ở môi trường dev, tự động lưu vào `memoryUsers` Map để không gây lỗi gián đoạn.
   6. **Cấp phát JWT**: Tạo ngay bộ cặp `accessToken` (hạn 15 phút) và `refreshToken` (hạn 7 ngày).
 
 ---

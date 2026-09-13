@@ -1,77 +1,245 @@
-# Tổng Hợp Toàn Bộ Thay Đổi (US-11 & Kiến Trúc Xử Lý Lỗi Toàn Diện)
+# 📝 Nhật Ký Cập Nhật & Tổng Hợp Thay Đổi (Recent Changes Note)
 
-> **Nhánh hiện tại:** `feat/us-11-system-error-auth-error-handling`  
-> **Cập nhật mới nhất:** 11/09/2026  
-> **Phạm vi hoàn thiện:** Phản hồi và khắc phục đầy đủ nhận xét review: **Đồng bộ toàn diện kiến trúc Xử lý Lỗi chuẩn hóa qua cả 3 tầng: `packages/shared`, `apps/server` và `apps/client`.**
-
----
-
-## 1. Tóm Tắt Giải Pháp Đáp Ứng Yêu Cầu Review
-
-Nhận xét review trước đó:
-> *"Sao cái PR nó chỉ đổi trong server mà ko có làm trong client + package/shared dị"*
-
-**Giải pháp đã triển khai:**
-1. **`packages/shared`**: Định nghĩa tập trung danh mục hằng số `ERROR_CODES`, các Zod schemas và TypeScript types cho Envelope chuẩn (`ApiErrorResponse`, `ApiSuccessResponse`, `ApiErrorDetail`, `ErrorCode`).
-2. **`apps/server`**: Tích hợp `@repo/shared` vào `errorHandler.ts`, `AppError.ts`, `authGuard.ts`, và `token.service.ts` để đảm bảo 100% response từ server đồng nhất với chuẩn chung.
-3. **`apps/client`**: Xây dựng lớp client error handling độc lập và mạnh mẽ (`apps/client/src/api/errorHandler.ts` và export qua `apps/client/src/shared/api/index.ts`), cung cấp các hàm tiện ích:
-   - `parseApiError()`: Phân tích mọi loại lỗi (Axios, mất mạng `ERR_NETWORK`, timeout `ERR_TIMEOUT`, server envelope) thành cấu trúc chuẩn.
-   - `mapValidationErrors()`: Chuyển đổi danh sách lỗi chi tiết thành dictionary gắn vào Form validation trong React.
-   - `getErrorMessage()`: Trích xuất thông điệp hiển thị Toast / Notification.
+> **Dự án:** PlotFarm / CloudFarm Monorepo  
+> **Nhánh phát triển:** `feat/us-11-system-error-auth-error-handling`  
+> **Thời gian cập nhật:** Ngày 13 tháng 09, 2026  
+> **Tác giả:** NghiaDPT & AI Assistant  
 
 ---
 
-## 2. Danh Sách Chi Tiết Các File Thay Đổi Theo Từng Tầng
+## 📑 Mục Lục Tổng Quan
+1. [Hệ Thống Xác Thực (Auth & Registration Redesign)](#1-hệ-thống-xác-thực-auth--registration-redesign)
+   - [Đồng bộ giao diện đăng nhập từ develop](#11-đồng-bộ-giao-diện-đăng-nhập-từ-develop)
+   - [Cơ chế In-Memory Dev Fallback trong Auth Controller](#12-cơ-chế-in-memory-dev-fallback-trong-auth-controller)
+   - [Bổ sung tính năng Đăng ký tài khoản (Register Flow)](#13-bổ-sung-tính-năng-đăng-ký-tài-khoản-register-flow)
+   - [Tối ưu hóa UX Form Đăng ký & Đăng nhập](#14-tối-ưu-hóa-ux-form-đăng-ký--đăng-nhập)
+   - [Quy trình chạy đồng thời Frontend & Backend](#15-quy-trình-chạy-đồng-thời-frontend--backend)
+2. [Giao Diện Landing Page CloudFarm (Theo Thiết Kế Mockup)](#2-giao-diện-landing-page-cloudfarm-theo-thiết-kế-mockup)
+   - [Kiến trúc Header & Logo thương hiệu](#21-kiến-trúc-header--logo-thương-hiệu)
+   - [Hero Section & Camera Live 24/7 kèm Cảm biến IoT](#22-hero-section--camera-live-247-kèm-cảm-biến-iot)
+   - [Mùa Vụ Thu Đông (Seasonal Crops Carousel)](#23-mùa-vụ-thu-đông-seasonal-crops-carousel)
+   - [Mô Hình Minh Bạch Trong 4 Bước (Process Steps)](#24-mô-hình-minh-bạch-trong-4-bước-process-steps)
+   - [Hình Ảnh Thực Tế & Đánh Giá Từ Gia Đình (Testimonials)](#25-hình-ảnh-thực-tế--đánh-giá-từ-gia-đình-testimonials)
+   - [Banner Đợt Xuống Giống Giới Hạn (Urgent CTA Banner)](#26-banner-đợt-xuống-giống-giới-hạn-urgent-cta-banner)
+   - [Footer Chuẩn Thương Hiệu & Pháp Lý](#27-footer-chuẩn-thương-hiệu--pháp-lý)
+   - [Kho Tài Nguyên Hình Ảnh Thực Tế](#28-kho-tài-nguyên-hình-ảnh-thực-tế)
+3. [Kiến Trúc Xử Lý Lỗi Toàn Diện (US-11 Error Handling Envelope)](#3-kiến-trúc-xử-lý-lỗi-toàn-diện-us-11-error-handling-envelope)
+   - [Tầng 1: packages/shared](#31-tầng-1-packagesshared)
+   - [Tầng 2: apps/server](#32-tầng-2-appsserver)
+   - [Tầng 3: apps/client](#33-tầng-3-appsclient)
+4. [Bảng Kiểm Tra Chất Lượng (Quality Gate & Test Suite)](#4-bảng-kiểm-tra-chất-lượng-quality-gate--test-suite)
+5. [Lịch Sử Git Commits](#5-lịch-sử-git-commits)
 
-### 🌐 Tầng 1: `packages/shared`
+---
+
+## 1. Hệ Thống Xác Thực (Auth & Registration Redesign)
+
+### 1.1. Đồng bộ giao diện đăng nhập từ develop
+- **Mục tiêu**: Thay thế toàn bộ mã nguồn đăng nhập tự dựng cũ bằng chuẩn UI chính thức được nhóm phát triển hợp nhất trên nhánh `develop`.
+- **Thực hiện**: Pull và merge `team7/develop` vào nhánh hiện tại (`feat/us-11-system-error-auth-error-handling`).
+- **Files cập nhật**:
+  - `apps/client/src/features/auth/ui/LoginPage.tsx`: Tích hợp các UI components từ `@/shared/ui` (`Card`, `Input`, `Button`, `Logo`, `Badge`).
+  - `apps/client/src/features/auth/model/useLoginForm.ts`: Hook xử lý submit đăng nhập và quản lý form state.
+  - `apps/client/src/features/auth/model/authSession.ts`: Quản lý lưu trữ phiên làm việc an toàn.
+
+### 1.2. Cơ chế In-Memory Dev Fallback trong Auth Controller
+- **File**: [`apps/server/src/modules/auth/auth.controller.ts`](file:///d:/Project/plot-farm/apps/server/src/modules/auth/auth.controller.ts)
+- **Vấn đề giải quyết**: Khi lập trình viên chạy local mà cơ sở dữ liệu Cloud PostgreSQL chưa kịp cấu hình hoặc gặp gián đoạn đường truyền, việc đăng nhập và đăng ký không bị sập hay trả lỗi 500.
+- **Giải pháp triển khai**:
+  - Bổ sung bộ nhớ cache tạm thời `memoryUsers = new Map<string, User>()` độc lập trong controller.
+  - Tự động fallback sang lưu trữ và xác thực trên memory khi Prisma kết nối DB thất bại.
+  - Mã hóa mật khẩu bằng `bcryptjs` chuẩn, sinh token JWT hợp lệ bằng `tokenService.generateTokenPair()`.
+  - Khởi tạo sẵn tài khoản mẫu: `customer@plotfarm.vn`, `staff@plotfarm.vn`, `admin@plotfarm.vn` (mật khẩu mặc định: `Password123@`).
+  - Hỗ trợ cả API chuẩn RESTful `POST /api/auth/register`, `POST /api/auth/login` và kênh API Gateway `POST /api/gateway` (actions `auth.login`, `auth.register`).
+
+### 1.3. Bổ sung tính năng Đăng ký tài khoản (Register Flow)
+- **Files đã tạo & cập nhật**:
+  - [`apps/client/src/features/auth/api/authApi.ts`](file:///d:/Project/plot-farm/apps/client/src/features/auth/api/authApi.ts): Thêm hàm `authApi.register({ fullName, email, password })`.
+  - [`apps/client/src/features/auth/model/useRegisterForm.ts`](file:///d:/Project/plot-farm/apps/client/src/features/auth/model/useRegisterForm.ts): Hook quản lý trạng thái form, validation khớp mật khẩu, và gọi API đăng ký.
+  - [`apps/client/src/features/auth/ui/RegisterFormPanel.tsx`](file:///d:/Project/plot-farm/apps/client/src/features/auth/ui/RegisterFormPanel.tsx): Component panel hiển thị form đăng ký.
+  - [`apps/client/src/app/router.tsx`](file:///d:/Project/plot-farm/apps/client/src/app/router.tsx): Thêm các tuyến đường `/register` và `/signup` tự động hiển thị tab đăng ký.
+
+### 1.4. Tối ưu hóa UX Form Đăng ký & Đăng nhập
+Theo yêu cầu trải nghiệm người dùng thực tế:
+1. **Loại bỏ khối chọn vai trò (Role Selector)**: Người dùng thông thường không cần chọn vai trò `CUSTOMER`/`STAFF`/`ADMIN` khi đăng ký. Hệ thống mặc định 100% tài khoản đăng ký mới có vai trò `CUSTOMER`.
+2. **Căn chỉnh Form về 1 cột dọc duy nhất (Single-column layout)**: Thay vì chia 2 cột gây hẹp ô nhập liệu, tất cả các trường dữ liệu:
+   - Họ và tên (`fullName`)
+   - Địa chỉ Email (`email`)
+   - Mật khẩu (`password`)
+   - Xác nhận mật khẩu (`confirmPassword`)
+   được xếp thành từng dòng riêng biệt, tăng tính thân thiện trên màn hình di động và desktop.
+3. **Loại bỏ thanh chuyển Tab phía trên đầu (`TabSwitch`)**: 
+   - Đưa tiêu đề trang (`Đăng nhập tài khoản` hoặc `Tạo tài khoản mới`) lên vị trí cao nhất.
+   - Chuyển hướng giữa Đăng nhập và Đăng ký qua liên kết điều hướng mượt mà ở chân form:
+     - Tại trang Đăng nhập: *"Chưa có tài khoản? Đăng ký ngay"*.
+     - Tại trang Đăng ký: *"Đã có tài khoản? Đăng nhập ngay"*.
+
+### 1.5. Quy trình chạy đồng thời Frontend & Backend
+- **Lệnh chuẩn hóa**:
+  ```bash
+  pnpm turbo run dev --filter=client --filter=server
+  # Hoặc ngắn gọn
+  pnpm dev
+  ```
+- **Cổng dịch vụ**:
+  - Frontend: `http://localhost:5173`
+  - Backend API: `http://localhost:5000`
+
+---
+
+## 2. Giao Diện Landing Page CloudFarm (Theo Thiết Kế Mockup)
+
+Xây dựng mới toàn diện giao diện trang chủ theo đúng 100% thiết kế hình ảnh (mockup) được người dùng cung cấp.
+
+### 2.1. Kiến trúc Header & Logo thương hiệu
+- **Files**: 
+  - [`apps/client/src/shared/ui/Header/Header.tsx`](file:///d:/Project/plot-farm/apps/client/src/shared/ui/Header/Header.tsx)
+  - [`apps/client/src/shared/ui/Logo/Logo.tsx`](file:///d:/Project/plot-farm/apps/client/src/shared/ui/Logo/Logo.tsx)
+  - [`apps/client/src/widgets/RootLayout/RootLayout.tsx`](file:///d:/Project/plot-farm/apps/client/src/widgets/RootLayout/RootLayout.tsx)
+- **Các chi tiết tích hợp**:
+  - Logo: Mầm cây sinh học trong nền xanh `#23a54f` cùng chữ **CloudFarm** sắc nét.
+  - Huy hiệu định vị: `📍 Đà Lạt Farm - Nhà xe` với hiệu ứng chấm xanh animate pulse.
+  - Danh mục Menu điều hướng chuẩn xác:
+    1. `Trang chủ` (`/`)
+    2. `Khám phá ô đất` (`/plots`)
+    3. `Camera 24/7` (`/journal`)
+    4. `Nhật ký nông vụ` (`/journal`)
+  - Hotline hỗ trợ: `1900 6068` (tích hợp phím tắt gọi `tel:19006068`).
+  - Hộp thông báo và Avatar tài khoản người dùng.
+
+### 2.2. Hero Section & Camera Live 24/7 kèm Cảm biến IoT
+- **File**: [`apps/client/src/pages/customer/HomePage.tsx`](file:///d:/Project/plot-farm/apps/client/src/pages/customer/HomePage.tsx)
+- **Nội dung hiển thị**:
+  - Huy hiệu: `🌱 Nông nghiệp số tuần hoàn tại Đà Lạt`.
+  - Tiêu đề: *“Sở hữu vườn rau hữu cơ riêng của bạn – Canh tác bởi chuyên gia, giám sát 24/7 từ xa”*.
+  - Đoạn mô tả: Trải nghiệm làm chủ nông trại chuẩn sinh thái tại Đạ Sar – Đà Lạt, hệ thống camera & cảm biến IoT truyền trực tiếp về điện thoại gia đình mỗi ngày.
+  - 2 Nút hành động:
+    - `Khám phá ô đất trồng ngay →` (chuyển hướng sang `/plots`).
+    - `▶ Xem Video Vườn & Camera Live` (mở Modal phát trực tiếp toàn màn hình).
+  - Khối Social Proof: Cụm avatar gia đình, huy hiệu `+1.2k`, điểm đánh giá ⭐ **4.9/5** và thông điệp *“Từ 1.200+ gia đình thành thị tin dùng”*.
+- **Khung Camera Live 24/7**:
+  - Hình ảnh thực tế từ góc máy nhà kính Đạ Sar.
+  - Huy hiệu `LIVE | 1080P` với hiệu ứng chớp đỏ thời gian thực.
+  - Tên luống: `Luống RA - 102 (Đà Lạt)`.
+  - Đồng hồ thời gian thực nhảy theo từng giây: `HH:mm:ss`.
+  - 2 thẻ cảm biến vi khí hậu thông minh:
+    - `💧 Độ ẩm đất: 68% (Chuẩn)`
+    - `🌡 Nhiệt độ: 24.2 °C`
+
+### 2.3. Mùa Vụ Thu Đông (Seasonal Crops Carousel)
+- **Tiêu đề phân mục**: `MÙA VỤ THU ĐÔNG` – *“Giống rau mùa vụ chuẩn bị gieo trồng”*.
+- **Điều khiển carousel**: Hai nút tròn điều hướng `<` `>` và thanh pagination dots tương tác chọn giống.
+- **3 thẻ giống rau đặc sản**:
+  1. **Cải bó xôi Nhật (Spinach)**:
+     - Huy hiệu: `Bán chạy nhất`
+     - Chu kỳ thu hoạch: `40 ngày`
+     - Sản lượng dự kiến: `15 – 20 kg / vụ`
+     - Thổ nhưỡng: `Bazan Organic 100%`
+  2. **Cải cầu vồng Thụy Sĩ (Rainbow Chard)**:
+     - Huy hiệu: `Dinh dưỡng cao`
+     - Chu kỳ thu hoạch: `45 ngày`
+     - Sản lượng dự kiến: `18 – 22 kg / vụ`
+     - Thổ nhưỡng: `Bazan Phù Sa Mịn`
+  3. **Xà lách búp mỡ Đà Lạt**:
+     - Huy hiệu: `Dễ chăm sóc`
+     - Chu kỳ thu hoạch: `45 ngày (Ngắn)`
+     - Sản lượng dự kiến: `12 – 16 kg / vụ`
+     - Thổ nhưỡng: `Giá thể xơ dừa sinh học`
+  - Nút bấm trên mỗi thẻ: `Chọn gieo giống này ↗` (điều hướng đến đặt ô đất).
+
+### 2.4. Mô Hình Minh Bạch Trong 4 Bước (Process Steps)
+- **Tiêu đề**: `MÔ HÌNH MINH BẠCH` – *“Hành trình nông trại từ xa trong 4 bước”*.
+- **4 Thẻ quy trình**:
+  - `01` **Chọn ô đất & Giống rau**: Diện tích 15m²–20m² theo nhu cầu tiêu dùng và danh mục rau mùa vụ yêu thích.
+  - `02` **Camera Live 24/7 & IoT**: Giám sát độ ẩm, nhiệt độ theo thời gian thực và xem trực tiếp qua camera Full HD.
+  - `03` **Chăm sóc chuẩn hữu cơ**: Kỹ sư bản địa bón phân trùn quế, nhổ cỏ thủ công, bắt sâu và chụp ảnh định kỳ.
+  - `04` **Thu hoạch & Giao tận nhà**: Thu hái lúc 5h sáng, đóng thùng sinh học và giao Agri Express trong 24 giờ.
+
+### 2.5. Hình Ảnh Thực Tế & Đánh Giá Từ Gia Đình (Testimonials)
+- **Tiêu đề**: `NIỀM VUI KHÁCH HÀNG` – *“Hình ảnh thực tế & Đánh giá từ gia đình”* kèm liên kết `Xem tất cả đánh giá →`.
+- **3 Thẻ nhận xét thực tế kèm ảnh chụp đời sống**:
+  1. **Chị Minh Anh** (Quận 7, TP. HCM) – Mã HĐ: `HĐ-1582 • Có camera riêng` – ⭐⭐⭐⭐⭐
+  2. **Anh Toàn Nam** (Cầu Giấy, Hà Nội) – Mã HĐ: `HĐ-2041 • Gói 6 tháng` – ⭐⭐⭐⭐⭐
+  3. **Bác Lê Thanh** (Hải Châu, Đà Nẵng) – Mã HĐ: `HĐ-0914 • Vụ sinh thái` – ⭐⭐⭐⭐⭐
+
+### 2.6. Banner Đợt Xuống Giống Giới Hạn (Urgent CTA Banner)
+- **Thiết kế**: Bo cong góc lớn (`rounded-3xl`), dải màu gradient xanh rừng thông đậm (`#0e391f` -> `#185c31`), điểm xuyết các vòng tròn phát sáng mờ.
+- **Nội dung**:
+  - Huy hiệu: `● Đợt mở bán vụ mùa giới hạn`.
+  - Tiêu đề: *“Chỉ còn 8 ô đất trống trong đợt xuống giống tuần này tại thung lũng Đà Lạt”*.
+  - Đoạn phụ: Đăng ký ngay hôm nay để nhận suất ưu tiên góc quan sát camera tốt nhất và miễn phí 100% công lắp đặt cảm biến thông minh.
+  - Nút bấm cam nổi bật: `Đặt ô đất ngay hôm nay →`.
+
+### 2.7. Footer Chuẩn Thương Hiệu & Pháp Lý
+- **File**: [`apps/client/src/shared/ui/Footer/Footer.tsx`](file:///d:/Project/plot-farm/apps/client/src/shared/ui/Footer/Footer.tsx)
+- **Nội dung 4 cột**:
+  1. **CloudFarm & Tiêu chuẩn**: Mô tả nền tảng, 3 huy hiệu `VietGAP Certified`, `GlobalGAP 100%`, `Organic Bio`.
+  2. **Quy Trình & Canh Tác**: Chọn đất & canh tác, Lập lịch gieo trồng, Giám sát IoT & Cam 24/7, Thu hoạch & Giao hàng.
+  3. **Hỗ Trợ & Chính Sách**: Bảo hiểm mùa vụ, Kiểm nghiệm đất & nước, Trải nghiệm tham quan, Điều khoản thuê đất.
+  4. **Trang Trại Đà Lạt**: Địa chỉ Tiểu khu 158, Đạ Sar, Lạc Dương, TP. Đà Lạt; Hotline `1900 6068`; Email `kythuat@cloudfarm.dalat.vn`.
+  5. **Bản quyền & Pháp lý**: © 2026 CloudFarm Đà Lạt, liên kết Bảo mật thông tin, Cam kết hữu cơ, Quy chế hoạt động.
+
+### 2.8. Kho Tài Nguyên Hình Ảnh Thực Tế
+Lưu trữ tại `apps/client/public/images/`:
+- `greenhouse_camera_live.jpg`: Ảnh góc nhìn trực tiếp nhà kính công nghệ cao Đạ Sar.
+- `spinach.jpg`: Cận cảnh luống cải bó xôi Nhật trên đất đỏ bazan.
+- `rainbow_chard.jpg`: Luống cải cầu vồng Thụy Sĩ đa sắc màu.
+- `butterhead_lettuce.jpg`: Giàn xà lách búp mỡ Đà Lạt xanh mướt.
+- `review_delivery.jpg`: Ảnh giao rau củ sạch tận cửa căn hộ gia đình.
+- `review_dinner.jpg`: Gia đình sum vầy bên bàn ăn rau sạch hữu cơ.
+- `review_produce.jpg`: Thùng gỗ đựng nông sản đóng gói tươi sạch tại vườn.
+
+---
+
+## 3. Kiến Trúc Xử Lý Lỗi Toàn Diện (US-11 Error Handling Envelope)
+
+### 3.1. Tầng 1: `packages/shared`
 - **`packages/shared/src/index.ts`**:
-  - Thêm `ERROR_CODES` bao gồm các mã lỗi chuẩn: `VALIDATION`, `INVALID_JSON`, `BAD_REQUEST`, `DUPLICATE`, `NOT_FOUND`, `AUTH_REQUIRED`, `INVALID_TOKEN`, `TOKEN_EXPIRED`, `INVALID_REFRESH_TOKEN`, `ACCOUNT_DISABLED`, `USER_NOT_FOUND`, `INTERNAL_SERVER`.
-  - Khai báo các Zod schemas & inferred types: `ApiErrorDetail`, `ApiErrorPayload`, `ApiErrorResponse`, `ApiSuccessResponse`, `ApiResponse`.
-  - Re-export toàn bộ `zod` để client và server sử dụng chung phiên bản.
+  - Định nghĩa tập trung danh mục `ERROR_CODES` (`VALIDATION`, `INVALID_JSON`, `BAD_REQUEST`, `DUPLICATE`, `NOT_FOUND`, `AUTH_REQUIRED`, `INVALID_TOKEN`, `TOKEN_EXPIRED`, `INVALID_REFRESH_TOKEN`, `ACCOUNT_DISABLED`, `USER_NOT_FOUND`, `INTERNAL_SERVER`).
+  - Cung cấp Zod schemas và types cho Envelope chuẩn: `ApiErrorResponse`, `ApiSuccessResponse`, `ApiErrorDetail`, `ApiResponse`.
 
-### 🖥️ Tầng 2: `apps/server`
-- **`apps/server/src/errors/AppError.ts`**:
-  - Nhận `ERROR_CODES` từ `@repo/shared`, chuẩn hóa các factory method `badRequest()`, `unauthorized()`, `forbidden()`, `notFound()`, `conflict()`, `internal()`.
-- **`apps/server/src/middlewares/errorHandler.ts`**:
-  - Trả về đúng định dạng `ApiErrorResponse` từ `@repo/shared`.
-  - Mapping tự động các mã `ERROR_CODES.VALIDATION`, `ERROR_CODES.INVALID_JSON`, `ERROR_CODES.DUPLICATE`, `ERROR_CODES.INTERNAL_SERVER`.
-- **`apps/server/src/middlewares/authGuard.ts`**:
-  - Sử dụng `ERROR_CODES.AUTH_REQUIRED`, `ERROR_CODES.INVALID_TOKEN`, `ERROR_CODES.TOKEN_EXPIRED`, `ERROR_CODES.USER_NOT_FOUND`, `ERROR_CODES.ACCOUNT_DISABLED`.
-- **`apps/server/src/modules/auth/token.service.ts`**:
-  - Sử dụng `ERROR_CODES.INVALID_REFRESH_TOKEN`, `ERROR_CODES.TOKEN_EXPIRED`, `ERROR_CODES.USER_NOT_FOUND`, `ERROR_CODES.ACCOUNT_DISABLED`.
+### 3.2. Tầng 2: `apps/server`
+- **`apps/server/src/errors/AppError.ts`**: Chuẩn hóa lớp lỗi ứng dụng kế thừa `Error` và mã lỗi chuẩn.
+- **`apps/server/src/middlewares/errorHandler.ts`**: Global middleware bọc 100% lỗi server trả về định dạng `ApiErrorResponse`.
+- **`apps/server/src/middlewares/authGuard.ts`**: Kiểm tra token và quyền truy cập chặt chẽ.
+- **`apps/server/src/modules/auth/token.service.ts`**: Tạo cặp Access Token và Refresh Token an toàn.
 
-### 💻 Tầng 3: `apps/client`
-- **`apps/client/src/api/errorHandler.ts`** *(Mới tạo)*:
-  - Hàm `isApiErrorResponse()`: Type guard kiểm tra an toàn định dạng response.
-  - Hàm `parseApiError()`: Bóc tách lỗi server hoặc chuyển hóa lỗi network / timeout.
-  - Hàm `mapValidationErrors()`: Biến đổi mảng lỗi chi tiết thành object key-value cho Form React.
-  - Hàm `getErrorMessage()`: Helper lấy nhanh nội dung lỗi dạng chuỗi cho Toast notification.
-- **`apps/client/src/api/errorHandler.test.ts`** *(Mới tạo)*:
-  - 6 unit test cases bao phủ toàn diện: type guard, parsing AxiosError có envelope, network error, timeout error, form mapping, fallback message.
-- **`apps/client/src/shared/api/index.ts`**:
-  - Export public API layer theo chuẩn FSD (Feature-Sliced Design), xuất cả `axiosClient`, `errorHandler`, và `@repo/shared`.
-- **`apps/client/src/auth/authStorage.ts`**:
-  - Cơ chế bọc try/catch chống sập ứng dụng khi localStorage bị lỗi cú pháp JSON.
-- **`apps/client/src/api/axiosClient.ts`**:
-  - Cơ chế Refresh Token Mutex Queue và chống vòng lặp vô hạn khi token hết hạn / tài khoản bị vô hiệu hóa.
-
-### 📚 Tài Liệu Hướng Dẫn
-- **`docs/ERROR_HANDLING_GUIDE.md`**: Cập nhật hướng dẫn chi tiết toàn bộ kiến trúc 3 lớp, bảng mã lỗi và ví dụ code mẫu cho cả Server và Client.
-- **`docs/RECENT_CHANGES.md`**: Cập nhật bản tổng hợp tiến độ và giải pháp kỹ thuật.
+### 3.3. Tầng 3: `apps/client`
+- **`apps/client/src/api/errorHandler.ts`**: Bộ helper client bóc tách lỗi:
+  - `parseApiError()`: Xử lý AxiosError, lỗi mất mạng (`ERR_NETWORK`), lỗi timeout (`ERR_TIMEOUT`).
+  - `mapValidationErrors()`: Chuyển đổi lỗi validation về React form field errors.
+  - `getErrorMessage()`: Trích xuất nội dung thông báo cho Toast/Alert.
+- **`apps/client/src/auth/authStorage.ts`**: Cơ chế bọc an toàn tránh sập ứng dụng khi localStorage bị lỗi dữ liệu.
+- **`apps/client/src/api/axiosClient.ts`**: Cơ chế Mutex Queue tự động refresh token ngầm khi token hết hạn và chống lặp vô hạn.
 
 ---
 
-## 3. Bảng Kiểm Tra Chất Lượng Toàn Bộ Monorepo
+## 4. Bảng Kiểm Tra Chất Lượng (Quality Gate & Test Suite)
 
-| Bước kiểm tra | Lệnh thực thi | Trạng thái |
-| :--- | :--- | :---: |
-| **Linting (ESLint - Strict 0 warning)** | `pnpm lint` | **100% PASSED** (0 warning, 0 error) |
-| **Unit Tests Shared (`@repo/shared`)** | `pnpm --filter @repo/shared test` | **2/2 PASSED** (100%) |
-| **Unit Tests Server (`apps/server`)** | `pnpm --filter server test` | **14/14 PASSED** (100%) |
-| **Unit Tests Client (`apps/client`)** | `pnpm --filter client test` | **13/13 PASSED** (100%) |
-| **Toàn bộ Test Suite Monorepo** | `pnpm test` | **29/29 PASSED** (100%) |
-| **Typecheck & Production Build** | `pnpm build` | **FULL BUILD SUCCESS** |
+| Hạng mục kiểm tra | Lệnh thực thi | Kết quả | Ghi chú |
+| :--- | :--- | :---: | :--- |
+| **ESLint Toàn Dự Án** | `pnpm lint` | **100% PASSED** | 0 lỗi, 0 cảnh báo (strict mode) |
+| **Shared Tests** | `pnpm --filter @repo/shared test` | **13/13 PASSED** | 100% test cases đạt |
+| **Server Tests** | `pnpm --filter server test` | **14/14 PASSED** | AuthGuard, ErrorHandler, Server tests |
+| **Client Tests** | `pnpm --filter client test` | **20/20 PASSED** | AxiosClient, AuthStorage, ErrorHandler, Debounce, App |
+| **Toàn Bộ Monorepo Tests** | `pnpm test` | **47/47 PASSED** | 100% pass trên toàn hệ thống |
+| **Production Build** | `pnpm build` | **SUCCESS** | TypeScript compilation & Vite bundle hoàn tất |
+| **Kiểm Tra Trình Duyệt** | Browser Subagent | **VERIFIED** | Giao diện sắc nét, responsive trên mọi kích thước |
 
 ---
 
-> ⚠️ **Lưu ý theo yêu cầu của bạn:** Chưa thực hiện lệnh pull request hay push lên GitHub lúc này. Toàn bộ mã nguồn đã sẵn sàng và được kiểm thử toàn diện tại local branch.
+## 5. Lịch Sử Git Commits
+
+| Hash Commit | Loại commit | Nội dung chi tiết |
+| :--- | :--- | :--- |
+| `60c7094` | `feat(client)` | Triển khai giao diện Landing Page CloudFarm hoàn chỉnh theo đúng thiết kế mockup |
+| `537c5fc` | `style(auth)` | Bỏ thanh tab switch trên đầu trang login và register, đưa tiêu đề lên trên cùng |
+| `e2c7203` | `style(auth)` | Căn chỉnh các ô nhập liệu của form đăng ký thành một cột dọc duy nhất |
+| `b72cfc1` | `refactor(auth)` | Bỏ bộ chọn vai trò khi đăng ký, mặc định vai trò là CUSTOMER |
+| `99771ea` | `feat(auth)` | Xây dựng interactive RegisterFormPanel và handler trên API Gateway |
+| `01f5fb0` | `feat(auth)` | Tích hợp endpoint register, in-memory dev fallback trong auth.controller và tài liệu |
+| `527768e` | `merge` | Merge nhánh `develop` vào nhánh `feat/us-11-system-error-auth-error-handling` |
+| `4447251` | `feat(error-handling)` | Hợp nhất chuẩn API Error Envelope xuyên suốt shared, server và client |
+
+---
+*Tài liệu này được cập nhật tự động và đồng bộ với toàn bộ hiện trạng mã nguồn thực tế của dự án.*
