@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 export function FarmerHarvestPage() {
-  const { id = "A-104" } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
 
   // State
@@ -81,7 +81,7 @@ export function FarmerHarvestPage() {
                   Thu hoạch & Xuất kho
                 </CardTitle>
                 <Badge variant="success" className="font-bold text-xs">
-                  Vụ mùa 60/60 ngày
+                  {id ? `Lô ${id}` : "Hàng đợi xuất kho"}
                 </Badge>
               </Box>
               <CardDescription className="text-xs text-muted-foreground mt-0.5">
@@ -90,14 +90,16 @@ export function FarmerHarvestPage() {
             </Box>
           </Box>
 
-          <Box className="flex items-center gap-2">
-            <Badge variant="secondary" className="font-mono text-xs py-1 px-3">
-              Lô: {id}
-            </Badge>
-            <Badge variant="warning" className="text-xs py-1 px-3 font-semibold">
-              <Clock className="h-3 w-3 mr-1 inline" /> Đến hạn thu hoạch hôm nay
-            </Badge>
-          </Box>
+          {id && (
+            <Box className="flex items-center gap-2">
+              <Badge variant="secondary" className="font-mono text-xs py-1 px-3">
+                Lô: {id}
+              </Badge>
+              <Badge variant="warning" className="text-xs py-1 px-3 font-semibold">
+                <Clock className="h-3 w-3 mr-1 inline" /> Đến hạn thu hoạch hôm nay
+              </Badge>
+            </Box>
+          )}
         </CardHeader>
       </Card>
 
@@ -118,9 +120,32 @@ export function FarmerHarvestPage() {
       )}
 
       {/* ─────────────────────────────────────────────────────────────
-          2. MAIN CONTENT (2 COLUMNS ON DESKTOP)
+          2. MAIN CONTENT (2 COLUMNS ON DESKTOP OR EMPTY QUEUE)
       ───────────────────────────────────────────────────────────── */}
-      <Box className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {!id ? (
+        <Card className="p-12 text-center border-dashed border-2 border-border shadow-none space-y-4">
+          <Box className="flex h-16 w-16 items-center justify-center rounded-full bg-orange-50 dark:bg-orange-950/50 text-orange-600 mx-auto">
+            <Truck className="h-8 w-8" />
+          </Box>
+          <Box className="space-y-1">
+            <CardTitle className="text-lg font-bold text-foreground">
+              Chưa có ô đất nào đến hạn thu hoạch
+            </CardTitle>
+            <CardDescription className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">
+              Hiện tại không có lô đất nào trong hàng đợi xuất kho. Khi có ô đất hoàn thành vụ mùa sinh trưởng 100%, bạn có thể tạo lệnh thu hoạch và in phiếu giao hàng tại đây.
+            </CardDescription>
+          </Box>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate("/farmer/plots")}
+            className="rounded-xl text-xs font-semibold"
+          >
+            Quay lại Quản lý ô đất
+          </Button>
+        </Card>
+      ) : (
+        <Box className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* LEFT COLUMN: Plot Info, Weighing Stepper, Packaging */}
         <Box className="lg:col-span-7 space-y-6">
           {/* Card: Plot Overview Banner */}
@@ -356,6 +381,7 @@ export function FarmerHarvestPage() {
           </Card>
         </Box>
       </Box>
+      )}
 
       {/* ─────────────────────────────────────────────────────────────
           MODAL: A6 PRINT PREVIEW

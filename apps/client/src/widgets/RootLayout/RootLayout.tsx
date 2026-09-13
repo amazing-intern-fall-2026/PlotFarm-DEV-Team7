@@ -213,7 +213,6 @@ function useFarmerSections(
           id: "tasks_today",
           icon: <CalendarCheck className="h-5 w-5" />,
           label: "Nhiệm vụ hôm nay",
-          badge: "4",
           onClick: () => onNavChange?.("tasks_today"),
         },
         {
@@ -226,7 +225,6 @@ function useFarmerSections(
           id: "harvest",
           icon: <Truck className="h-5 w-5" />,
           label: "Thu hoạch & Xuất kho",
-          badge: "1",
           onClick: () => onNavChange?.("harvest"),
         },
         {
@@ -250,7 +248,6 @@ function useFarmerSections(
           id: "alerts",
           icon: <AlertTriangle className="h-5 w-5" />,
           label: "Báo cáo sự cố ô đất",
-          badge: "1",
           onClick: () => onNavChange?.("alerts"),
         },
       ],

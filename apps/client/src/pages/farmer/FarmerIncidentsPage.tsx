@@ -53,25 +53,17 @@ const INCIDENT_TYPES: IncidentTypeOption[] = [
   },
 ];
 
-const PLOTS_LIST = [
-  { id: "B-205", label: "Ô đất B-205 (Cải bó xôi • Khu B Luống 5)" },
-  { id: "A-104", label: "Ô đất A-104 (Cải cầu vồng • Khu A Luống 2)" },
-  { id: "A-101", label: "Ô đất A-101 (Xà lách búp • Khu A Luống 1)" },
-  { id: "B-206", label: "Ô đất B-206 (Xà lách lolo tím • Khu B Luống 6)" },
-  { id: "A-102", label: "Ô đất A-102 (Cà chua cherry • Khu A Luống 3)" },
-];
+const PLOTS_LIST: { id: string; label: string }[] = [];
 
 export function FarmerIncidentsPage() {
-  const { id = "B-205" } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
 
   // States
-  const [selectedPlot, setSelectedPlot] = React.useState<string>(id);
+  const [selectedPlot, setSelectedPlot] = React.useState<string>(id || "");
   const [selectedType, setSelectedType] = React.useState<string>("pest_fungus");
-  const [evidencePhoto, setEvidencePhoto] = React.useState<string | null>("/images/proof_care_782.jpg");
-  const [selectedProposals, setSelectedProposals] = React.useState<string[]>([
-    "Phun sinh học tỏi ớt",
-  ]);
+  const [evidencePhoto, setEvidencePhoto] = React.useState<string | null>(null);
+  const [selectedProposals, setSelectedProposals] = React.useState<string[]>([]);
   const [customNotes, setCustomNotes] = React.useState<string>("");
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = React.useState<boolean>(false);
@@ -162,11 +154,15 @@ export function FarmerIncidentsPage() {
               onChange={(e) => setSelectedPlot(e.target.value)}
               className="w-full h-11 px-3.5 rounded-2xl bg-muted/40 border border-border text-xs sm:text-sm font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
             >
-              {PLOTS_LIST.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.label}
-                </option>
-              ))}
+              {PLOTS_LIST.length === 0 ? (
+                <option value="">-- Chưa có ô đất nào được phân công --</option>
+              ) : (
+                PLOTS_LIST.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.label}
+                  </option>
+                ))
+              )}
             </select>
           </Box>
 

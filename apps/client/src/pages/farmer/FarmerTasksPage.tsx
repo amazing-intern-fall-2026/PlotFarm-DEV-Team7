@@ -43,20 +43,7 @@ interface PriorityTask {
   customerNote: string;
 }
 
-const ACTIVE_TASK: PriorityTask = {
-  id: "CARE-782",
-  type: "Bón phân vi sinh",
-  zone: "Khu A",
-  bed: "Luống 2",
-  deadline: "Trước 09:30",
-  plotCode: "Ô đất A-104",
-  cropName: "Cải cầu vồng",
-  customerName: "Thu Hà",
-  contractCode: "#CF-8921",
-  soilMoisture: "58%",
-  temperature: "24°C",
-  customerNote: "Bón 150g phân trùn quế quanh rễ, tỉa bớt lá già sát đất",
-};
+const ACTIVE_TASK: PriorityTask | null = null;
 
 interface SecondaryTask {
   id: string;
@@ -68,26 +55,7 @@ interface SecondaryTask {
   status: "pending" | "in_progress" | "done";
 }
 
-const UPCOMING_TASKS: SecondaryTask[] = [
-  {
-    id: "CARE-783",
-    type: "Kiểm tra bẫy pheromone bướm trắng",
-    plotCode: "Ô đất B-205",
-    bed: "Luống 5",
-    deadline: "Trước 10:30",
-    customerName: "Trần Quang",
-    status: "pending",
-  },
-  {
-    id: "CARE-784",
-    type: "Đo nồng độ EC và xới thoáng đất",
-    plotCode: "Ô đất A-102",
-    bed: "Luống 3",
-    deadline: "Trước 11:15",
-    customerName: "Đức Thắng",
-    status: "pending",
-  },
-];
+const UPCOMING_TASKS: SecondaryTask[] = [];
 
 interface ManagedPlot {
   id: string;
@@ -100,36 +68,7 @@ interface ManagedPlot {
   image: string;
 }
 
-const MANAGED_PLOTS: ManagedPlot[] = [
-  {
-    id: "A-104",
-    code: "Ô đất A-104",
-    cropName: "Cải cầu vồng",
-    currentDay: 32,
-    totalDays: 60,
-    progressPercent: 53,
-    image: "/images/rainbow_chard.jpg",
-  },
-  {
-    id: "A-101",
-    code: "Ô đất A-101",
-    cropName: "Xà lách búp",
-    currentDay: 60,
-    totalDays: 60,
-    progressPercent: 100,
-    readyForHarvest: true,
-    image: "/images/butterhead_lettuce.jpg",
-  },
-  {
-    id: "A-102",
-    code: "Ô đất A-102",
-    cropName: "Cà chua cherry",
-    currentDay: 18,
-    totalDays: 75,
-    progressPercent: 24,
-    image: "/images/spinach.jpg",
-  },
-];
+const MANAGED_PLOTS: ManagedPlot[] = [];
 
 export function FarmerTasksPage() {
   const navigate = useNavigate();
@@ -182,14 +121,14 @@ export function FarmerTasksPage() {
             <Badge variant="warning" className="flex items-center gap-2 px-3.5 py-2 text-xs rounded-xl">
               <Clock className="h-4 w-4 text-amber-600" />
               <Text as="span" className="text-xs">
-                Chờ xử lý: <strong className="font-bold">3 việc</strong>
+                Chờ xử lý: <strong className="font-bold">{ACTIVE_TASK ? 1 + UPCOMING_TASKS.length : UPCOMING_TASKS.length} việc</strong>
               </Text>
             </Badge>
 
             <Badge variant="secondary" className="flex items-center gap-2 px-3.5 py-2 text-xs rounded-xl border border-border">
               <CheckCircle2 className="h-4 w-4 text-orange-600" />
               <Text as="span" className="text-xs">
-                Đến hạn thu hoạch: <strong className="font-bold text-orange-600">1 ô (A-101)</strong>
+                Đến hạn thu hoạch: <strong className="font-bold text-orange-600">{MANAGED_PLOTS.filter((p) => p.readyForHarvest).length} ô</strong>
               </Text>
             </Badge>
 
@@ -200,7 +139,7 @@ export function FarmerTasksPage() {
               rightIcon={<ChevronRight className="h-4 w-4" />}
               className="rounded-xl h-9 text-xs font-semibold"
             >
-              Ô đất phụ trách (5 ô)
+              Ô đất phụ trách ({MANAGED_PLOTS.length} ô)
             </Button>
           </Box>
         </CardHeader>
@@ -209,25 +148,31 @@ export function FarmerTasksPage() {
       {/* ─────────────────────────────────────────────────────────────
           2. ALERT NOTIFICATION BANNER
       ───────────────────────────────────────────────────────────── */}
-      <Card className="p-0 overflow-hidden border-amber-200/80 bg-gradient-to-r from-orange-100/80 via-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/20">
-        <CardContent className="flex items-center justify-between p-4 text-xs sm:text-sm text-orange-950 dark:text-orange-200">
+      <Card className="p-0 overflow-hidden border-border bg-gradient-to-r from-emerald-50/60 via-background to-background dark:from-emerald-950/20">
+        <CardContent className="flex items-center justify-between p-4 text-xs sm:text-sm text-foreground">
           <Box className="flex items-center gap-2.5 font-medium">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-500 text-white font-bold text-xs shrink-0 shadow-xs">
-              ⚡
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-600 text-white font-bold text-xs shrink-0 shadow-xs">
+              ✓
             </span>
             <Text as="span" className="text-xs sm:text-sm">
-              <strong>Hôm nay:</strong> 3 việc chờ xử lý • 1 ô đất đến hạn thu hoạch nông sản sạch
+              {ACTIVE_TASK ? (
+                <><strong>Hôm nay:</strong> Có 1 việc ưu tiên chờ xử lý</>
+              ) : (
+                <><strong>Hôm nay:</strong> 0 việc tồn đọng • Bạn đã sẵn sàng tiếp nhận lịch phân công mới</>
+              )}
             </Text>
           </Box>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate("/farmer/tasks/CARE-782/execute")}
-            rightIcon={<ChevronRight className="h-4 w-4" />}
-            className="text-orange-800 hover:text-orange-950 hover:bg-orange-200/40 font-bold text-xs h-8"
-          >
-            Xử lý ngay
-          </Button>
+          {ACTIVE_TASK && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(`/farmer/tasks/${ACTIVE_TASK.id}/execute`)}
+              rightIcon={<ChevronRight className="h-4 w-4" />}
+              className="text-emerald-800 hover:text-emerald-950 hover:bg-emerald-200/40 font-bold text-xs h-8"
+            >
+              Xử lý ngay
+            </Button>
+          )}
         </CardContent>
       </Card>
 
@@ -246,98 +191,110 @@ export function FarmerTasksPage() {
       <Box className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* ── LEFT COLUMN: PRIORITY TASK & UPCOMING SCHEDULE (7 COLS) ── */}
         <Box className="lg:col-span-7 space-y-5">
-          {/* Active Priority Task Card (#CARE-782) */}
-          <Card className="p-0 overflow-hidden border-2 border-emerald-500/50 shadow-md hover:shadow-lg transition-all relative">
-            <Box className="h-1.5 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600" />
+          {/* Active Priority Task Card or Empty State */}
+          {ACTIVE_TASK ? (
+            <Card className="p-0 overflow-hidden border-2 border-emerald-500/50 shadow-md hover:shadow-lg transition-all relative">
+              <Box className="h-1.5 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600" />
 
-            <CardHeader className="p-5 sm:p-6 pb-2">
-              {/* Task Type & Deadline Row */}
-              <Box className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                <Box className="flex items-center gap-2">
-                  <Badge variant="success" className="px-3 py-1 font-bold">
-                    {ACTIVE_TASK.type}
+              <CardHeader className="p-5 sm:p-6 pb-2">
+                <Box className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <Box className="flex items-center gap-2">
+                    <Badge variant="success" className="px-3 py-1 font-bold">
+                      {ACTIVE_TASK.type}
+                    </Badge>
+                    <Text variant="muted" className="text-xs font-medium">
+                      {ACTIVE_TASK.zone} • {ACTIVE_TASK.bed}
+                    </Text>
+                  </Box>
+                  <Badge variant="warning" className="gap-1.5 px-3 py-0.5 text-xs font-bold">
+                    <Clock className="h-3.5 w-3.5 text-amber-600" />
+                    <span>{ACTIVE_TASK.deadline}</span>
                   </Badge>
-                  <Text variant="muted" className="text-xs font-medium">
-                    {ACTIVE_TASK.zone} • {ACTIVE_TASK.bed}
-                  </Text>
                 </Box>
-                <Badge variant="warning" className="gap-1.5 px-3 py-0.5 text-xs font-bold">
-                  <Clock className="h-3.5 w-3.5 text-amber-600" />
-                  <span>{ACTIVE_TASK.deadline}</span>
-                </Badge>
-              </Box>
 
-              {/* Plot & Customer Details */}
+                <Box className="space-y-1">
+                  <CardTitle className="text-xl sm:text-2xl font-extrabold flex items-center gap-2">
+                    <span>{ACTIVE_TASK.plotCode}</span>
+                    <span className="text-muted-foreground">•</span>
+                    <span className="text-emerald-700 dark:text-emerald-400">
+                      {ACTIVE_TASK.cropName}
+                    </span>
+                  </CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">
+                    Chủ vườn: <strong>{ACTIVE_TASK.customerName}</strong> (Hợp đồng {ACTIVE_TASK.contractCode})
+                  </CardDescription>
+                </Box>
+              </CardHeader>
+
+              <CardContent className="p-5 sm:p-6 pt-0 space-y-4">
+                <Box className="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-muted/40 border border-border">
+                  <Box className="flex items-center gap-2.5">
+                    <Box className="flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 shrink-0">
+                      <Droplets className="h-4 w-4" />
+                    </Box>
+                    <Box>
+                      <Text variant="muted" className="text-[11px] font-medium">Độ ẩm đất</Text>
+                      <Text as="p" className="text-xs sm:text-sm font-bold text-foreground">
+                        {ACTIVE_TASK.soilMoisture}{" "}
+                        <span className="text-[10px] font-normal text-amber-600">(Cần bón ẩm)</span>
+                      </Text>
+                    </Box>
+                  </Box>
+
+                  <Box className="flex items-center gap-2.5">
+                    <Box className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 shrink-0">
+                      <Thermometer className="h-4 w-4" />
+                    </Box>
+                    <Box>
+                      <Text variant="muted" className="text-[11px] font-medium">Nhiệt độ luống</Text>
+                      <Text as="p" className="text-xs sm:text-sm font-bold text-foreground">
+                        {ACTIVE_TASK.temperature}
+                      </Text>
+                    </Box>
+                  </Box>
+                </Box>
+
+                <Box className="rounded-2xl border-l-4 border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/30 p-3.5 text-xs text-foreground">
+                  <Box className="flex items-start gap-2">
+                    <FileText className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <Box>
+                      <strong className="text-emerald-900 dark:text-emerald-200">
+                        Khách dặn dò:
+                      </strong>{" "}
+                      {ACTIVE_TASK.customerNote}
+                    </Box>
+                  </Box>
+                </Box>
+              </CardContent>
+
+              <CardFooter className="p-5 sm:p-6 pt-0 border-t border-border">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={() => navigate(`/farmer/tasks/${ACTIVE_TASK.id}/execute`)}
+                  leftIcon={<Play className="h-4 w-4 fill-current" />}
+                  rightIcon={<ArrowRight className="h-4 w-4" />}
+                  className="w-full"
+                >
+                  Bắt đầu xử lý nhiệm vụ này
+                </Button>
+              </CardFooter>
+            </Card>
+          ) : (
+            <Card className="p-8 text-center border-dashed border-2 border-border shadow-none space-y-3">
+              <Box className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 mx-auto">
+                <CheckCircle2 className="h-7 w-7" />
+              </Box>
               <Box className="space-y-1">
-                <CardTitle className="text-xl sm:text-2xl font-extrabold flex items-center gap-2">
-                  <span>{ACTIVE_TASK.plotCode}</span>
-                  <span className="text-muted-foreground">•</span>
-                  <span className="text-emerald-700 dark:text-emerald-400">
-                    {ACTIVE_TASK.cropName}
-                  </span>
+                <CardTitle className="text-base font-bold text-foreground">
+                  Không có nhiệm vụ ưu tiên cần xử lý
                 </CardTitle>
-                <CardDescription className="text-xs sm:text-sm">
-                  Chủ vườn: <strong>{ACTIVE_TASK.customerName}</strong> (Hợp đồng {ACTIVE_TASK.contractCode})
+                <CardDescription className="text-xs text-muted-foreground max-w-sm mx-auto">
+                  Bạn không có nhiệm vụ khẩn cấp nào trong ca trực hôm nay. Khi hệ thống phân công phiếu chăm sóc hoặc bón phân, thông tin sẽ xuất hiện tại đây.
                 </CardDescription>
               </Box>
-            </CardHeader>
-
-            <CardContent className="p-5 sm:p-6 pt-0 space-y-4">
-              {/* IoT Live Sensors Banner */}
-              <Box className="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-muted/40 border border-border">
-                <Box className="flex items-center gap-2.5">
-                  <Box className="flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 shrink-0">
-                    <Droplets className="h-4 w-4" />
-                  </Box>
-                  <Box>
-                    <Text variant="muted" className="text-[11px] font-medium">Độ ẩm đất</Text>
-                    <Text as="p" className="text-xs sm:text-sm font-bold text-foreground">
-                      {ACTIVE_TASK.soilMoisture}{" "}
-                      <span className="text-[10px] font-normal text-amber-600">(Cần bón ẩm)</span>
-                    </Text>
-                  </Box>
-                </Box>
-
-                <Box className="flex items-center gap-2.5">
-                  <Box className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 shrink-0">
-                    <Thermometer className="h-4 w-4" />
-                  </Box>
-                  <Box>
-                    <Text variant="muted" className="text-[11px] font-medium">Nhiệt độ luống</Text>
-                    <Text as="p" className="text-xs sm:text-sm font-bold text-foreground">
-                      {ACTIVE_TASK.temperature}
-                    </Text>
-                  </Box>
-                </Box>
-              </Box>
-
-              {/* Customer Special Note Box */}
-              <Box className="rounded-2xl border-l-4 border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/30 p-3.5 text-xs text-foreground">
-                <Box className="flex items-start gap-2">
-                  <FileText className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <Box>
-                    <strong className="text-emerald-900 dark:text-emerald-200">
-                      Khách dặn dò:
-                    </strong>{" "}
-                    {ACTIVE_TASK.customerNote}
-                  </Box>
-                </Box>
-              </Box>
-            </CardContent>
-
-            <CardFooter className="p-5 sm:p-6 pt-0 border-t border-border">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => navigate(`/farmer/tasks/${ACTIVE_TASK.id}/execute`)}
-                leftIcon={<Play className="h-4 w-4 fill-current" />}
-                rightIcon={<ArrowRight className="h-4 w-4" />}
-                className="w-full"
-              >
-                Bắt đầu xử lý nhiệm vụ này
-              </Button>
-            </CardFooter>
-          </Card>
+            </Card>
+          )}
 
           {/* Secondary / Upcoming Tasks */}
           <Box className="space-y-3">
@@ -346,37 +303,43 @@ export function FarmerTasksPage() {
             </Text>
 
             <Box className="space-y-2.5">
-              {UPCOMING_TASKS.map((task) => (
-                <Card
-                  key={task.id}
-                  className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                >
-                  <Box className="space-y-1">
-                    <Box className="flex items-center gap-2">
-                      <Text as="strong" className="font-bold text-sm text-foreground">
-                        {task.type}
-                      </Text>
-                      <Text variant="muted" className="text-xs">•</Text>
-                      <Text variant="muted" className="text-xs font-medium">
-                        {task.plotCode} ({task.bed})
+              {UPCOMING_TASKS.length === 0 ? (
+                <Card className="p-6 text-center border-dashed border border-border shadow-none">
+                  <Text variant="muted" className="text-xs">Chưa có công việc kế tiếp trong ca trực.</Text>
+                </Card>
+              ) : (
+                UPCOMING_TASKS.map((task) => (
+                  <Card
+                    key={task.id}
+                    className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <Box className="space-y-1">
+                      <Box className="flex items-center gap-2">
+                        <Text as="strong" className="font-bold text-sm text-foreground">
+                          {task.type}
+                        </Text>
+                        <Text variant="muted" className="text-xs">•</Text>
+                        <Text variant="muted" className="text-xs font-medium">
+                          {task.plotCode} ({task.bed})
+                        </Text>
+                      </Box>
+                      <Text variant="muted" className="text-xs">
+                        Chủ hộ: {task.customerName} • Hạn chót:{" "}
+                        <span className="text-orange-600 font-medium">{task.deadline}</span>
                       </Text>
                     </Box>
-                    <Text variant="muted" className="text-xs">
-                      Chủ hộ: {task.customerName} • Hạn chót:{" "}
-                      <span className="text-orange-600 font-medium">{task.deadline}</span>
-                    </Text>
-                  </Box>
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate(`/farmer/tasks/${task.id}/execute`)}
-                    className="self-start sm:self-auto rounded-xl text-xs font-semibold"
-                  >
-                    Mở phiếu
-                  </Button>
-                </Card>
-              ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/farmer/tasks/${task.id}/execute`)}
+                      className="self-start sm:self-auto rounded-xl text-xs font-semibold"
+                    >
+                      Mở phiếu
+                    </Button>
+                  </Card>
+                ))
+              )}
             </Box>
           </Box>
         </Box>
@@ -387,7 +350,7 @@ export function FarmerTasksPage() {
           <Card className="p-5 space-y-4">
             <CardHeader className="p-0 flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base font-bold">
-                Ô đất đang phụ trách (3 ô)
+                Ô đất đang phụ trách ({MANAGED_PLOTS.length} ô)
               </CardTitle>
               <Button
                 variant="link"
@@ -400,66 +363,62 @@ export function FarmerTasksPage() {
             </CardHeader>
 
             <CardContent className="p-0 space-y-3">
-              {MANAGED_PLOTS.map((plot) => (
-                <Box
-                  key={plot.id}
-                  className="rounded-2xl border border-border p-3.5 bg-muted/30 hover:bg-muted/50 transition-colors space-y-2.5"
-                >
-                  <Box className="flex items-center justify-between">
-                    <Box>
-                      <Box className="flex items-center gap-2">
-                        <Text as="strong" className="text-sm font-bold text-foreground">
-                          {plot.code}
+              {MANAGED_PLOTS.length === 0 ? (
+                <Card className="p-6 text-center border-dashed border border-border shadow-none">
+                  <Text variant="muted" className="text-xs">Chưa có ô đất nào được phân công phụ trách.</Text>
+                </Card>
+              ) : (
+                MANAGED_PLOTS.map((plot) => (
+                  <Box
+                    key={plot.id}
+                    className="rounded-2xl border border-border p-3.5 bg-muted/30 hover:bg-muted/50 transition-colors space-y-2.5"
+                  >
+                    <Box className="flex items-center justify-between">
+                      <Box>
+                        <Box className="flex items-center gap-2">
+                          <Text as="strong" className="text-sm font-bold text-foreground">
+                            {plot.code}
+                          </Text>
+                          {plot.readyForHarvest && (
+                            <Badge variant="warning" className="text-[10px] px-1.5 py-0.5 font-bold">
+                              Sẵn sàng
+                            </Badge>
+                          )}
+                        </Box>
+                        <Text variant="muted" className="text-xs">
+                          {plot.cropName} • Ngày {plot.currentDay}/{plot.totalDays}
                         </Text>
-                        {plot.readyForHarvest && (
-                          <Badge variant="warning" className="text-[10px] px-1.5 py-0.5 font-bold">
-                            Sẵn sàng
-                          </Badge>
-                        )}
                       </Box>
-                      <Text variant="muted" className="text-xs">
-                        {plot.cropName} • Ngày {plot.currentDay}/{plot.totalDays}
-                      </Text>
-                    </Box>
 
-                    {plot.readyForHarvest ? (
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => handleHarvestClick(plot.code)}
-                        className="rounded-xl text-xs font-bold bg-[#8c4b14] hover:bg-[#733d10] text-white"
-                      >
-                        🚜 Thu hoạch
-                      </Button>
-                    ) : (
-                      <Box className="flex items-center gap-2">
-                        <Text as="span" className="text-xs font-bold text-foreground">
-                          {plot.progressPercent}%
-                        </Text>
+                      {plot.readyForHarvest ? (
                         <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => setSelectedLiveCamPlot(plot.code)}
-                          aria-label={`Xem camera ${plot.code}`}
-                          className="h-8 w-8 text-blue-600 bg-blue-50 dark:bg-blue-950 border-blue-200"
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleHarvestClick(plot.code)}
+                          className="rounded-xl text-xs font-bold bg-[#8c4b14] hover:bg-[#733d10] text-white"
                         >
-                          <Video className="h-4 w-4" />
+                          🚜 Thu hoạch
                         </Button>
-                      </Box>
-                    )}
+                      ) : (
+                        <Box className="flex items-center gap-2">
+                          <Text as="span" className="text-xs font-bold text-foreground">
+                            {plot.progressPercent}%
+                          </Text>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => setSelectedLiveCamPlot(plot.code)}
+                            aria-label={`Xem camera ${plot.code}`}
+                            className="h-8 w-8 text-blue-600 bg-blue-50 dark:bg-blue-950 border-blue-200"
+                          >
+                            <Video className="h-4 w-4" />
+                          </Button>
+                        </Box>
+                      )}
+                    </Box>
                   </Box>
-
-                  {/* Progress bar */}
-                  <Box className="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                    <Box
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        plot.readyForHarvest ? "bg-amber-600" : "bg-emerald-600"
-                      }`}
-                      style={{ width: `${plot.progressPercent}%` }}
-                    />
-                  </Box>
-                </Box>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
 

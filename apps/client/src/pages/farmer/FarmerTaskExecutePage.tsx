@@ -34,22 +34,16 @@ export function FarmerTaskExecutePage() {
   const [currentStep, setCurrentStep] = React.useState<number>(2); // 1: Đã nhận, 2: Minh chứng, 3: Đóng phiếu
 
   // Form states
-  const [proofImage, setProofImage] = React.useState<string>("/images/proof_care_782.jpg");
-  const [resultNote, setResultNote] = React.useState<string>(
-    "Đã bón phân trùn quế quanh rễ và xới tơi xốp, giữ ẩm tốt."
-  );
-  const [isDosageChecked, setIsDosageChecked] = React.useState<boolean>(true);
+  const [proofImage, setProofImage] = React.useState<string>("");
+  const [resultNote, setResultNote] = React.useState<string>("");
+  const [isDosageChecked, setIsDosageChecked] = React.useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = React.useState<boolean>(false);
   const [isIncidentModalOpen, setIsIncidentModalOpen] = React.useState<boolean>(false);
   const [incidentText, setIncidentText] = React.useState<string>("");
 
   // Quick chips
-  const [selectedChips, setSelectedChips] = React.useState<string[]>([
-    "Tưới vi sinh",
-    "Cây bung lá khỏe",
-    "Đã xới thoáng đất",
-  ]);
+  const [selectedChips, setSelectedChips] = React.useState<string[]>([]);
 
   const toggleChip = (chip: string) => {
     setSelectedChips((prev) =>
@@ -201,47 +195,70 @@ export function FarmerTaskExecutePage() {
                   Ảnh chụp luống thực tế để gửi kèm vào nhật ký canh tác của khách
                 </CardDescription>
               </Box>
-              <Badge variant="success">1/1 ảnh đã tải</Badge>
+              <Badge variant={proofImage ? "success" : "secondary"}>
+                {proofImage ? "1/1 ảnh đã tải" : "Chưa tải ảnh"}
+              </Badge>
             </CardHeader>
 
             <CardContent className="p-5 pt-0 space-y-4">
-              {/* Proof Image Preview with Watermark */}
-              <Box className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-900 border border-border group">
-                <img
-                  src={proofImage}
-                  alt="Minh chứng hiện trường"
-                  className="w-full h-full object-cover"
-                />
+              {/* Proof Image Preview or Upload Dropzone */}
+              {proofImage ? (
+                <Box className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-900 border border-border group">
+                  <img
+                    src={proofImage}
+                    alt="Minh chứng hiện trường"
+                    className="w-full h-full object-cover"
+                  />
 
-                {/* Top Watermark & Valid Status Badge */}
-                <Box className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                  <Badge variant="secondary" className="bg-black/60 text-white border border-white/20 backdrop-blur-md">
-                    📍 Lô B-205 • 09:12 AM
-                  </Badge>
-                  <Badge variant="success" className="bg-emerald-600 text-white font-bold shadow-xs">
-                    ✓ Ảnh hợp lệ
-                  </Badge>
-                </Box>
+                  {/* Top Watermark & Valid Status Badge */}
+                  <Box className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                    <Badge variant="secondary" className="bg-black/60 text-white border border-white/20 backdrop-blur-md">
+                      📍 Minh chứng thực địa
+                    </Badge>
+                    <Badge variant="success" className="bg-emerald-600 text-white font-bold shadow-xs">
+                      ✓ Ảnh hợp lệ
+                    </Badge>
+                  </Box>
 
-                {/* Change photo button */}
-                <Box className="absolute bottom-3 right-3 flex items-center gap-2">
-                  <label className="cursor-pointer rounded-xl bg-white/95 hover:bg-white text-slate-900 px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-md transition-all">
-                    <Camera className="h-3.5 w-3.5 text-emerald-600" />
-                    <span>Chụp lại góc khác / Đổi ảnh</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        if (e.target.files?.[0]) {
-                          const file = e.target.files[0];
-                          setProofImage(URL.createObjectURL(file));
-                        }
-                      }}
-                    />
-                  </label>
+                  {/* Change photo button */}
+                  <Box className="absolute bottom-3 right-3 flex items-center gap-2">
+                    <label className="cursor-pointer rounded-xl bg-white/95 hover:bg-white text-slate-900 px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-md transition-all">
+                      <Camera className="h-3.5 w-3.5 text-emerald-600" />
+                      <span>Chụp lại góc khác / Đổi ảnh</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          if (e.target.files?.[0]) {
+                            const file = e.target.files[0];
+                            setProofImage(URL.createObjectURL(file));
+                          }
+                        }}
+                      />
+                    </label>
+                  </Box>
                 </Box>
-              </Box>
+              ) : (
+                <label className="aspect-[16/10] w-full rounded-2xl border-2 border-dashed border-border bg-muted/20 hover:bg-muted/40 transition-colors flex flex-col items-center justify-center p-6 text-center space-y-2 cursor-pointer">
+                  <Box className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600">
+                    <Camera className="h-6 w-6" />
+                  </Box>
+                  <Text as="span" className="text-xs font-bold text-foreground">Bấm để chụp hoặc tải ảnh hiện trường</Text>
+                  <Text variant="muted" className="text-[11px]">Hỗ trợ ảnh JPG, PNG chụp trực tiếp từ camera nông trại</Text>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files?.[0]) {
+                        const file = e.target.files[0];
+                        setProofImage(URL.createObjectURL(file));
+                      }
+                    }}
+                  />
+                </label>
+              )}
 
               {/* Result Note Field */}
               <Box className="space-y-2 pt-2">

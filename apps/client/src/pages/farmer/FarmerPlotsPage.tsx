@@ -55,114 +55,8 @@ interface PlotData {
   lastWatered: string;
 }
 
-const ALL_PLOTS: PlotData[] = [
-  {
-    id: "A-104",
-    code: "Ô đất A-104",
-    area: "20m²",
-    bed: "Luống 2",
-    zone: "Khu A",
-    cropName: "Cải cầu vồng Thụy Sĩ",
-    customerName: "Chị Thu Hà",
-    customerPhone: "0918.342.421",
-    currentDay: 32,
-    totalDays: 60,
-    progressPercent: 53,
-    soilMoisture: 68,
-    soilStatus: "Đạt",
-    temperature: 24.5,
-    airHumidity: 72,
-    harvestDate: "24/12/2026",
-    status: "growing",
-    image: "/images/rainbow_chard.jpg",
-    lastWatered: "06:00 sáng nay (Đạt chuẩn)",
-  },
-  {
-    id: "B-205",
-    code: "Ô đất B-205",
-    area: "15m²",
-    bed: "Luống 5",
-    zone: "Khu B",
-    cropName: "Cải bó xôi Nhật",
-    customerName: "Anh Trần Quang",
-    customerPhone: "0909.112.334",
-    currentDay: 18,
-    totalDays: 60,
-    progressPercent: 30,
-    soilMoisture: 72,
-    soilStatus: "Đạt",
-    temperature: 23.0,
-    airHumidity: 75,
-    harvestDate: "08/01/2027",
-    status: "growing",
-    image: "/images/spinach.jpg",
-    lastWatered: "06:30 sáng nay (Đạt chuẩn)",
-  },
-  {
-    id: "A-101",
-    code: "Ô đất A-101",
-    area: "25m²",
-    bed: "Luống 1",
-    zone: "Khu A",
-    cropName: "Xà lách búp mỡ",
-    customerName: "Bác Hoàng Nam",
-    customerPhone: "0934.556.778",
-    currentDay: 60,
-    totalDays: 60,
-    progressPercent: 100,
-    soilMoisture: 65,
-    soilStatus: "Đạt",
-    temperature: 22.8,
-    airHumidity: 70,
-    harvestDate: "Hôm nay (Đã đến hạn)",
-    status: "ready_harvest",
-    readyForHarvest: true,
-    image: "/images/butterhead_lettuce.jpg",
-    lastWatered: "Hôm qua • 17:00",
-  },
-  {
-    id: "B-206",
-    code: "Ô đất B-206",
-    area: "18m²",
-    bed: "Luống 6",
-    zone: "Khu B",
-    cropName: "Xà lách lolo tím",
-    customerName: "Chị Mai Lan",
-    customerPhone: "0988.776.554",
-    currentDay: 27,
-    totalDays: 60,
-    progressPercent: 45,
-    soilMoisture: 45,
-    soilStatus: "Cần tưới",
-    temperature: 25.0,
-    airHumidity: 64,
-    harvestDate: "15/01/2027",
-    status: "need_water",
-    image: "/images/seedlings_growth.jpg",
-    lastWatered: "Hôm qua • 16:00 (Đất hơi khô)",
-  },
-  {
-    id: "A-102",
-    code: "Ô đất A-102",
-    area: "20m²",
-    bed: "Luống 3",
-    zone: "Khu A",
-    cropName: "Cà chua cherry",
-    customerName: "Anh Đức Thắng",
-    customerPhone: "0912.889.900",
-    currentDay: 18,
-    totalDays: 75,
-    progressPercent: 24,
-    soilMoisture: 62,
-    soilStatus: "Đạt",
-    temperature: 25.5,
-    airHumidity: 68,
-    harvestDate: "28/01/2027",
-    status: "growing",
-    image: "/images/proof_care_782.jpg",
-    lastWatered: "07:00 sáng nay (Đạt chuẩn)",
-  },
-];
+const ALL_PLOTS: PlotData[] = [];
+
 
 export function FarmerPlotsPage() {
   const navigate = useNavigate();
@@ -208,6 +102,12 @@ export function FarmerPlotsPage() {
     return matchesSearch && matchesZone && matchesStatus;
   });
 
+  const zoneACount = ALL_PLOTS.filter((p) => p.zone === "Khu A").length;
+  const zoneBCount = ALL_PLOTS.filter((p) => p.zone === "Khu B").length;
+  const needWaterCount = ALL_PLOTS.filter((p) => p.status === "need_water").length;
+  const growingCount = ALL_PLOTS.filter((p) => p.status === "growing").length;
+  const readyHarvestCount = ALL_PLOTS.filter((p) => p.status === "ready_harvest").length;
+
   return (
     <Box className="w-full space-y-6 pb-12">
       {/* ─────────────────────────────────────────────────────────────
@@ -232,7 +132,13 @@ export function FarmerPlotsPage() {
               type="button"
               variant="primary"
               size="sm"
-              onClick={() => setCreateLogPlot(ALL_PLOTS[0])}
+              onClick={() => {
+                if (ALL_PLOTS.length > 0) {
+                  setCreateLogPlot(ALL_PLOTS[0]);
+                } else {
+                  showToast("Hiện chưa có ô đất nào được phân công để đăng nhật ký.");
+                }
+              }}
               leftIcon={<PlusCircle className="h-4 w-4" />}
             >
               <Text as="span" className="text-xs font-bold">+ Đăng nhật ký mới</Text>
@@ -313,7 +219,7 @@ export function FarmerPlotsPage() {
                 onClick={() => setZoneFilter("Khu A")}
                 className="h-8 text-xs font-bold"
               >
-                Khu A Đà Lạt (3)
+                Khu A Đà Lạt ({zoneACount})
               </Button>
               <Button
                 type="button"
@@ -322,7 +228,7 @@ export function FarmerPlotsPage() {
                 onClick={() => setZoneFilter("Khu B")}
                 className="h-8 text-xs font-bold"
               >
-                Khu B (2)
+                Khu B ({zoneBCount})
               </Button>
             </Box>
           </Box>
@@ -351,7 +257,7 @@ export function FarmerPlotsPage() {
               className="h-7 rounded-full px-3 text-xs flex items-center gap-1.5"
             >
               <Box className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-              <Text as="span">Cần tưới nước (1)</Text>
+              <Text as="span">Cần tưới nước ({needWaterCount})</Text>
             </Button>
 
             <Button
@@ -362,7 +268,7 @@ export function FarmerPlotsPage() {
               className="h-7 rounded-full px-3 text-xs flex items-center gap-1.5"
             >
               <Box className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              <Text as="span">Đang sinh trưởng (3)</Text>
+              <Text as="span">Đang sinh trưởng ({growingCount})</Text>
             </Button>
 
             <Button
@@ -373,7 +279,7 @@ export function FarmerPlotsPage() {
               className="h-7 rounded-full px-3 text-xs flex items-center gap-1.5"
             >
               <Box className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-              <Text as="span">Chuẩn bị thu hoạch (1)</Text>
+              <Text as="span">Chuẩn bị thu hoạch ({readyHarvestCount})</Text>
             </Button>
           </Box>
         </CardContent>
@@ -382,7 +288,22 @@ export function FarmerPlotsPage() {
       {/* ─────────────────────────────────────────────────────────────
           3. PARCEL CARDS GRID (3 Columns on Desktop with @/shared/ui)
       ───────────────────────────────────────────────────────────── */}
-      <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {filteredPlots.length === 0 ? (
+        <Card className="p-12 text-center border-dashed border-2 border-border shadow-none space-y-4">
+          <Box className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 mx-auto">
+            <Sprout className="h-8 w-8" />
+          </Box>
+          <Box className="space-y-1">
+            <CardTitle className="text-lg font-bold text-foreground">
+              Chưa có ô đất canh tác nào
+            </CardTitle>
+            <CardDescription className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">
+              Hiện tại bạn chưa được phân công ô đất nào. Khi có hợp đồng canh tác mới từ quản trị viên, thông tin luống rau sẽ được hiển thị tại đây.
+            </CardDescription>
+          </Box>
+        </Card>
+      ) : (
+        <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredPlots.map((plot) => (
           <Card
             key={plot.id}
@@ -534,6 +455,7 @@ export function FarmerPlotsPage() {
           </Card>
         ))}
       </Box>
+      )}
 
       {/* ─────────────────────────────────────────────────────────────
           MODAL 1: LIVE CAMERA VIEW (Card with @/shared/ui)

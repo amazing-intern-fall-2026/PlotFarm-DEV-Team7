@@ -25,6 +25,7 @@ import {
   ArrowLeft,
   Clock,
   MapPin,
+  FileText,
 } from "lucide-react";
 
 interface HistoryTaskItem {
@@ -54,67 +55,7 @@ interface HistoryTaskItem {
   protectionInfo?: string;
 }
 
-const HISTORY_TASKS: HistoryTaskItem[] = [
-  {
-    id: "CARE-780",
-    code: "Phiếu #CARE-780 • Bón phân vi sinh",
-    category: "care",
-    title: "Bón phân trùn quế quanh gốc & xới đất tơi xốp",
-    plotCode: "Ô đất A-104",
-    completedAt: "22/10/2026 (08:30)",
-    statusBadge: "✓ Đã nghiệm thu",
-    statusVariant: "success",
-    image: "/images/proof_care_782.jpg",
-    feedback: {
-      rating: 5.0,
-      customerName: "Chị Mai Thảo (Chủ ô)",
-      comment: "5 sao - Bác Bảy xới đất rất kỹ, rau phát triển xanh tốt, gia đình rất yên tâm.",
-    },
-  },
-  {
-    id: "HARV-100",
-    code: "Thu hoạch ô đất A-100 • 17.8 kg xà lách",
-    category: "harvest",
-    title: "Thu hoạch sáng sớm & đóng thùng Eco-box",
-    plotCode: "Mã: AGRI-VN-883011",
-    completedAt: "20/10/2026",
-    statusBadge: "🚚 Đã giao shipper",
-    statusVariant: "warning",
-    image: "/images/review_produce.jpg",
-    deliveryInfo: {
-      courier: "Kho lạnh Lalamove Farm",
-      tempText: "Đã xuất kho đúng hẹn, nhiệt độ bảo quản 12°C",
-    },
-  },
-  {
-    id: "IRR-542",
-    code: "Phiếu #IRR-542 • Tưới nhỏ giọt bổ sung",
-    category: "care",
-    title: "Bù ẩm luống rau sau đợt nắng hanh",
-    plotCode: "Ô đất B-012",
-    completedAt: "18/10/2026 (16:15)",
-    statusBadge: "✓ Đã nghiệm thu",
-    statusVariant: "success",
-    image: "/images/greenhouse_camera_live.jpg",
-    sensorOutcome: {
-      label: "Độ ẩm đất sau tưới",
-      percent: 68,
-      statusText: "Đạt chuẩn VietGAP (60–75%)",
-    },
-  },
-  {
-    id: "PEST-319",
-    code: "Phiếu #PEST-319 • Đặt bẫy sinh học",
-    category: "care",
-    title: "Thay bẫy dính vàng & kiểm đếm sâu tơ",
-    plotCode: "Ô đất A-104",
-    completedAt: "16/10/2026 (09:00)",
-    statusBadge: "✓ Đã nghiệm thu",
-    statusVariant: "success",
-    image: "/images/seedlings_growth.jpg",
-    protectionInfo: "Bảo vệ thực vật sinh học 100% - Không phát hiện sâu tơ, chỉ số sinh khối ổn định.",
-  },
-];
+const HISTORY_TASKS: HistoryTaskItem[] = [];
 
 export function FarmerHistoryPage() {
   const navigate = useNavigate();
@@ -122,6 +63,10 @@ export function FarmerHistoryPage() {
   // State
   const [selectedMonth, setSelectedMonth] = React.useState<string>("10/2026");
   const [activeFilter, setActiveFilter] = React.useState<"ALL" | "care" | "harvest" | "feedback">("ALL");
+
+  const careCount = HISTORY_TASKS.filter((t) => t.category === "care").length;
+  const harvestCount = HISTORY_TASKS.filter((t) => t.category === "harvest").length;
+  const feedbackCount = HISTORY_TASKS.filter((t) => Boolean(t.feedback)).length;
 
   const filteredTasks = HISTORY_TASKS.filter((task) => {
     if (activeFilter === "care") return task.category === "care";
@@ -187,10 +132,10 @@ export function FarmerHistoryPage() {
           </Box>
           <Box>
             <Text as="h3" className="text-xl sm:text-2xl font-extrabold text-foreground">
-              36 việc đã làm
+              {HISTORY_TASKS.length} việc đã làm
             </Text>
             <Text variant="muted" className="text-xs font-semibold text-emerald-600">
-              Hoàn thành 100% chỉ tiêu
+              {HISTORY_TASKS.length > 0 ? "Hoàn thành 100% chỉ tiêu" : "Chưa có tác vụ hoàn tất"}
             </Text>
           </Box>
         </Card>
@@ -201,10 +146,10 @@ export function FarmerHistoryPage() {
           </Box>
           <Box>
             <Text as="h3" className="text-xl sm:text-2xl font-extrabold text-foreground">
-              100% có ảnh
+              {HISTORY_TASKS.length > 0 ? "100% có ảnh" : "0% có ảnh"}
             </Text>
             <Text variant="muted" className="text-xs font-semibold text-blue-600">
-              Đã đối soát minh chứng
+              {HISTORY_TASKS.length > 0 ? "Đã đối soát minh chứng" : "Chưa có dữ liệu đối soát"}
             </Text>
           </Box>
         </Card>
@@ -215,10 +160,10 @@ export function FarmerHistoryPage() {
           </Box>
           <Box>
             <Text as="h3" className="text-xl sm:text-2xl font-extrabold text-foreground">
-              Đánh giá 4.9 ⭐
+              Đánh giá {HISTORY_TASKS.length > 0 ? "4.9 ⭐" : "0.0 ⭐"}
             </Text>
             <Text variant="muted" className="text-xs font-semibold text-amber-600">
-              Từ 32 khách hàng chấm
+              {feedbackCount > 0 ? `Từ ${feedbackCount} khách hàng chấm` : "Chưa có đánh giá"}
             </Text>
           </Box>
         </Card>
@@ -240,7 +185,7 @@ export function FarmerHistoryPage() {
             onClick={() => setActiveFilter("ALL")}
             className="rounded-full text-xs font-bold h-8"
           >
-            Tất cả (36)
+            Tất cả ({HISTORY_TASKS.length})
           </Button>
 
           <Button
@@ -250,7 +195,7 @@ export function FarmerHistoryPage() {
             onClick={() => setActiveFilter("care")}
             className="rounded-full text-xs font-bold h-8"
           >
-            Chăm sóc (24)
+            Chăm sóc ({careCount})
           </Button>
 
           <Button
@@ -260,7 +205,7 @@ export function FarmerHistoryPage() {
             onClick={() => setActiveFilter("harvest")}
             className="rounded-full text-xs font-bold h-8"
           >
-            Thu hoạch (12)
+            Thu hoạch ({harvestCount})
           </Button>
 
           <Button
@@ -270,7 +215,7 @@ export function FarmerHistoryPage() {
             onClick={() => setActiveFilter("feedback")}
             className="rounded-full text-xs font-bold h-8"
           >
-            Có phản hồi (8)
+            Có phản hồi ({feedbackCount})
           </Button>
         </Box>
       </Card>
@@ -279,145 +224,163 @@ export function FarmerHistoryPage() {
           4. WORK HISTORY CARDS LIST
       ───────────────────────────────────────────────────────────── */}
       <Box className="space-y-4">
-        {filteredTasks.map((task) => (
-          <Card
-            key={task.id}
-            className="p-5 sm:p-6 rounded-3xl border-border shadow-xs hover:shadow-md transition-all space-y-4 bg-card"
-          >
-            {/* Top row: Icon, Title, Status badge */}
-            <Box className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-3">
-              <Box className="flex items-center gap-2.5">
-                {task.category === "harvest" ? (
-                  <Box className="h-8 w-8 rounded-xl bg-orange-100 text-orange-700 flex items-center justify-center shrink-0">
-                    <Truck className="h-4 w-4" />
-                  </Box>
-                ) : (
-                  <Box className="h-8 w-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                    <Sprout className="h-4 w-4" />
-                  </Box>
-                )}
-
-                <Box>
-                  <CardTitle className="text-sm sm:text-base font-bold text-foreground">
-                    {task.code}
-                  </CardTitle>
-                  <CardDescription className="text-xs flex items-center gap-3 mt-0.5">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3 text-muted-foreground" /> {task.plotCode}
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3 text-muted-foreground" /> {task.completedAt}
-                    </span>
-                  </CardDescription>
-                </Box>
-              </Box>
-
-              <Badge
-                variant={task.statusVariant}
-                className={`font-bold text-xs self-start sm:self-auto ${
-                  task.statusVariant === "warning" ? "bg-orange-100 text-orange-800 border-orange-200" : ""
-                }`}
-              >
-                {task.statusBadge}
-              </Badge>
+        {filteredTasks.length === 0 ? (
+          <Card className="p-12 text-center border-dashed border-2 border-border shadow-none space-y-4">
+            <Box className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 mx-auto">
+              <FileText className="h-8 w-8" />
             </Box>
-
-            {/* Sub-card: Detailed Proof & Feedback */}
-            <Box className="flex flex-col md:flex-row items-start md:items-center gap-4 p-3.5 rounded-2xl bg-muted/30 border border-border">
-              {/* Proof thumbnail */}
-              <Box className="relative h-20 w-24 rounded-xl overflow-hidden bg-black shrink-0 border border-border">
-                <img
-                  src={task.image}
-                  alt={task.title}
-                  className="h-full w-full object-cover"
-                />
-              </Box>
-
-              {/* Contextual content based on task type */}
-              <Box className="flex-1 space-y-1.5">
-                {/* 1. Customer Feedback Review */}
-                {task.feedback && (
-                  <Box className="space-y-1">
-                    <Box className="flex items-center gap-2">
-                      <Badge variant="warning" className="text-[10px] font-bold gap-1 px-2 py-0.5">
-                        <Star className="h-3 w-3 fill-current" /> {task.feedback.rating.toFixed(1)}
-                      </Badge>
-                      <Text as="span" className="text-xs font-bold text-foreground">
-                        {task.feedback.customerName}
-                      </Text>
-                    </Box>
-                    <Text as="p" className="text-xs text-foreground/90 italic">
-                      "{task.feedback.comment}"
-                    </Text>
-                  </Box>
-                )}
-
-                {/* 2. Cold Chain Courier Info */}
-                {task.deliveryInfo && (
-                  <Box className="space-y-1">
-                    <Text as="p" className="text-xs font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      <span>{task.deliveryInfo.courier}</span>
-                    </Text>
-                    <Text variant="muted" className="text-xs">
-                      {task.deliveryInfo.tempText}
-                    </Text>
-                  </Box>
-                )}
-
-                {/* 3. Irrigation Sensor Outcome */}
-                {task.sensorOutcome && (
-                  <Box className="space-y-1.5">
-                    <Box className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-foreground flex items-center gap-1">
-                        <Droplets className="h-3.5 w-3.5 text-cyan-600" />
-                        {task.sensorOutcome.label}:
-                      </span>
-                      <strong className="text-emerald-700 font-bold">
-                        {task.sensorOutcome.percent}% ({task.sensorOutcome.statusText})
-                      </strong>
-                    </Box>
-                    <Box className="w-full h-2 rounded-full bg-muted overflow-hidden">
-                      <Box
-                        className="h-full bg-emerald-600 rounded-full"
-                        style={{ width: `${task.sensorOutcome.percent}%` }}
-                      />
-                    </Box>
-                  </Box>
-                )}
-
-                {/* 4. Biosecurity Protection */}
-                {task.protectionInfo && (
-                  <Text as="p" className="text-xs text-foreground/90 flex items-start gap-1.5">
-                    <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>{task.protectionInfo}</span>
-                  </Text>
-                )}
-              </Box>
+            <Box className="space-y-1">
+              <CardTitle className="text-lg font-bold text-foreground">
+                Chưa có lịch sử công việc trong tháng này
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">
+                Các công việc chăm sóc, thu hoạch sau khi hoàn tất và nghiệm thu thực địa sẽ được lưu trữ và đối soát tại đây.
+              </CardDescription>
             </Box>
           </Card>
-        ))}
+        ) : (
+          filteredTasks.map((task) => (
+            <Card
+              key={task.id}
+              className="p-5 sm:p-6 rounded-3xl border-border shadow-xs hover:shadow-md transition-all space-y-4 bg-card"
+            >
+              {/* Top row: Icon, Title, Status badge */}
+              <Box className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-3">
+                <Box className="flex items-center gap-2.5">
+                  {task.category === "harvest" ? (
+                    <Box className="h-8 w-8 rounded-xl bg-orange-100 text-orange-700 flex items-center justify-center shrink-0">
+                      <Truck className="h-4 w-4" />
+                    </Box>
+                  ) : (
+                    <Box className="h-8 w-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                      <Sprout className="h-4 w-4" />
+                    </Box>
+                  )}
+
+                  <Box>
+                    <CardTitle className="text-sm sm:text-base font-bold text-foreground">
+                      {task.code}
+                    </CardTitle>
+                    <CardDescription className="text-xs flex items-center gap-3 mt-0.5">
+                      <span className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3 text-muted-foreground" /> {task.plotCode}
+                      </span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3 w-3 text-muted-foreground" /> {task.completedAt}
+                      </span>
+                    </CardDescription>
+                  </Box>
+                </Box>
+
+                <Badge
+                  variant={task.statusVariant}
+                  className={`font-bold text-xs self-start sm:self-auto ${
+                    task.statusVariant === "warning" ? "bg-orange-100 text-orange-800 border-orange-200" : ""
+                  }`}
+                >
+                  {task.statusBadge}
+                </Badge>
+              </Box>
+
+              {/* Sub-card: Detailed Proof & Feedback */}
+              <Box className="flex flex-col md:flex-row items-start md:items-center gap-4 p-3.5 rounded-2xl bg-muted/30 border border-border">
+                {/* Proof thumbnail */}
+                <Box className="relative h-20 w-24 rounded-xl overflow-hidden bg-black shrink-0 border border-border">
+                  <img
+                    src={task.image}
+                    alt={task.title}
+                    className="h-full w-full object-cover"
+                  />
+                </Box>
+
+                {/* Contextual content based on task type */}
+                <Box className="flex-1 space-y-1.5">
+                  {/* 1. Customer Feedback Review */}
+                  {task.feedback && (
+                    <Box className="space-y-1">
+                      <Box className="flex items-center gap-2">
+                        <Badge variant="warning" className="text-[10px] font-bold gap-1 px-2 py-0.5">
+                          <Star className="h-3 w-3 fill-current" /> {task.feedback.rating.toFixed(1)}
+                        </Badge>
+                        <Text as="span" className="text-xs font-bold text-foreground">
+                          {task.feedback.customerName}
+                        </Text>
+                      </Box>
+                      <Text as="p" className="text-xs text-foreground/90 italic">
+                        "{task.feedback.comment}"
+                      </Text>
+                    </Box>
+                  )}
+
+                  {/* 2. Cold Chain Courier Info */}
+                  {task.deliveryInfo && (
+                    <Box className="space-y-1">
+                      <Text as="p" className="text-xs font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        <span>{task.deliveryInfo.courier}</span>
+                      </Text>
+                      <Text variant="muted" className="text-xs">
+                        {task.deliveryInfo.tempText}
+                      </Text>
+                    </Box>
+                  )}
+
+                  {/* 3. Irrigation Sensor Outcome */}
+                  {task.sensorOutcome && (
+                    <Box className="space-y-1.5">
+                      <Box className="flex items-center justify-between text-xs">
+                        <span className="font-semibold text-foreground flex items-center gap-1">
+                          <Droplets className="h-3.5 w-3.5 text-cyan-600" />
+                          {task.sensorOutcome.label}:
+                        </span>
+                        <strong className="text-emerald-700 font-bold">
+                          {task.sensorOutcome.percent}% ({task.sensorOutcome.statusText})
+                        </strong>
+                      </Box>
+                      <Box className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                        <Box
+                          className="h-full bg-emerald-600 rounded-full"
+                          style={{ width: `${task.sensorOutcome.percent}%` }}
+                        />
+                      </Box>
+                    </Box>
+                  )}
+
+                  {/* 4. Biosecurity Protection */}
+                  {task.protectionInfo && (
+                    <Text as="p" className="text-xs text-foreground/90 flex items-start gap-1.5">
+                      <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <span>{task.protectionInfo}</span>
+                    </Text>
+                  )}
+                </Box>
+              </Box>
+            </Card>
+          ))
+        )}
       </Box>
 
       {/* ─────────────────────────────────────────────────────────────
           5. COMPLETION ACHIEVEMENT BANNER
       ───────────────────────────────────────────────────────────── */}
-      <Card className="p-5 rounded-3xl border-emerald-200 dark:border-emerald-800 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100 dark:from-emerald-950/40 dark:to-teal-950/20 shadow-xs">
-        <CardContent className="p-0 flex items-center gap-4 text-emerald-950 dark:text-emerald-200">
-          <Box className="h-12 w-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-            <Sparkles className="h-6 w-6" />
-          </Box>
-          <Box>
-            <CardTitle className="text-sm sm:text-base font-extrabold">
-              Nghiệm thu trọn vẹn
-            </CardTitle>
-            <CardDescription className="text-xs text-emerald-800 dark:text-emerald-300 mt-0.5">
-              Bạn đã hoàn tất 100% minh chứng thực địa tháng {selectedMonth}. Hồ sơ năng suất lao động đã được gửi đến ban quản lý nông trại.
-            </CardDescription>
-          </Box>
-        </CardContent>
-      </Card>
+      {HISTORY_TASKS.length > 0 && (
+        <Card className="p-5 rounded-3xl border-emerald-200 dark:border-emerald-800 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100 dark:from-emerald-950/40 dark:to-teal-950/20 shadow-xs">
+          <CardContent className="p-0 flex items-center gap-4 text-emerald-950 dark:text-emerald-200">
+            <Box className="h-12 w-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Sparkles className="h-6 w-6" />
+            </Box>
+            <Box>
+              <CardTitle className="text-sm sm:text-base font-extrabold">
+                Nghiệm thu trọn vẹn
+              </CardTitle>
+              <CardDescription className="text-xs text-emerald-800 dark:text-emerald-300 mt-0.5">
+                Bạn đã hoàn tất 100% minh chứng thực địa tháng {selectedMonth}. Hồ sơ năng suất lao động đã được gửi đến ban quản lý nông trại.
+              </CardDescription>
+            </Box>
+          </CardContent>
+        </Card>
+      )}
     </Box>
   );
 }
