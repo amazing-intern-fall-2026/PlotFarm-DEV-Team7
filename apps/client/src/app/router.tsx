@@ -201,6 +201,8 @@ export function ShellRouteLayout({ role = "customer" }: { role?: AppRole }) {
 
 export const router = createBrowserRouter([
   { path: AUTH_ROUTES.LOGIN.slice(1), element: <LoginPage /> },
+  { path: "register", element: <LoginPage initialTab="register" /> },
+  { path: "signup", element: <LoginPage initialTab="register" /> },
   { path: AUTH_ROUTES.FORGOT_PASSWORD.slice(1), element: <Navigate to={AUTH_ROUTES.LOGIN} replace /> },
 
   {

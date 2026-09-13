@@ -34,6 +34,7 @@ export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const validated = RegisterRequestSchema.parse(req.body);
+      const role = (req.body.role === "STAFF" ? "STAFF" : "CUSTOMER") as "CUSTOMER" | "STAFF" | "ADMIN";
       const passwordHash = await bcrypt.hash(validated.password, 10);
       const userCode = `USR-${Math.floor(100000 + Math.random() * 900000)}`;
 
@@ -43,6 +44,8 @@ export class AuthController {
         email: string;
         fullName: string;
         role: "CUSTOMER" | "STAFF" | "ADMIN";
+        preferredLocale: string;
+        avatarUrl: string | null;
       };
 
       try {
@@ -59,7 +62,7 @@ export class AuthController {
             fullName: validated.fullName,
             phone: validated.phone || null,
             preferredLocale: validated.preferredLocale || "vi",
-            role: "CUSTOMER",
+            role,
           },
         });
 
@@ -69,6 +72,8 @@ export class AuthController {
           email: created.email,
           fullName: created.fullName,
           role: created.role as "CUSTOMER" | "STAFF" | "ADMIN",
+          preferredLocale: created.preferredLocale || "vi",
+          avatarUrl: created.avatarUrl || null,
         };
       } catch (dbError: unknown) {
         if (dbError instanceof AppError) throw dbError;
@@ -85,7 +90,9 @@ export class AuthController {
           email: validated.email,
           passwordHash,
           fullName: validated.fullName,
-          role: "CUSTOMER" as const,
+          role,
+          preferredLocale: validated.preferredLocale || "vi",
+          avatarUrl: null,
           deletedAt: null,
         };
         memoryUsers.set(validated.email, memUser);
@@ -108,6 +115,8 @@ export class AuthController {
       res.status(201).json(
         buildSuccessResponse(
           {
+            accessToken,
+            refreshToken,
             tokens: {
               accessToken,
               refreshToken,
@@ -117,6 +126,7 @@ export class AuthController {
           "Đăng ký tài khoản thành công.",
         ),
       );
+
     } catch (error) {
       next(error);
     }

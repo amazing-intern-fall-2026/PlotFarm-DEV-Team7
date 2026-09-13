@@ -8,6 +8,10 @@ import {
   Monitor,
   Truck,
   CheckCircle2,
+  User,
+  Phone,
+  Sprout,
+  Wrench,
 } from "lucide-react";
 import {
   Box,
@@ -25,6 +29,8 @@ import { cn } from "@/shared/lib/utils";
 import { AUTH_ROUTES, AUTH_UI_TEXT, ROLE_HOME_ROUTES } from "../constants";
 import { getStoredUser, isAuthenticated } from "../model/authSession";
 import { useLoginForm } from "../model/useLoginForm";
+import { useRegisterForm } from "../model/useRegisterForm";
+
 
 function GoogleIcon() {
   return (
@@ -381,10 +387,24 @@ function LoginFormPanel() {
   );
 }
 
-function RegisterPlaceholder() {
+function RegisterFormPanel({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
+  const {
+    registerFullName,
+    registerEmail,
+    registerPhone,
+    registerPassword,
+    registerConfirmPassword,
+    selectedRole,
+    setSelectedRole,
+    handleSubmit,
+    errors,
+    isLoading,
+    isSuccess,
+  } = useRegisterForm();
+
   return (
-    <Box className="space-y-4 sm:space-y-5">
-      <Box className="space-y-1.5">
+    <Box as="form" onSubmit={handleSubmit} noValidate className="space-y-3.5 sm:space-y-4">
+      <Box className="space-y-1">
         <Heading
           level={1}
           className="text-xl sm:text-2xl font-bold text-foreground tracking-tight"
@@ -398,18 +418,162 @@ function RegisterPlaceholder() {
           {AUTH_UI_TEXT.REGISTER_SUBTITLE}
         </Text>
       </Box>
-      <Box className="rounded-lg border border-dashed border-border bg-muted/40 p-6 sm:p-8 text-center text-xs sm:text-sm text-muted-foreground">
-        {AUTH_UI_TEXT.REGISTER_WIP_NOTICE}
-        <br />
-        {AUTH_UI_TEXT.REGISTER_BACK_TO_LOGIN}{" "}
-        <strong className="text-foreground">{AUTH_UI_TEXT.TAB_LOGIN}</strong>.
+
+      {/* Role Selection */}
+      <Box className="space-y-1.5">
+        <Text variant="small" className="text-xs font-semibold text-foreground">
+          Chọn vai trò tài khoản:
+        </Text>
+        <Box className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => setSelectedRole("CUSTOMER")}
+            className={cn(
+              "flex flex-col items-start p-2.5 rounded-xl border text-left transition-all",
+              selectedRole === "CUSTOMER"
+                ? "border-primary bg-primary/10 text-primary shadow-sm font-semibold"
+                : "border-border bg-card/60 hover:border-primary/50 text-muted-foreground"
+            )}
+          >
+            <Box className="flex items-center gap-1.5 mb-0.5">
+              <Sprout className="h-4 w-4" />
+              <span className="text-xs sm:text-sm font-medium">Khách hàng</span>
+            </Box>
+            <span className="text-[11px] leading-tight opacity-75">
+              Thuê đất & nhận rau sạch
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedRole("STAFF")}
+            className={cn(
+              "flex flex-col items-start p-2.5 rounded-xl border text-left transition-all",
+              selectedRole === "STAFF"
+                ? "border-primary bg-primary/10 text-primary shadow-sm font-semibold"
+                : "border-border bg-card/60 hover:border-primary/50 text-muted-foreground"
+            )}
+          >
+            <Box className="flex items-center gap-1.5 mb-0.5">
+              <Wrench className="h-4 w-4" />
+              <span className="text-xs sm:text-sm font-medium">Kỹ thuật viên</span>
+            </Box>
+            <span className="text-[11px] leading-tight opacity-75">
+              Chăm sóc & giám sát nông vụ
+            </span>
+          </button>
+        </Box>
+      </Box>
+
+      {errors.general && (
+        <Box className="rounded-lg border border-destructive/40 bg-destructive/10 px-3.5 py-2.5 text-xs sm:text-sm text-destructive">
+          {errors.general}
+        </Box>
+      )}
+
+      {isSuccess && (
+        <Box className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3.5 py-2.5 text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+          Đăng ký tài khoản thành công! Đang tự động đăng nhập...
+        </Box>
+      )}
+
+      <Input
+        id="register-fullname"
+        type="text"
+        label="Họ và tên"
+        placeholder="Ví dụ: Nguyễn Văn An"
+        autoComplete="name"
+        error={errors.fullName}
+        leftIcon={<User className="h-4 w-4" />}
+        disabled={isLoading || isSuccess}
+        {...registerFullName}
+      />
+
+      <Box className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Input
+          id="register-email"
+          type="email"
+          label="Email"
+          placeholder="tenban@gmail.com"
+          autoComplete="email"
+          error={errors.email}
+          leftIcon={<Mail className="h-4 w-4" />}
+          disabled={isLoading || isSuccess}
+          {...registerEmail}
+        />
+
+        <Input
+          id="register-phone"
+          type="tel"
+          label="Số điện thoại"
+          placeholder="0912 345 678"
+          autoComplete="tel"
+          error={errors.phone}
+          leftIcon={<Phone className="h-4 w-4" />}
+          disabled={isLoading || isSuccess}
+          {...registerPhone}
+        />
+      </Box>
+
+      <Box className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Input
+          id="register-password"
+          type="password"
+          label="Mật khẩu"
+          placeholder="Tối thiểu 6 ký tự"
+          autoComplete="new-password"
+          error={errors.password}
+          leftIcon={<Lock className="h-4 w-4" />}
+          showPasswordToggle
+          disabled={isLoading || isSuccess}
+          {...registerPassword}
+        />
+
+        <Input
+          id="register-confirm-password"
+          type="password"
+          label="Xác nhận mật khẩu"
+          placeholder="Nhập lại mật khẩu"
+          autoComplete="new-password"
+          error={errors.confirmPassword}
+          leftIcon={<Lock className="h-4 w-4" />}
+          showPasswordToggle
+          disabled={isLoading || isSuccess}
+          {...registerConfirmPassword}
+        />
+      </Box>
+
+      <Button
+        type="submit"
+        variant="primary"
+        size="lg"
+        className="w-full mt-2"
+        isLoading={isLoading}
+        disabled={isSuccess}
+        leftIcon={!isLoading ? <ShieldCheck className="h-4 w-4" /> : undefined}
+      >
+        Đăng ký tài khoản ngay
+      </Button>
+
+      <Box className="text-center text-xs text-muted-foreground pt-1">
+        Đã có tài khoản nông trại?{" "}
+        <button
+          type="button"
+          onClick={onSwitchToLogin}
+          className="font-semibold text-primary hover:underline transition-colors"
+        >
+          Đăng nhập ngay
+        </button>
       </Box>
     </Box>
   );
 }
 
-export function LoginPage() {
-  const [tab, setTab] = React.useState<AuthTab>("login");
+export interface LoginPageProps {
+  initialTab?: AuthTab;
+}
+
+export function LoginPage({ initialTab = "login" }: LoginPageProps) {
+  const [tab, setTab] = React.useState<AuthTab>(initialTab);
 
   const user = getStoredUser();
   if (user && isAuthenticated()) {
@@ -446,10 +610,15 @@ export function LoginPage() {
 
             <TabSwitch active={tab} onChange={setTab} />
 
-            {tab === "login" ? <LoginFormPanel /> : <RegisterPlaceholder />}
+            {tab === "login" ? (
+              <LoginFormPanel />
+            ) : (
+              <RegisterFormPanel onSwitchToLogin={() => setTab("login")} />
+            )}
           </Box>
         </Box>
       </Box>
     </Box>
   );
 }
+
