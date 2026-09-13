@@ -11,7 +11,11 @@ import {
 import { db } from "@repo/database";
 import { AppError } from "../../errors/AppError";
 import { buildSuccessResponse } from "../../common/utils/envelope";
-import { loginWithCredentials, loginWithGoogle, AuthService } from "../auth/auth.service";
+import {
+  AuthService,
+  loginWithCredentials,
+  loginWithGoogle,
+} from "../auth/auth.service";
 import { TokenService } from "../auth/token.service";
 import { getMockPlots } from "../plots/plots.service";
 import { createMockCareRequest } from "../care/care.service";
@@ -107,14 +111,14 @@ const actionRegistry: Record<string, ActionConfig> = {
     requireAuth: false,
   },
   "auth.verifyEmail": {
-    handler: async (payload) => {
+    handler: (payload) => {
       const parsed = VerifyEmailRequestSchema.parse(payload);
       return AuthService.verifyEmail(parsed);
     },
     requireAuth: false,
   },
   "auth.resendOtp": {
-    handler: async (payload) => {
+    handler: (payload) => {
       const parsed = ResendOtpRequestSchema.parse(payload);
       return AuthService.resendOtp(parsed);
     },

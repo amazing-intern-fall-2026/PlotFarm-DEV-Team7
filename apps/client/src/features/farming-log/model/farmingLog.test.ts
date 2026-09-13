@@ -63,7 +63,7 @@ describe("Farming Progress Log Test Suite (US-23 & US-24)", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         const stageError = result.error.errors.find(
-          (err) => err.path[0] === "selectedStage"
+          (err: { path: (string | number)[] }) => err.path[0] === "selectedStage"
         );
         expect(stageError).toBeDefined();
         expect(stageError?.message).toContain("Vui lòng chọn mốc sinh trưởng");
@@ -84,7 +84,7 @@ describe("Farming Progress Log Test Suite (US-23 & US-24)", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         const photoError = result.error.errors.find(
-          (err) => err.path[0] === "photoUrls"
+          (err: { path: (string | number)[] }) => err.path[0] === "photoUrls"
         );
         expect(photoError).toBeDefined();
         expect(photoError?.message).toContain(
@@ -107,7 +107,7 @@ describe("Farming Progress Log Test Suite (US-23 & US-24)", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         const notesError = result.error.errors.find(
-          (err) => err.path[0] === "notes"
+          (err: { path: (string | number)[] }) => err.path[0] === "notes"
         );
         expect(notesError?.message).toContain("ít nhất 10 ký tự");
       }

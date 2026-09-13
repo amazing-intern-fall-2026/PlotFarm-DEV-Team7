@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AuthController, login } from "./auth.controller";
+import { AuthController } from "./auth.controller";
 import { authGuard } from "../../middlewares/authGuard";
 
 const router: Router = Router();
@@ -17,8 +17,8 @@ router.post("/verify-email", AuthController.verifyEmail);
 router.post("/resend-otp", AuthController.resendOtp);
 
 // Endpoint login
-router.post("/login", login);
-router.post("/auth/login", login);
+router.post("/login", AuthController.login);
+router.post("/auth/login", AuthController.login);
 
 // Endpoint được bảo vệ bằng authGuard
 router.get("/profile", authGuard, AuthController.getProfile);
