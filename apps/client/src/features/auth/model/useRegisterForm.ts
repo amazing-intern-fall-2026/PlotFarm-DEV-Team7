@@ -136,18 +136,15 @@ export function useRegisterForm() {
 
   const onSubmit = async (values: RegisterFormValues) => {
     try {
-      const response = (await authApi.register({
+      const response = await authApi.register({
         fullName: values.fullName.trim(),
         email: values.email.trim().toLowerCase(),
         phone: values.phone.trim(),
         password: values.password,
-      })) as {
-        accessToken?: string;
-        refreshToken?: string;
-        user?: { role?: string; [key: string]: unknown };
-      };
+        role: "CUSTOMER",
+      });
 
-      const { accessToken, refreshToken, user } = response || {};
+      const { accessToken, refreshToken, user } = response;
 
       if (accessToken) {
         sessionStorage.setItem(SESSION_KEYS.ACCESS_TOKEN, accessToken);

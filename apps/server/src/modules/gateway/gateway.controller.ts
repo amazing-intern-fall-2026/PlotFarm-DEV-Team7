@@ -8,9 +8,11 @@ import {
   VerifyEmailRequestSchema,
   ResendOtpRequestSchema,
 } from "@repo/shared";
+import { db } from "@repo/database";
 import { AppError } from "../../errors/AppError";
 import { buildSuccessResponse } from "../../common/utils/envelope";
 import { loginWithCredentials, loginWithGoogle, AuthService } from "../auth/auth.service";
+import { TokenService } from "../auth/token.service";
 import { getMockPlots } from "../plots/plots.service";
 import { createMockCareRequest } from "../care/care.service";
 import { decryptPayload } from "./jwe";
@@ -67,7 +69,40 @@ const actionRegistry: Record<string, ActionConfig> = {
   "auth.register": {
     handler: async (payload) => {
       const parsed = RegisterRequestSchema.parse(payload);
-      return AuthService.register(parsed);
+      const result = await AuthService.register(parsed);
+
+      const user = await db.user.findUnique({
+        where: { email: parsed.email.trim().toLowerCase() },
+      });
+
+      let accessToken = "";
+      let refreshToken = "";
+      if (user) {
+        accessToken = TokenService.generateAccessToken({
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        });
+        try {
+          refreshToken = await TokenService.createRefreshToken(user.id);
+        } catch {
+          refreshToken = `rt_${user.id}_${Date.now()}`;
+        }
+      }
+
+      return {
+        ...result,
+        accessToken,
+        refreshToken,
+        user: {
+          userCode: user?.userCode || result.userCode,
+          email: user?.email || result.email,
+          fullName: user?.fullName || result.fullName,
+          role: user?.role || result.role,
+          preferredLocale: user?.preferredLocale || "vi",
+          avatarUrl: user?.avatarUrl || null,
+        },
+      };
     },
     requireAuth: false,
   },
