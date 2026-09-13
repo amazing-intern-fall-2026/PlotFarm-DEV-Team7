@@ -500,7 +500,7 @@ export function FarmerPlotsPage() {
                 <Button
                   type="button"
                   variant="primary"
-                  onClick={() => showToast(`Đã xuất lệnh thu hoạch nông sản cho ${plot.code}!`)}
+                  onClick={() => navigate(`/farmer/harvest/${plot.id}`)}
                   className="w-full bg-[#ea580c] hover:bg-[#c2410c] text-white py-2.5 text-xs font-bold"
                 >
                   🚜 Tạo lệnh thu hoạch ngay

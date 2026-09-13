@@ -140,8 +140,8 @@ export function FarmerTasksPage() {
     setShowHarvestAlert(true);
     setTimeout(() => {
       setShowHarvestAlert(false);
-      navigate("/farmer/plots");
-    }, 1500);
+      navigate("/farmer/harvest/A-101");
+    }, 1200);
   };
 
   return (

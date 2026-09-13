@@ -263,6 +263,43 @@ Thiết kế và nâng cấp từ các bản phác thảo di động sang giao d
   - Hộp thoại nhanh: `CreateFarmingLogModal` mở trực tiếp từ trang danh sách ô đất `/farmer/plots`.
   - Kế thừa 100% hệ thống `@/shared/ui`: `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`, `Button`, `Badge`, `Box`, `Text`.
 
+### 3.6. Bộ 3 Giao Diện Vận Hành Nông Vụ Mới (Thu Hoạch, Sự Cố, Lịch Sử)
+- **1. Thu hoạch & Xuất kho nông sản (`/farmer/harvest` & `/farmer/harvest/:id` - `FarmerHarvestPage.tsx`)**:
+  - **Cân sản lượng thực tế & Stepper**: Bộ tăng giảm sản lượng `[-] 18.5 kg [+]` với bước nhảy 0.5 kg, kiểm tra dải chuẩn tự động (16.0–20.0 kg) hiển thị huy hiệu `Đạt chuẩn dự kiến`.
+  - **Kiểm soát đóng thùng Eco-box `#8842`**: Xem ảnh thùng nông sản đóng gói, đổi ảnh, kiểm tra mã niêm phong tem nhiệt VietGAP.
+  - **Trạng thái ô đất**: Checkbox tùy chọn `Chuyển ô đất sang Chờ làm đất (Maintenance)` sau khi hoàn tất.
+  - **Phiếu vận đơn AgriExpress A6**: Tích hợp mã vận đơn `AGRI-VN-884291`, barcode & QR code quét nhanh `8842 9104 2901`, huy hiệu chuỗi cung ứng lạnh `Bảo quản mát 10–15°C`, thông tin người gửi (Đà Lạt) & người nhận (Thảo Điền, TP. Thủ Đức).
+  - **Thao tác**: Nút `🖨 In phiếu A6 & Giao Shipper` mở modal xem trước bản in khổ A6 và xác nhận bàn giao cho Shipper AgriExpress.
+
+- **2. Báo cáo sự cố ô đất khẩn cấp (`/farmer/incidents` & `/farmer/plots/:id/incident` - `FarmerIncidentsPage.tsx`)**:
+  - **Chọn vị trí ô đất**: Dropdown chọn ô đất canh tác (mặc định Ô B-205 • Cải bó xôi • Luống 5).
+  - **4 Nhóm danh mục sự cố chuẩn mực**:
+    1. *Phát hiện sâu bệnh / Nấm lá* (Icon Bug)
+    2. *Hệ thống tưới bị nghẽn* (Icon Droplets)
+    3. *Cảm biến báo sai số* (Icon Thermometer)
+    4. *Đất ngập úng rễ* (Icon Waves)
+  - **Bằng chứng hiện trường GPS**: Vùng tải/chụp ảnh trực tiếp từ camera đính kèm tọa độ GPS và thông số luống.
+  - **Gợi ý đề xuất xử lý nhanh**: Các chip bấm chọn phương án (`+ Phun sinh học tỏi ớt`, `+ Tạm ngừng tưới nhỏ giọt 24h`, `+ Cắt tỉa lá bệnh`, `+ Kiểm tra van áp suất luống`).
+  - **Thao tác**: Nút `✈ Gửi cảnh báo đến Quản trị viên` mở modal xác nhận gửi đến Kỹ sư trưởng và nhóm trực kỹ thuật.
+
+- **3. Lịch sử công việc & Đối soát thực địa (`/farmer/history` - `FarmerHistoryPage.tsx`)**:
+  - **Bộ chọn mốc thời gian**: Dropdown chọn tháng đối soát (`Tháng 10/2026`).
+  - **3 Thẻ chỉ số KPI nổi bật**:
+    - 📋 `36 việc đã làm` (Hoàn thành 100% chỉ tiêu)
+    - 📷 `100% có ảnh` (Toàn bộ đã đối soát hợp lệ)
+    - ⭐ `Đánh giá 4.9` (Điểm trung bình từ khách hàng)
+  - **Bộ lọc danh mục**: `Tất cả (36)`, `Chăm sóc (24)`, `Thu hoạch (12)`, `Có phản hồi (8)`.
+  - **Danh sách thẻ công việc chi tiết**:
+    - Thẻ chăm sóc cải cầu vồng kèm ảnh kiểm định phân bón và đánh giá 5 sao từ khách hàng Thu Hà (*"Cải giao rất tươi, gia đình rất thích!"*).
+    - Thẻ thu hoạch xà lách mỡ đóng thùng Eco-box `#8842` kèm biên bản bàn giao xe lạnh Lalamove Farm `29C-882.14` và đánh giá 5 sao từ khách hàng Minh Anh (*"Đóng gói rất chỉn chu, tem niêm phong nguyên vẹn!"*).
+    - Thẻ tưới vi sinh & xới đất kèm thanh đo độ ẩm sau tưới đạt 68% chuẩn VietGAP.
+    - Thẻ kiểm tra bẫy sinh học bướm đêm phân khu B.
+  - **Banner vinh danh**: `✨ Nghiệm thu trọn vẹn: Bạn đã hoàn tất 100% minh chứng thực địa tháng 10`.
+
+- **Hệ Thống Kiểm Thử & Nghiệp Vụ (`apps/client/src/features/farmer-ops/`)**:
+  - `farmerOps.ts`: Định nghĩa logic kiểm tra ngưỡng cân (16–20 kg), phân loại sự cố và bộ lọc danh mục lịch sử.
+  - `farmerOps.test.ts`: 11 test cases kiểm thử toàn diện toàn bộ luồng nghiệp vụ trên.
+
 ---
 
 ## 4. Kiến Trúc Xử Lý Lỗi Toàn Diện (US-11 Error Handling Envelope)
@@ -295,8 +332,8 @@ Thiết kế và nâng cấp từ các bản phác thảo di động sang giao d
 | **ESLint Toàn Monorepo** | `pnpm lint` | **100% PASSED** | 0 lỗi, 0 cảnh báo trên cả 6 packages (strict mode) |
 | **Shared Tests** | `pnpm --filter @repo/shared test` | **13/13 PASSED** | Mốc sinh trưởng, schema validation đạt 100% |
 | **Server Tests** | `pnpm --filter server test` | **14/14 PASSED** | AuthGuard, ErrorHandler, Media & Diary routes |
-| **Client Tests** | `pnpm --filter client test` | **27/27 PASSED** | 7/7 test cases mới cho AC1, AC2, AC3 & Compression |
-| **Toàn Bộ Monorepo Tests** | `pnpm test` | **54/54 PASSED** | 100% pass toàn bộ test suites |
+| **Client Tests** | `pnpm --filter client test` | **38/38 PASSED** | +11 tests mới cho Farmer Ops (Cân thu hoạch, Sự cố, Lịch sử) |
+| **Toàn Bộ Monorepo Tests** | `pnpm test` | **65/65 PASSED** | 100% pass toàn bộ test suites |
 | **Production Build** | `pnpm build` | **SUCCESS** | TypeScript compilation & Vite bundle hoàn tất |
 | **Backend API Live Check** | Node Fetch Script | **VERIFIED** | `201 Created` cho Media upload & Farming logs |
 
@@ -306,6 +343,7 @@ Thiết kế và nâng cấp từ các bản phác thảo di động sang giao d
 
 | Hash Commit | Loại commit | Nội dung chi tiết |
 | :--- | :--- | :--- |
+| *Pending* | `feat(farmer)` | Triển khai bộ 3 màn hình Thu hoạch & Xuất kho, Báo cáo sự cố, Lịch sử công việc & Đối soát thực địa |
 | `1d7ef1d` | `feat(farmer)` | Chuyển đổi và thiết kế lại giao diện Staff Field Ops thành trải nghiệm Web Desktop chuẩn mực |
 | `651ef79` | `docs(note)` | Cập nhật tài liệu tổng hợp thay đổi về auth và landing page |
 | `60c7094` | `feat(client)` | Triển khai giao diện Landing Page CloudFarm hoàn chỉnh theo đúng thiết kế mockup |

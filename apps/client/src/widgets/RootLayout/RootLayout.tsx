@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   Settings,
   LogOut,
+  Truck,
 } from "lucide-react";
 
 import { useT } from "@/shared/lib/i18n";
@@ -222,6 +223,13 @@ function useFarmerSections(
           onClick: () => onNavChange?.("my_plots"),
         },
         {
+          id: "harvest",
+          icon: <Truck className="h-5 w-5" />,
+          label: "Thu hoạch & Xuất kho",
+          badge: "1",
+          onClick: () => onNavChange?.("harvest"),
+        },
+        {
           id: "scan_qr",
           icon: <QrCode className="h-5 w-5" />,
           label: "Quét mã QR lô",
@@ -235,14 +243,14 @@ function useFarmerSections(
         {
           id: "task_journal",
           icon: <FileText className="h-5 w-5" />,
-          label: "Nhật ký canh tác",
+          label: "Lịch sử công việc",
           onClick: () => onNavChange?.("task_journal"),
         },
         {
           id: "alerts",
           icon: <AlertTriangle className="h-5 w-5" />,
-          label: "Cảnh báo vi khí hậu",
-          badge: "2",
+          label: "Báo cáo sự cố ô đất",
+          badge: "1",
           onClick: () => onNavChange?.("alerts"),
         },
       ],

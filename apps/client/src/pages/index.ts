@@ -12,6 +12,9 @@ export * from "./farmer/FarmerTasksPage";
 export * from "./farmer/FarmerTaskExecutePage";
 export * from "./farmer/FarmerPlotsPage";
 export * from "./farmer/FarmerNewLogPage";
+export * from "./farmer/FarmerHarvestPage";
+export * from "./farmer/FarmerIncidentsPage";
+export * from "./farmer/FarmerHistoryPage";
 
 // Admin Pages
 export * from "./admin/AdminDashboardPage";
