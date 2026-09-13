@@ -16,7 +16,7 @@ interface CreateFarmingLogModalProps {
   plotCode?: string;
   cropName?: string;
   customerName?: string;
-  onSuccess?: () => void;
+  onSuccess?: (createdLog?: unknown) => void;
 }
 
 export function CreateFarmingLogModal({
@@ -58,8 +58,8 @@ export function CreateFarmingLogModal({
             cropName={cropName}
             customerName={customerName}
             onCancel={onClose}
-            onSuccess={() => {
-              onSuccess?.();
+            onSuccess={(result) => {
+              onSuccess?.(result);
               onClose();
             }}
           />

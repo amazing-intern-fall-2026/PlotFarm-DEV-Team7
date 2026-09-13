@@ -37,7 +37,7 @@ interface FarmingLogFormProps {
   plotCode?: string;
   cropName?: string;
   customerName?: string;
-  onSuccess?: () => void;
+  onSuccess?: (createdLog?: unknown) => void;
   onCancel?: () => void;
 }
 
@@ -78,8 +78,8 @@ export function FarmingLogForm({
     contractId,
     contractStatus,
     isAssignedToFarmer,
-    onSuccess: () => {
-      onSuccess?.();
+    onSuccess: (createdLog) => {
+      onSuccess?.(createdLog);
     },
   });
 
@@ -361,7 +361,11 @@ export function FarmingLogForm({
                 variant="primary"
                 onClick={() => {
                   setIsSuccessModalOpen(false);
-                  navigate("/farmer/plots");
+                  if (onCancel) {
+                    onCancel();
+                  } else {
+                    navigate("/farmer/plots");
+                  }
                 }}
                 className="w-full"
               >

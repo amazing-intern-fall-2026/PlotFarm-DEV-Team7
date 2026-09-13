@@ -57,7 +57,9 @@ interface PlotData {
   isAssignedToFarmer: boolean;
 }
 
-const ALL_PLOTS: PlotData[] = [
+const STORAGE_KEY_PLOTS = "farmer_managed_plots_data";
+
+const INITIAL_PLOTS: PlotData[] = [
   {
     id: "CONTRACT-A104",
     code: "Ô đất A-104",
@@ -181,6 +183,89 @@ const ALL_PLOTS: PlotData[] = [
 export function FarmerPlotsPage() {
   const navigate = useNavigate();
 
+  // Manage plots in state and persist changes across user operations
+  const [plots, setPlots] = React.useState<PlotData[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_PLOTS);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // fallback
+    }
+    return INITIAL_PLOTS;
+  });
+
+  const handleUpdatePlotProgress = React.useCallback(
+    (
+      contractId: string,
+      updatedData: {
+        progressPercent?: number;
+        soilMoisture?: number;
+        temperature?: number;
+        airHumidity?: number;
+        photoUrls?: string[];
+        image?: string;
+        sensorSnapshot?: { soilMoisture?: number; temperature?: number; humidity?: number };
+      }
+    ) => {
+      setPlots((prevPlots) => {
+        const updated = prevPlots.map((plot) => {
+          const isMatch =
+            plot.id === contractId ||
+            plot.code.toLowerCase().includes(contractId.toLowerCase()) ||
+            contractId.toLowerCase().includes(plot.id.toLowerCase());
+
+          if (isMatch) {
+            const newProgress = Number(updatedData.progressPercent ?? plot.progressPercent);
+            const isHarvestReady = newProgress >= 100;
+            const newMoisture =
+              updatedData.sensorSnapshot?.soilMoisture ??
+              updatedData.soilMoisture ??
+              plot.soilMoisture;
+            const newTemp =
+              updatedData.sensorSnapshot?.temperature ??
+              updatedData.temperature ??
+              plot.temperature;
+            const newHumidity =
+              updatedData.sensorSnapshot?.humidity ??
+              updatedData.airHumidity ??
+              plot.airHumidity;
+            const newImage =
+              updatedData.photoUrls?.[0] ?? updatedData.image ?? plot.image;
+
+            return {
+              ...plot,
+              progressPercent: newProgress,
+              soilMoisture: newMoisture,
+              soilStatus: (newMoisture < 50 ? "Cần tưới" : "Đạt") as "Đạt" | "Cần tưới" | "Tối ưu",
+              temperature: newTemp,
+              airHumidity: newHumidity,
+              status: (isHarvestReady ? "ready_harvest" : newMoisture < 50 ? "need_water" : "growing") as
+                | "growing"
+                | "need_water"
+                | "ready_harvest",
+              readyForHarvest: isHarvestReady,
+              image: newImage,
+              lastWatered: "Vừa cập nhật",
+            };
+          }
+          return plot;
+        });
+
+        try {
+          localStorage.setItem(STORAGE_KEY_PLOTS, JSON.stringify(updated));
+        } catch {
+          // ignore quota
+        }
+
+        return updated;
+      });
+    },
+    []
+  );
+
   // Filters state
   const [searchQuery, setSearchQuery] = React.useState("");
   const [zoneFilter, setZoneFilter] = React.useState<"ALL" | "Khu A" | "Khu B">("ALL");
@@ -210,7 +295,7 @@ export function FarmerPlotsPage() {
   };
 
   // Filtered plots
-  const filteredPlots = ALL_PLOTS.filter((plot) => {
+  const filteredPlots = plots.filter((plot) => {
     const matchesSearch =
       plot.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
       plot.cropName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -222,11 +307,11 @@ export function FarmerPlotsPage() {
     return matchesSearch && matchesZone && matchesStatus;
   });
 
-  const zoneACount = ALL_PLOTS.filter((p) => p.zone === "Khu A").length;
-  const zoneBCount = ALL_PLOTS.filter((p) => p.zone === "Khu B").length;
-  const needWaterCount = ALL_PLOTS.filter((p) => p.status === "need_water").length;
-  const growingCount = ALL_PLOTS.filter((p) => p.status === "growing").length;
-  const readyHarvestCount = ALL_PLOTS.filter((p) => p.status === "ready_harvest").length;
+  const zoneACount = plots.filter((p) => p.zone === "Khu A").length;
+  const zoneBCount = plots.filter((p) => p.zone === "Khu B").length;
+  const needWaterCount = plots.filter((p) => p.status === "need_water").length;
+  const growingCount = plots.filter((p) => p.status === "growing").length;
+  const readyHarvestCount = plots.filter((p) => p.status === "ready_harvest").length;
 
   return (
     <Box className="w-full space-y-6 pb-12">
@@ -238,7 +323,7 @@ export function FarmerPlotsPage() {
           <Box>
             <Box className="flex items-center gap-2.5">
               <CardTitle className="text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">
-                Ô đất của tôi ({ALL_PLOTS.length} ô)
+                Ô đất của tôi ({plots.length} ô)
               </CardTitle>
               <Badge variant="success">Phân khu A & B</Badge>
             </Box>
@@ -253,8 +338,8 @@ export function FarmerPlotsPage() {
               variant="primary"
               size="sm"
               onClick={() => {
-                if (ALL_PLOTS.length > 0) {
-                  setCreateLogPlot(ALL_PLOTS[0]);
+                if (plots.length > 0) {
+                  setCreateLogPlot(plots[0]);
                 } else {
                   showToast("Hiện chưa có ô đất nào được phân công để đăng nhật ký.");
                 }
@@ -330,7 +415,7 @@ export function FarmerPlotsPage() {
                 onClick={() => setZoneFilter("ALL")}
                 className="h-8 text-xs font-bold"
               >
-                Tất cả ({ALL_PLOTS.length})
+                Tất cả ({plots.length})
               </Button>
               <Button
                 type="button"
@@ -717,26 +802,47 @@ export function FarmerPlotsPage() {
 
             {/* Modal Body: 2 Columns */}
             <CardContent className="overflow-y-auto p-5 space-y-6 flex-1">
-              {/* Stepper vụ mùa: Gieo hạt > Nảy mầm > Bung lá > Thu hoạch */}
-              <Box className="flex items-center justify-between p-3 rounded-2xl bg-muted/40 border border-border text-xs">
-                <Box className="flex items-center gap-1.5 text-emerald-700 font-bold">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  <Text as="span">Gieo hạt</Text>
+              {/* Stepper vụ mùa: Gieo hạt (25%) > Nảy mầm (50%) > Bung lá (75%) > Thu hoạch (100%) */}
+              <Box className="space-y-2 p-3.5 rounded-2xl bg-muted/30 border border-border">
+                <Box className="flex items-center justify-between text-xs">
+                  <Text as="label" className="font-bold text-foreground flex items-center gap-1.5">
+                    <Sprout className="h-4 w-4 text-emerald-600" />
+                    <span>Mốc sinh trưởng mùa vụ & Tiến độ thu hoạch:</span>
+                  </Text>
+                  <Badge variant="success" className="font-bold text-xs">
+                    Tiến độ: {selectedPlotForDetail.progressPercent}%
+                  </Badge>
                 </Box>
-                <Text as="span" className="text-muted-foreground">›</Text>
-                <Box className="flex items-center gap-1.5 text-emerald-700 font-bold">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  <Text as="span">Nảy mầm</Text>
-                </Box>
-                <Text as="span" className="text-muted-foreground">›</Text>
-                <Badge variant="secondary" className="gap-1.5 font-bold">
-                  <Box className="h-2 w-2 rounded-full bg-blue-600" />
-                  <Text as="span">Bung lá</Text>
-                </Badge>
-                <Text as="span" className="text-muted-foreground">›</Text>
-                <Box className="flex items-center gap-1.5 text-muted-foreground font-medium">
-                  <Box className="h-2 w-2 rounded-full bg-muted-foreground/40" />
-                  <Text as="span">Thu hoạch</Text>
+
+                <Box className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                  {[
+                    { label: "Gieo hạt", percent: 25 },
+                    { label: "Nảy mầm", percent: 50 },
+                    { label: "Bung lá", percent: 75 },
+                    { label: "Thu hoạch", percent: 100 },
+                  ].map((step) => {
+                    const isCurrent = selectedPlotForDetail.progressPercent === step.percent;
+                    const isPassed = selectedPlotForDetail.progressPercent >= step.percent;
+                    return (
+                      <Button
+                        key={step.label}
+                        type="button"
+                        variant={isCurrent ? "primary" : isPassed ? "secondary" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                          setSelectedPlotForDetail((prev) =>
+                            prev ? { ...prev, progressPercent: step.percent } : null
+                          );
+                        }}
+                        className={`h-9 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all ${
+                          isCurrent ? "ring-2 ring-emerald-500/40 shadow-sm" : ""
+                        }`}
+                      >
+                        {isPassed && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />}
+                        <span>{step.label} ({step.percent}%)</span>
+                      </Button>
+                    );
+                  })}
                 </Box>
               </Box>
 
@@ -836,20 +942,36 @@ export function FarmerPlotsPage() {
             </CardContent>
 
             {/* Footer */}
-            <CardFooter className="p-5 border-t border-border bg-muted/20">
+            <CardFooter className="p-5 border-t border-border bg-muted/20 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setSelectedPlotForDetail(null)}
+                className="w-full sm:w-auto text-xs font-bold"
+              >
+                Hủy bỏ
+              </Button>
+
               <Button
                 type="button"
                 variant="primary"
                 onClick={() => {
+                  handleUpdatePlotProgress(selectedPlotForDetail.id, {
+                    progressPercent: selectedPlotForDetail.progressPercent,
+                    soilMoisture: selectedPlotForDetail.soilMoisture,
+                    temperature: selectedPlotForDetail.temperature,
+                    airHumidity: selectedPlotForDetail.airHumidity,
+                    image: selectedPlotForDetail.image,
+                  });
                   showToast(
-                    `Đã lưu nhật ký và tự động gửi thông báo SMS/Zalo cho khách hàng ${selectedPlotForDetail.customerName}!`
+                    `Đã cập nhật tiến độ ${selectedPlotForDetail.code} lên ${selectedPlotForDetail.progressPercent}% và gửi thông báo cho khách hàng ${selectedPlotForDetail.customerName}!`
                   );
                   setSelectedPlotForDetail(null);
                 }}
-                className="w-full"
+                className="w-full sm:w-auto"
                 leftIcon={<Send className="h-3.5 w-3.5" />}
               >
-                Lưu nhật ký & Gửi thông báo đến khách
+                Lưu tiến độ ({selectedPlotForDetail.progressPercent}%) & Gửi thông báo
               </Button>
             </CardFooter>
           </Card>
@@ -867,8 +989,12 @@ export function FarmerPlotsPage() {
         plotCode={createLogPlot?.code}
         cropName={createLogPlot?.cropName}
         customerName={createLogPlot?.customerName}
-        onSuccess={() => {
-          showToast(`Đăng nhật ký cho ${createLogPlot?.code} thành công!`);
+        onSuccess={(createdLog: unknown) => {
+          if (createLogPlot) {
+            handleUpdatePlotProgress(createLogPlot.id, (createdLog || {}) as { progressPercent?: number });
+            const newPercent = (createdLog as { progressPercent?: number })?.progressPercent ?? createLogPlot.progressPercent;
+            showToast(`Đã cập nhật tiến độ ${createLogPlot.code} lên ${newPercent}% và lưu nhật ký thành công!`);
+          }
           setCreateLogPlot(null);
         }}
       />
