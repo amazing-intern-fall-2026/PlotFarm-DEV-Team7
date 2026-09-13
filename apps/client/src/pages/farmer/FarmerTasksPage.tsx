@@ -43,7 +43,91 @@ interface PriorityTask {
   customerNote: string;
 }
 
-const ACTIVE_TASK: PriorityTask | null = null;
+const STORAGE_KEY_PLOTS = "farmer_managed_plots_data";
+
+interface RawPlotData {
+  id: string;
+  code: string;
+  cropName: string;
+  currentDay?: number;
+  totalDays?: number;
+  progressPercent?: number;
+  readyForHarvest?: boolean;
+  image?: string;
+  isAssignedToFarmer?: boolean;
+  soilMoisture?: number;
+  temperature?: number;
+}
+
+const FALLBACK_PLOTS: ManagedPlot[] = [
+  {
+    id: "CONTRACT-A104",
+    code: "Ô đất A-104",
+    cropName: "Cải cầu vồng Thụy Sĩ",
+    currentDay: 32,
+    totalDays: 60,
+    progressPercent: 53,
+    readyForHarvest: false,
+    image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&auto=format&fit=crop&q=60",
+  },
+  {
+    id: "CONTRACT-B205",
+    code: "Ô đất B-205",
+    cropName: "Cải bó xôi Nhật",
+    currentDay: 18,
+    totalDays: 60,
+    progressPercent: 30,
+    readyForHarvest: false,
+    image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=800&auto=format&fit=crop&q=60",
+  },
+  {
+    id: "CONTRACT-B206",
+    code: "Ô đất B-206",
+    cropName: "Xà lách lolo tím",
+    currentDay: 60,
+    totalDays: 60,
+    progressPercent: 100,
+    readyForHarvest: false,
+    image: "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=800&auto=format&fit=crop&q=60",
+  },
+  {
+    id: "CONTRACT-A101",
+    code: "Ô đất A-101",
+    cropName: "Xà lách búp mỡ",
+    currentDay: 60,
+    totalDays: 60,
+    progressPercent: 100,
+    readyForHarvest: true,
+    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=60",
+  },
+];
+
+const loadManagedPlots = (): ManagedPlot[] => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_PLOTS);
+    if (raw) {
+      const parsed = JSON.parse(raw) as RawPlotData[];
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const assigned = parsed.filter((p) => p.isAssignedToFarmer !== false);
+        if (assigned.length > 0) {
+          return assigned.map((p) => ({
+            id: p.id,
+            code: p.code,
+            cropName: p.cropName,
+            currentDay: p.currentDay ?? 30,
+            totalDays: p.totalDays ?? 60,
+            progressPercent: typeof p.progressPercent === "number" ? p.progressPercent : 50,
+            readyForHarvest: p.readyForHarvest ?? ((p.progressPercent ?? 0) >= 100),
+            image: p.image || "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&auto=format&fit=crop&q=60",
+          }));
+        }
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return FALLBACK_PLOTS;
+};
 
 interface SecondaryTask {
   id: string;
@@ -55,7 +139,50 @@ interface SecondaryTask {
   status: "pending" | "in_progress" | "done";
 }
 
-const UPCOMING_TASKS: SecondaryTask[] = [];
+const DEFAULT_ACTIVE_TASK: PriorityTask = {
+  id: "CARE-782",
+  type: "Bón phân vi sinh & Tưới gốc",
+  zone: "Khu A",
+  bed: "Luống 2",
+  deadline: "Trước 10:30 (Ưu tiên)",
+  plotCode: "Ô đất A-104",
+  cropName: "Cải cầu vồng Thụy Sĩ",
+  customerName: "Chị Thu Hà",
+  contractCode: "HD-2026-A104",
+  soilMoisture: "58%",
+  temperature: "24.5°C",
+  customerNote: "Tưới vi sinh hữu cơ theo đúng tỉ lệ 1:500, nhớ chụp ảnh cập nhật nhật ký cho mình xem với nhé!",
+};
+
+const DEFAULT_UPCOMING_TASKS: SecondaryTask[] = [
+  {
+    id: "CARE-783",
+    type: "Kiểm tra sâu bệnh & Bấm ngọn",
+    plotCode: "Ô đất B-205",
+    bed: "Luống 5 (Khu B)",
+    deadline: "11:45 Hôm nay",
+    customerName: "Anh Trần Quang",
+    status: "pending",
+  },
+  {
+    id: "CARE-784",
+    type: "Kiểm định chất lượng & Chuẩn bị thu hoạch",
+    plotCode: "Ô đất A-101",
+    bed: "Luống 1 (Khu A)",
+    deadline: "14:30 Hôm nay",
+    customerName: "Bác Hoàng Nam",
+    status: "pending",
+  },
+  {
+    id: "LOG-104",
+    type: "Đăng bài viết nhật ký tiến độ vụ mùa",
+    plotCode: "Ô đất A-104",
+    bed: "Luống 2 (Khu A)",
+    deadline: "16:00 Hôm nay",
+    customerName: "Chị Thu Hà",
+    status: "pending",
+  },
+];
 
 interface ManagedPlot {
   id: string;
@@ -68,12 +195,52 @@ interface ManagedPlot {
   image: string;
 }
 
-const MANAGED_PLOTS: ManagedPlot[] = [];
-
 export function FarmerTasksPage() {
   const navigate = useNavigate();
   const [selectedLiveCamPlot, setSelectedLiveCamPlot] = React.useState<string | null>(null);
   const [showHarvestAlert, setShowHarvestAlert] = React.useState(false);
+
+  const [managedPlots, setManagedPlots] = React.useState<ManagedPlot[]>(loadManagedPlots);
+  const [activeTask] = React.useState<PriorityTask | null>(DEFAULT_ACTIVE_TASK);
+  const [upcomingTasks] = React.useState<SecondaryTask[]>(DEFAULT_UPCOMING_TASKS);
+
+  // Sync with local storage when page regains focus or storage event triggers
+  React.useEffect(() => {
+    const handleSync = () => {
+      setManagedPlots(loadManagedPlots());
+    };
+    handleSync();
+    window.addEventListener("storage", handleSync);
+    window.addEventListener("focus", handleSync);
+    return () => {
+      window.removeEventListener("storage", handleSync);
+      window.removeEventListener("focus", handleSync);
+    };
+  }, []);
+
+  // Dynamic reading for A-104 if available in managedPlots or raw storage
+  const activePlotData = React.useMemo(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_PLOTS);
+      if (raw) {
+        const parsed = JSON.parse(raw) as RawPlotData[];
+        const found = parsed.find((p) => p.id === "CONTRACT-A104" || p.code.includes("A-104"));
+        if (found) return found;
+      }
+    } catch {
+      // ignore
+    }
+    return null;
+  }, [managedPlots]);
+
+  const activeTaskData = React.useMemo(() => {
+    if (!activeTask) return null;
+    return {
+      ...activeTask,
+      soilMoisture: activePlotData?.soilMoisture ? `${activePlotData.soilMoisture}%` : activeTask.soilMoisture,
+      temperature: activePlotData?.temperature ? `${activePlotData.temperature}°C` : activeTask.temperature,
+    };
+  }, [activeTask, activePlotData]);
 
   const handleHarvestClick = (_plotCode: string) => {
     setShowHarvestAlert(true);
@@ -121,14 +288,14 @@ export function FarmerTasksPage() {
             <Badge variant="warning" className="flex items-center gap-2 px-3.5 py-2 text-xs rounded-xl">
               <Clock className="h-4 w-4 text-amber-600" />
               <Text as="span" className="text-xs">
-                Chờ xử lý: <strong className="font-bold">{ACTIVE_TASK ? 1 + UPCOMING_TASKS.length : UPCOMING_TASKS.length} việc</strong>
+                Chờ xử lý: <strong className="font-bold">{activeTaskData ? 1 + upcomingTasks.length : upcomingTasks.length} việc</strong>
               </Text>
             </Badge>
 
             <Badge variant="secondary" className="flex items-center gap-2 px-3.5 py-2 text-xs rounded-xl border border-border">
               <CheckCircle2 className="h-4 w-4 text-orange-600" />
               <Text as="span" className="text-xs">
-                Đến hạn thu hoạch: <strong className="font-bold text-orange-600">{MANAGED_PLOTS.filter((p) => p.readyForHarvest).length} ô</strong>
+                Đến hạn thu hoạch: <strong className="font-bold text-orange-600">{managedPlots.filter((p) => p.readyForHarvest).length} ô</strong>
               </Text>
             </Badge>
 
@@ -139,7 +306,7 @@ export function FarmerTasksPage() {
               rightIcon={<ChevronRight className="h-4 w-4" />}
               className="rounded-xl h-9 text-xs font-semibold"
             >
-              Ô đất phụ trách ({MANAGED_PLOTS.length} ô)
+              Ô đất phụ trách ({managedPlots.length} ô)
             </Button>
           </Box>
         </CardHeader>
@@ -155,18 +322,18 @@ export function FarmerTasksPage() {
               ✓
             </span>
             <Text as="span" className="text-xs sm:text-sm">
-              {ACTIVE_TASK ? (
-                <><strong>Hôm nay:</strong> Có 1 việc ưu tiên chờ xử lý</>
+              {activeTaskData ? (
+                <><strong>Hôm nay:</strong> Có 1 việc ưu tiên chờ xử lý • {activeTaskData.plotCode} ({activeTaskData.type})</>
               ) : (
                 <><strong>Hôm nay:</strong> 0 việc tồn đọng • Bạn đã sẵn sàng tiếp nhận lịch phân công mới</>
               )}
             </Text>
           </Box>
-          {ACTIVE_TASK && (
+          {activeTaskData && (
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate(`/farmer/tasks/${ACTIVE_TASK.id}/execute`)}
+              onClick={() => navigate(`/farmer/tasks/${activeTaskData.id}/execute`)}
               rightIcon={<ChevronRight className="h-4 w-4" />}
               className="text-emerald-800 hover:text-emerald-950 hover:bg-emerald-200/40 font-bold text-xs h-8"
             >
@@ -192,7 +359,7 @@ export function FarmerTasksPage() {
         {/* ── LEFT COLUMN: PRIORITY TASK & UPCOMING SCHEDULE (7 COLS) ── */}
         <Box className="lg:col-span-7 space-y-5">
           {/* Active Priority Task Card or Empty State */}
-          {ACTIVE_TASK ? (
+          {activeTaskData ? (
             <Card className="p-0 overflow-hidden border-2 border-emerald-500/50 shadow-md hover:shadow-lg transition-all relative">
               <Box className="h-1.5 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600" />
 
@@ -200,28 +367,28 @@ export function FarmerTasksPage() {
                 <Box className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <Box className="flex items-center gap-2">
                     <Badge variant="success" className="px-3 py-1 font-bold">
-                      {ACTIVE_TASK.type}
+                      {activeTaskData.type}
                     </Badge>
                     <Text variant="muted" className="text-xs font-medium">
-                      {ACTIVE_TASK.zone} • {ACTIVE_TASK.bed}
+                      {activeTaskData.zone} • {activeTaskData.bed}
                     </Text>
                   </Box>
                   <Badge variant="warning" className="gap-1.5 px-3 py-0.5 text-xs font-bold">
                     <Clock className="h-3.5 w-3.5 text-amber-600" />
-                    <span>{ACTIVE_TASK.deadline}</span>
+                    <span>{activeTaskData.deadline}</span>
                   </Badge>
                 </Box>
 
                 <Box className="space-y-1">
                   <CardTitle className="text-xl sm:text-2xl font-extrabold flex items-center gap-2">
-                    <span>{ACTIVE_TASK.plotCode}</span>
+                    <span>{activeTaskData.plotCode}</span>
                     <span className="text-muted-foreground">•</span>
                     <span className="text-emerald-700 dark:text-emerald-400">
-                      {ACTIVE_TASK.cropName}
+                      {activeTaskData.cropName}
                     </span>
                   </CardTitle>
                   <CardDescription className="text-xs sm:text-sm">
-                    Chủ vườn: <strong>{ACTIVE_TASK.customerName}</strong> (Hợp đồng {ACTIVE_TASK.contractCode})
+                    Chủ vườn: <strong>{activeTaskData.customerName}</strong> (Hợp đồng {activeTaskData.contractCode})
                   </CardDescription>
                 </Box>
               </CardHeader>
@@ -235,7 +402,7 @@ export function FarmerTasksPage() {
                     <Box>
                       <Text variant="muted" className="text-[11px] font-medium">Độ ẩm đất</Text>
                       <Text as="p" className="text-xs sm:text-sm font-bold text-foreground">
-                        {ACTIVE_TASK.soilMoisture}{" "}
+                        {activeTaskData.soilMoisture}{" "}
                         <span className="text-[10px] font-normal text-amber-600">(Cần bón ẩm)</span>
                       </Text>
                     </Box>
@@ -248,7 +415,7 @@ export function FarmerTasksPage() {
                     <Box>
                       <Text variant="muted" className="text-[11px] font-medium">Nhiệt độ luống</Text>
                       <Text as="p" className="text-xs sm:text-sm font-bold text-foreground">
-                        {ACTIVE_TASK.temperature}
+                        {activeTaskData.temperature}
                       </Text>
                     </Box>
                   </Box>
@@ -261,22 +428,31 @@ export function FarmerTasksPage() {
                       <strong className="text-emerald-900 dark:text-emerald-200">
                         Khách dặn dò:
                       </strong>{" "}
-                      {ACTIVE_TASK.customerNote}
+                      {activeTaskData.customerNote}
                     </Box>
                   </Box>
                 </Box>
               </CardContent>
 
-              <CardFooter className="p-5 sm:p-6 pt-0 border-t border-border">
+              <CardFooter className="p-5 sm:p-6 pt-0 border-t border-border flex flex-col sm:flex-row gap-2.5">
                 <Button
                   variant="primary"
                   size="lg"
-                  onClick={() => navigate(`/farmer/tasks/${ACTIVE_TASK.id}/execute`)}
+                  onClick={() => navigate(`/farmer/tasks/${activeTaskData.id}/execute`)}
                   leftIcon={<Play className="h-4 w-4 fill-current" />}
                   rightIcon={<ArrowRight className="h-4 w-4" />}
-                  className="w-full"
+                  className="flex-1"
                 >
                   Bắt đầu xử lý nhiệm vụ này
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => navigate("/farmer/contracts/CONTRACT-A104/new-log")}
+                  leftIcon={<FileText className="h-4 w-4 text-emerald-600" />}
+                  className="sm:w-auto font-semibold"
+                >
+                  Đăng nhật ký tiến độ
                 </Button>
               </CardFooter>
             </Card>
@@ -303,12 +479,12 @@ export function FarmerTasksPage() {
             </Text>
 
             <Box className="space-y-2.5">
-              {UPCOMING_TASKS.length === 0 ? (
+              {upcomingTasks.length === 0 ? (
                 <Card className="p-6 text-center border-dashed border border-border shadow-none">
                   <Text variant="muted" className="text-xs">Chưa có công việc kế tiếp trong ca trực.</Text>
                 </Card>
               ) : (
-                UPCOMING_TASKS.map((task) => (
+                upcomingTasks.map((task) => (
                   <Card
                     key={task.id}
                     className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
@@ -350,7 +526,7 @@ export function FarmerTasksPage() {
           <Card className="p-5 space-y-4">
             <CardHeader className="p-0 flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base font-bold">
-                Ô đất đang phụ trách ({MANAGED_PLOTS.length} ô)
+                Ô đất đang phụ trách ({managedPlots.length} ô)
               </CardTitle>
               <Button
                 variant="link"
@@ -363,12 +539,12 @@ export function FarmerTasksPage() {
             </CardHeader>
 
             <CardContent className="p-0 space-y-3">
-              {MANAGED_PLOTS.length === 0 ? (
+              {managedPlots.length === 0 ? (
                 <Card className="p-6 text-center border-dashed border border-border shadow-none">
                   <Text variant="muted" className="text-xs">Chưa có ô đất nào được phân công phụ trách.</Text>
                 </Card>
               ) : (
-                MANAGED_PLOTS.map((plot) => (
+                managedPlots.map((plot) => (
                   <Box
                     key={plot.id}
                     className="rounded-2xl border border-border p-3.5 bg-muted/30 hover:bg-muted/50 transition-colors space-y-2.5"
