@@ -8,6 +8,8 @@ import { errorHandler } from "./middlewares/errorHandler";
 import { authRoutes } from "./modules/auth/auth.routes";
 import { plotsRouter } from "./modules/plots/plots.routes";
 import { careRouter } from "./modules/care/care.routes";
+import { mediaRouter } from "./modules/media/media.routes";
+import { diaryRouter } from "./modules/diary/diary.routes";
 import { AuthController, login } from "./modules/auth/auth.controller";
 
 dotenv.config();
@@ -35,6 +37,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/v1", plotsRouter);
 app.use("/api/v1", authRoutes);
 app.use("/api/v1", careRouter);
+app.use("/api/v1", mediaRouter);
+app.use("/api/v1", diaryRouter);
 app.post("/api/gateway", (req: Request, res: Response, next: NextFunction) => {
   const action = req.body?.action;
   if (action === "auth.register") {

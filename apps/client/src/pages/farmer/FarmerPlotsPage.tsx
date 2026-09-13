@@ -28,7 +28,9 @@ import {
   Send,
   Cloud,
   Sun,
+  PlusCircle,
 } from "lucide-react";
+import { CreateFarmingLogModal } from "@/features/farming-log";
 
 interface PlotData {
   id: string;
@@ -173,6 +175,7 @@ export function FarmerPlotsPage() {
   // Selected plot for Detail / Telemetry modal
   const [selectedPlotForDetail, setSelectedPlotForDetail] = React.useState<PlotData | null>(null);
   const [selectedLiveCamPlot, setSelectedLiveCamPlot] = React.useState<PlotData | null>(null);
+  const [createLogPlot, setCreateLogPlot] = React.useState<PlotData | null>(null);
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
 
   // Quick note chips state inside Telemetry modal
@@ -224,7 +227,17 @@ export function FarmerPlotsPage() {
             </CardDescription>
           </Box>
 
-          <Box className="flex items-center gap-2.5">
+          <Box className="flex flex-wrap items-center gap-2.5">
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              onClick={() => setCreateLogPlot(ALL_PLOTS[0])}
+              leftIcon={<PlusCircle className="h-4 w-4" />}
+            >
+              <Text as="span" className="text-xs font-bold">+ Đăng nhật ký mới</Text>
+            </Button>
+
             <Button
               type="button"
               variant="outline"
@@ -237,7 +250,7 @@ export function FarmerPlotsPage() {
 
             <Button
               type="button"
-              variant="primary"
+              variant="outline"
               size="sm"
               onClick={() => navigate("/farmer")}
             >
@@ -777,6 +790,21 @@ export function FarmerPlotsPage() {
           </Card>
         </Box>
       )}
+      {/* ─────────────────────────────────────────────────────────────
+          MODAL 3: CREATE FARMING LOG MODAL (US-23, US-24)
+      ───────────────────────────────────────────────────────────── */}
+      <CreateFarmingLogModal
+        isOpen={Boolean(createLogPlot)}
+        onClose={() => setCreateLogPlot(null)}
+        contractId={createLogPlot?.id}
+        plotCode={createLogPlot?.code}
+        cropName={createLogPlot?.cropName}
+        customerName={createLogPlot?.customerName}
+        onSuccess={() => {
+          showToast(`Đăng nhật ký cho ${createLogPlot?.code} thành công!`);
+          setCreateLogPlot(null);
+        }}
+      />
     </Box>
   );
 }

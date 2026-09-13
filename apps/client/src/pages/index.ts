@@ -11,6 +11,7 @@ export * from "./customer/AboutPage";
 export * from "./farmer/FarmerTasksPage";
 export * from "./farmer/FarmerTaskExecutePage";
 export * from "./farmer/FarmerPlotsPage";
+export * from "./farmer/FarmerNewLogPage";
 
 // Admin Pages
 export * from "./admin/AdminDashboardPage";

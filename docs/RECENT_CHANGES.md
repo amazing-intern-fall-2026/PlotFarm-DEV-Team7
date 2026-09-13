@@ -242,18 +242,26 @@ Thiết kế và nâng cấp từ các bản phác thảo di động sang giao d
     - Chỉ số vi khí hậu tức thời (Độ ẩm 58%, Nhiệt độ 24°C).
     - Camera trực tiếp luống B-205 để đối chiếu trước khi hoàn tất.
 
-### 3.4. Chuẩn hóa 100% Giao diện Staff/Farmer bằng Hệ Thống Component `@/shared/ui`
-- **Yêu cầu & Ràng buộc**: Tuyệt đối không sử dụng các thẻ HTML thô (`div`, `button`, `span`) cho các khối giao diện nền tảng, mà kế thừa và phát triển từ toàn bộ hệ thống component của Design System `@/shared/ui`:
-  - `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`: Khung bao thẻ tác vụ, thống kê KPI, bộ lọc và các modal.
-  - `Button`: Tất cả nút hành động (Quét QR, Xem camera, Nhật ký, Thu hoạch, Báo sự cố, Đóng phiếu) hỗ trợ đầy đủ variant (`primary`, `secondary`, `outline`, `destructive`, `ghost`).
-  - `Badge`: Thẻ hiển thị trạng thái sinh trưởng, đếm ngược thời gian, cảnh báo độ ẩm và phân khu.
-  - `Box`: Thành phần bao bọc đa hình (polymorphic layout container) thay thế hoàn toàn các thẻ layout vô nghĩa.
-  - `Text`: Đồng bộ typographic variants (`h1-h6`, `muted`, `p`, `span`, `strong`) đảm bảo đồng nhất font chữ Outfit/Inter.
-- **Các trang đã chuẩn hóa**:
-  1. [`apps/client/src/pages/farmer/FarmerTasksPage.tsx`](file:///d:/Project/plot-farm/apps/client/src/pages/farmer/FarmerTasksPage.tsx)
-  2. [`apps/client/src/pages/farmer/FarmerTaskExecutePage.tsx`](file:///d:/Project/plot-farm/apps/client/src/pages/farmer/FarmerTaskExecutePage.tsx)
-  3. [`apps/client/src/pages/farmer/FarmerPlotsPage.tsx`](file:///d:/Project/plot-farm/apps/client/src/pages/farmer/FarmerPlotsPage.tsx)
-
+### 3.5. Biểu Mẫu Đăng Bài Viết Nhật Ký Tiến Độ Cây Trồng (US-23 & US-24)
+- **Mục tiêu**: Cung cấp biểu mẫu tiện lợi trên mobile/desktop cho nông dân đăng bài viết nhật ký sinh trưởng thực địa cho hợp đồng ACTIVE, chọn mốc mùa vụ, nén ảnh client-side và tải ảnh Cloudinary (US-23), gửi bài viết qua API (US-24).
+- **Quy chuẩn 4 mốc sinh trưởng chuẩn mực**:
+  - `STAGE_1`: Gieo hạt & Nảy mầm (Tiến độ 25%)
+  - `STAGE_2`: Phát triển thân lá & Tỉa thưa (Tiến độ 50%)
+  - `STAGE_3`: Trưởng thành & Chăm sóc tăng cường (Tiến độ 75%)
+  - `STAGE_4`: Chuẩn bị thu hoạch (Tiến độ 100%)
+- **Hạ tầng Tải Ảnh (Cloudinary & Client Compression)**:
+  - Hàm `compressImage` (Canvas API): Giảm độ phân giải tối đa 1600px, nén JPEG 0.8 xuống ~300KB-800KB để tiết kiệm 4G đồng ruộng.
+  - Tích hợp API `POST /api/v1/media/upload` (US-23) kèm hiển thị thanh tiến trình (progress bar 0 - 100%).
+  - Hỗ trợ xóa thumbnail tức thì bằng nút `(X)` theo tiêu chí chấp thuận AC3.
+- **Biểu mẫu & Xác thực (React Hook Form + Zod)**:
+  - Bắt buộc chọn 1 trong 4 mốc mùa vụ và có ít nhất 1 ảnh thực tế (AC2).
+  - Tích hợp ghi chú hiện trạng kèm gợi ý tag nhanh.
+  - Nhập và đồng bộ chỉ số vi khí hậu (nhiệt độ, độ ẩm đất, độ ẩm không khí) từ cảm biến IoT.
+  - Gọi API `POST /api/v1/contracts/:id/farming-logs` (US-24) trả về mã 201 Created và thông báo thành công (AC1).
+- **Hệ thống Component & Tuyến đường**:
+  - Tuyến đường mới: `/farmer/contracts/:id/new-log` và `/farmer/new-log`.
+  - Hộp thoại nhanh: `CreateFarmingLogModal` mở trực tiếp từ trang danh sách ô đất `/farmer/plots`.
+  - Kế thừa 100% hệ thống `@/shared/ui`: `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`, `Button`, `Badge`, `Box`, `Text`.
 
 ---
 
@@ -284,13 +292,13 @@ Thiết kế và nâng cấp từ các bản phác thảo di động sang giao d
 
 | Hạng mục kiểm tra | Lệnh thực thi | Kết quả | Ghi chú |
 | :--- | :--- | :---: | :--- |
-| **ESLint Toàn Dự Án** | `pnpm lint` | **100% PASSED** | 0 lỗi, 0 cảnh báo (strict mode) |
-| **Shared Tests** | `pnpm --filter @repo/shared test` | **13/13 PASSED** | 100% test cases đạt |
-| **Server Tests** | `pnpm --filter server test` | **14/14 PASSED** | AuthGuard, ErrorHandler, Server tests |
-| **Client Tests** | `pnpm --filter client test` | **20/20 PASSED** | AxiosClient, AuthStorage, ErrorHandler, Debounce, App |
-| **Toàn Bộ Monorepo Tests** | `pnpm test` | **47/47 PASSED** | 100% pass trên toàn hệ thống |
+| **ESLint Toàn Monorepo** | `pnpm lint` | **100% PASSED** | 0 lỗi, 0 cảnh báo trên cả 6 packages (strict mode) |
+| **Shared Tests** | `pnpm --filter @repo/shared test` | **13/13 PASSED** | Mốc sinh trưởng, schema validation đạt 100% |
+| **Server Tests** | `pnpm --filter server test` | **14/14 PASSED** | AuthGuard, ErrorHandler, Media & Diary routes |
+| **Client Tests** | `pnpm --filter client test` | **27/27 PASSED** | 7/7 test cases mới cho AC1, AC2, AC3 & Compression |
+| **Toàn Bộ Monorepo Tests** | `pnpm test` | **54/54 PASSED** | 100% pass toàn bộ test suites |
 | **Production Build** | `pnpm build` | **SUCCESS** | TypeScript compilation & Vite bundle hoàn tất |
-| **Kiểm Tra Trình Duyệt** | Browser Subagent | **VERIFIED** | Giao diện sắc nét, responsive trên mọi kích thước |
+| **Backend API Live Check** | Node Fetch Script | **VERIFIED** | `201 Created` cho Media upload & Farming logs |
 
 ---
 
