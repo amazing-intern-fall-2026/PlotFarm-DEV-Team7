@@ -343,24 +343,100 @@ export function getMockLoginResponse(email: string): LoginResponseData {
     userCode = "USR-ADMIN-2026-0003";
   }
 
-  const mockResponse: LoginResponseData = {
-    accessToken: `mock-access-token.${Buffer.from(email).toString("base64")}`,
-    refreshToken: `mock-refresh-token.${Buffer.from(email).toString("base64")}`,
+async function buildLoginResponse(user: {
+  userCode: string | null;
+  email: string;
+  fullName: string;
+  role: LoginResponseData["user"]["role"];
+  preferredLocale: string;
+  avatarUrl: string | null;
+  id: string;
+}): Promise<LoginResponseData> {
+  const accessToken = TokenService.generateAccessToken({
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  });
+  const refreshToken = await TokenService.createRefreshToken(user.id);
+
+  return {
+    accessToken,
+    refreshToken,
     user: {
-      userCode,
-      email,
-      fullName,
-      role,
-      preferredLocale: "vi",
-      avatarUrl: null,
+      userCode: user.userCode ?? "",
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      preferredLocale: user.preferredLocale,
+      avatarUrl: user.avatarUrl,
     },
   };
+}
 
-  const result = LoginResponseDataSchema.safeParse(mockResponse);
-  if (!result.success) {
-    throw new Error(
-      `Mock login response does not match LoginResponseDataSchema: ${result.error.message}`,
+export async function loginWithCredentials(
+  email: string,
+  password: string,
+): Promise<LoginResponseData> {
+  const user = await db.user.findUnique({ where: { email } });
+
+  if (!user || user.deletedAt !== null) {
+    throw AppError.unauthorized(
+      "Email hoặc mật khẩu không đúng.",
+      ERROR_CODES.UNAUTHORIZED,
     );
   }
-  return result.data;
+
+  const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+  if (!isPasswordValid) {
+    throw AppError.unauthorized(
+      "Email hoặc mật khẩu không đúng.",
+      ERROR_CODES.UNAUTHORIZED,
+    );
+  }
+
+  return buildLoginResponse(user);
+}
+
+export async function loginWithGoogle(idToken: string): Promise<LoginResponseData> {
+  const profile = await verifyGoogleIdToken(idToken);
+
+  if (!profile.emailVerified) {
+    throw AppError.unauthorized(
+      "Email Google chưa được xác thực.",
+      ERROR_CODES.UNAUTHORIZED,
+    );
+  }
+
+  let user = await db.user.findUnique({ where: { googleId: profile.googleId } });
+
+  if (!user) {
+    const existingByEmail = await db.user.findUnique({ where: { email: profile.email } });
+
+    if (existingByEmail) {
+      user = await db.user.update({
+        where: { id: existingByEmail.id },
+        data: { googleId: profile.googleId, isVerified: true },
+      });
+    } else {
+      const passwordHash = await bcrypt.hash(randomUUID(), 10);
+      user = await db.user.create({
+        data: {
+          email: profile.email,
+          fullName: profile.fullName,
+          avatarUrl: profile.avatarUrl,
+          googleId: profile.googleId,
+          passwordHash,
+          role: "CUSTOMER",
+          isVerified: true,
+          userCode: generateUserCode(),
+        },
+      });
+    }
+  }
+
+  if (user.deletedAt !== null) {
+    throw AppError.forbidden("Tài khoản đã bị khóa.", ERROR_CODES.ACCOUNT_DISABLED);
+  }
+
+  return buildLoginResponse(user);
 }

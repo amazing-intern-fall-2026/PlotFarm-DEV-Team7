@@ -10,6 +10,7 @@ import {
   GATEWAY_HEADER_AUTHORIZATION,
   GATEWAY_ERROR_MESSAGES,
 } from "./gateway.constants";
+import { encryptPayload } from "./jwe";
 
 export interface GatewayEnvelope<T = unknown> {
   action: string;
@@ -43,13 +44,16 @@ export async function dispatchAction<TReq = unknown, TRes = unknown>(
     ...(token ? { [GATEWAY_HEADER_AUTHORIZATION]: `Bearer ${token}` } : {}),
   };
 
+  // ── Mã hóa payload (JWE) trước khi gửi ──────────────────────────────────────
+  const cipher = await encryptPayload(envelope);
+
   // ── Network ───────────────────────────────────────────────────────────────
   let res: Response;
   try {
     res = await fetch(GATEWAY_ENDPOINT, {
       method: "POST",
       headers,
-      body: JSON.stringify(envelope),
+      body: JSON.stringify({ cipher }),
       signal: AbortSignal.timeout(GATEWAY_TIMEOUT_MS),
     });
   } catch {

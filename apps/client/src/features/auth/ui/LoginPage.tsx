@@ -200,6 +200,8 @@ function LoginFormPanel() {
     errors,
     isLoading,
     setValue,
+    loginWithGoogle,
+    isGoogleLoading,
   } = useLoginForm();
 
   const fillAccount = (email: string) => {
@@ -342,8 +344,8 @@ function LoginFormPanel() {
           size="default"
           leftIcon={<GoogleIcon />}
           className="w-full"
-          disabled={isLoading}
-          onClick={() => alert(AUTH_UI_TEXT.GOOGLE_SOON)}
+          disabled={isLoading || isGoogleLoading}
+          onClick={() => void loginWithGoogle()}
         >
           {AUTH_UI_TEXT.SOCIAL_GOOGLE}
         </Button>

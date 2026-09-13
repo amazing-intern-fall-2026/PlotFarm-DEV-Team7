@@ -79,10 +79,16 @@ export class AuthController {
    * Endpoint: POST /api/auth/refresh
    * Nhận refreshToken và trả về accessToken mới
    */
-  static async refresh(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async refresh(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const validatedBody = RefreshSchema.parse(req.body);
-      const result = await TokenService.refreshAccessToken(validatedBody.refreshToken);
+      const result = await TokenService.refreshAccessToken(
+        validatedBody.refreshToken,
+      );
 
       res.status(200).json({
         success: true,
@@ -99,7 +105,11 @@ export class AuthController {
    * Endpoint: GET /api/auth/profile
    * Route được bảo vệ bởi authGuard
    */
-  static async getProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async getProfile(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       res.status(200).json({
         success: true,

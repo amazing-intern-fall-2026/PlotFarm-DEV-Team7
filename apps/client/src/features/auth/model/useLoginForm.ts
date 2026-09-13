@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
-import type { UserRole } from "@repo/shared";
+import type { LoginResponseData, UserRole } from "@repo/shared";
 import { AppError } from "@/shared/lib/errors/AppError";
 import { useDebouncedCallback } from "@/shared/lib/hooks/useDebouncedCallback";
 import { authApi } from "../api/authApi";
+import { promptGoogleSignIn } from "../lib/googleIdentity";
 import {
   SESSION_KEYS,
   ROLE_HOME_ROUTES,
@@ -31,6 +33,42 @@ export interface LoginFormErrors {
 export function useLoginForm() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [googleError, setGoogleError] = useState<string | undefined>();
+
+  const completeLogin = (data: LoginResponseData) => {
+    sessionStorage.setItem(SESSION_KEYS.ACCESS_TOKEN, data.accessToken);
+    sessionStorage.setItem(SESSION_KEYS.REFRESH_TOKEN, data.refreshToken);
+    sessionStorage.setItem(SESSION_KEYS.USER, JSON.stringify(data.user));
+
+    const from = (location.state as { from?: { pathname?: string } })?.from
+      ?.pathname;
+    const roleHome =
+      ROLE_HOME_ROUTES[data.user.role as UserRole] ?? AUTH_ROUTES.LOGIN;
+    navigate(from || roleHome, { replace: true });
+  };
+
+  const loginWithGoogle = async () => {
+    setGoogleError(undefined);
+    setIsGoogleLoading(true);
+    try {
+      await promptGoogleSignIn(async (idToken) => {
+        try {
+          const data = await authApi.loginGoogle(idToken);
+          completeLogin(data);
+        } catch (err) {
+          const appErr = AppError.fromUnknown(err);
+          setGoogleError(getAuthErrorMessage(appErr.errorCode));
+        } finally {
+          setIsGoogleLoading(false);
+        }
+      });
+    } catch (err) {
+      const appErr = AppError.fromUnknown(err);
+      setGoogleError(getAuthErrorMessage(appErr.errorCode));
+      setIsGoogleLoading(false);
+    }
+  };
 
   const {
     register,
@@ -89,21 +127,11 @@ export function useLoginForm() {
 
   const onSubmit = async (values: LoginFormValues) => {
     try {
-      const { accessToken, refreshToken, user } = await authApi.login(
+      const data = await authApi.login(
         values.email.trim().toLowerCase(),
         values.password
       );
-
-      sessionStorage.setItem(SESSION_KEYS.ACCESS_TOKEN, accessToken);
-      sessionStorage.setItem(SESSION_KEYS.REFRESH_TOKEN, refreshToken);
-      sessionStorage.setItem(SESSION_KEYS.USER, JSON.stringify(user));
-
-      const from = (location.state as { from?: { pathname?: string } })?.from
-        ?.pathname;
-      const roleHome =
-        ROLE_HOME_ROUTES[user.role as UserRole] ?? AUTH_ROUTES.LOGIN;
-      const dest = from || roleHome;
-      navigate(dest, { replace: true });
+      completeLogin(data);
     } catch (err) {
       const appErr = AppError.fromUnknown(err);
       setError("root", {
@@ -122,11 +150,13 @@ export function useLoginForm() {
     errors: {
       email: errors.email?.message,
       password: errors.password?.message,
-      general: errors.root?.message,
+      general: errors.root?.message ?? googleError,
     },
     formErrors: errors,
     isLoading: isSubmitting,
     debouncedTrigger,
     setValue,
+    loginWithGoogle,
+    isGoogleLoading,
   };
 }
