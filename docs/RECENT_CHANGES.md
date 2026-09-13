@@ -191,20 +191,73 @@ Lưu trữ tại `apps/client/public/images/`:
 
 ---
 
-## 3. Kiến Trúc Xử Lý Lỗi Toàn Diện (US-11 Error Handling Envelope)
+## 3. Giao Diện Web Dành Cho Staff / Kỹ Thuật Viên Nông Trại (Staff Web Redesign)
 
-### 3.1. Tầng 1: `packages/shared`
+Thiết kế và nâng cấp từ các bản phác thảo di động sang giao diện Web Desktop / Tablet chuyên nghiệp cho đội ngũ Kỹ thuật viên thực địa (CloudFarm Ops / Field Tasks).
+
+### 3.1. Trang Nhiệm Vụ Hôm Nay (`/farmer` - `FarmerTasksPage.tsx`)
+- **Header Kỹ thuật viên**: Card thông tin Bác Bảy (KTV Trưởng • Đội 1 Khu A), trạng thái `● Đang làm việc`, giờ ca trực (07:00 – 15:30).
+- **Bộ 3 Chỉ Số Nhanh (KPI Widgets)**:
+  - 📋 `3 Việc chờ xử lý` (1 việc khẩn trước 09:30).
+  - 🚜 `1 Ô đến hạn thu hoạch` (Ô A-101).
+  - 🌿 `5 Ô đất phụ trách` (Độ ẩm TB 68%).
+- **Banner Cảnh Báo Điều Hành**: `⚡ Hôm nay: 3 việc chờ xử lý • 1 ô đến hạn thu hoạch`.
+- **Bố Cục 2 Cột Desktop**:
+  - **Cột Trái (Hero Task & Lịch Trình Ca Trực)**:
+    - Thẻ nhiệm vụ ưu tiên số 1 (`#CARE-782`): Bón phân vi sinh, Luống 2 (Khu A), Hạn chót `Trước 09:30`. Ô đất A-104 (Cải cầu vồng), khách hàng Thu Hà. Thẻ vi khí hậu: Độ ẩm 58%, Nhiệt độ 24°C. Hộp dặn dò từ khách: *"Bón 150g phân trùn quế quanh rễ, tỉa bớt lá già sát đất"*. Nút `▶ Bắt đầu xử lý nhiệm vụ này`.
+    - Danh sách việc kế tiếp: Kiểm tra bẫy pheromone (Ô B-205), Đo EC & xới đất (Ô A-102).
+  - **Cột Phải (Ô Đất Phụ Trách & Công Cụ Nhanh)**:
+    - 3 ô đất thực địa với thanh tiến độ %, ngày sinh trưởng (32/60, 60/60, 18/75), nút xem Camera Live trực tiếp tại luống và nút thu hoạch nhanh.
+    - Tiện ích: Quét mã QR luống, Bản đồ phân khu, Báo sự cố khẩn cấp.
+
+### 3.2. Trang Quản Lý Ô Đất (`/farmer/plots` - `FarmerPlotsPage.tsx`)
+- **Thanh Công Cụ Đa Năng**:
+  - Ô tìm kiếm theo mã ô (A-104), tên giống rau, hoặc tên khách hàng.
+  - Tab lọc phân khu: `Tất cả (5)`, `Khu A Đà Lạt (3)`, `Khu B (2)`.
+  - Bộ lọc trạng thái: `Cần tưới nước (1)`, `Đang sinh trưởng (3)`, `Chuẩn bị thu hoạch (1)`.
+- **Lưới Ô Đất 3 Cột (Responsive Grid)**:
+  - Hiển thị đầy đủ 5 ô đất với chỉ số cảm biến vi khí hậu: Độ ẩm đất %, Nhiệt độ luống °C, tiến độ sinh trưởng, ngày thu hoạch dự kiến.
+  - Thao tác nhanh trên từng ô: `[📹 Xem camera]` và `[📖 Nhật ký & Chi tiết]`.
+  - Riêng ô A-101 (Đạt 60/60 ngày): Nút cam nổi bật `[🚜 Tạo lệnh thu hoạch ngay]`.
+- **Modal Camera Trực Tiếp**: Mở stream Full HD của luống rau kèm chỉ số cảm biến tức thời và nút chụp ảnh lưu kho.
+- **Modal Chi Tiết & Telemetry Cây Trồng (Screens 4 & 5)**:
+  - Stepper vụ mùa: Gieo hạt > Nảy mầm > Bung lá > Thu hoạch.
+  - Bộ 3 thẻ cảm biến: Độ ẩm đất, Nhiệt độ luống, Độ ẩm không khí.
+  - Ảnh kiểm định thực tế và hệ thống thẻ ghi chú nhanh (`+ Tưới vi sinh`, `✓ Cây bung lá khỏe`, `+ Đã xới thoáng đất`, `+ Nắng ấm`).
+  - Nút: `Lưu nhật ký & Gửi thông báo đến khách` (tự động đồng bộ Zalo/SMS).
+
+### 3.3. Trang Thực Hiện Nhiệm Vụ (`/farmer/tasks/:id/execute` - `FarmerTaskExecutePage.tsx`)
+- **Header & Đồng Hồ Đếm Ngược**: Mã phiếu `#CARE-782`, hạn hoàn thành `Trước 09:30`.
+- **Stepper 3 Bước Ngang**: `✓ 1. Đã nhận` -> `● 2. Minh chứng (Đang làm)` -> `○ 3. Đóng phiếu`.
+- **Bố Cục 2 Cột Chuyên Dụng**:
+  - **Cột Trái (Minh Chứng Hiện Trường & Nghiệm Thu)**:
+    - Ảnh chụp luống rau thực tế kèm vị trí & giờ watermark (`📍 Lô B-205 • 09:12 AM`) và badge `✓ Ảnh hợp lệ`.
+    - Nút tải/đổi ảnh chụp.
+    - Khung nhập ghi chú kỹ thuật kết quả xử lý.
+    - Hộp xác nhận liều lượng chuẩn VietGAP: Cam kết đã bón đúng 200g phân trùn quế theo lời dặn của khách.
+    - Nút `[🚫 Báo sự cố]` (mở Modal mô tả gửi đến Giám sát viên) và `[✓ Hoàn tất & Đóng phiếu]`.
+  - **Cột Phải (Chỉ Định Kỹ Thuật & Cảm Biến)**:
+    - Chi tiết tác vụ, vị trí luống, thông tin khách hàng.
+    - Hộp lời dặn dò từ khách nổi bật.
+    - Chỉ số vi khí hậu tức thời (Độ ẩm 58%, Nhiệt độ 24°C).
+    - Camera trực tiếp luống B-205 để đối chiếu trước khi hoàn tất.
+
+---
+
+## 4. Kiến Trúc Xử Lý Lỗi Toàn Diện (US-11 Error Handling Envelope)
+
+### 4.1. Tầng 1: `packages/shared`
 - **`packages/shared/src/index.ts`**:
   - Định nghĩa tập trung danh mục `ERROR_CODES` (`VALIDATION`, `INVALID_JSON`, `BAD_REQUEST`, `DUPLICATE`, `NOT_FOUND`, `AUTH_REQUIRED`, `INVALID_TOKEN`, `TOKEN_EXPIRED`, `INVALID_REFRESH_TOKEN`, `ACCOUNT_DISABLED`, `USER_NOT_FOUND`, `INTERNAL_SERVER`).
   - Cung cấp Zod schemas và types cho Envelope chuẩn: `ApiErrorResponse`, `ApiSuccessResponse`, `ApiErrorDetail`, `ApiResponse`.
 
-### 3.2. Tầng 2: `apps/server`
+### 4.2. Tầng 2: `apps/server`
 - **`apps/server/src/errors/AppError.ts`**: Chuẩn hóa lớp lỗi ứng dụng kế thừa `Error` và mã lỗi chuẩn.
 - **`apps/server/src/middlewares/errorHandler.ts`**: Global middleware bọc 100% lỗi server trả về định dạng `ApiErrorResponse`.
 - **`apps/server/src/middlewares/authGuard.ts`**: Kiểm tra token và quyền truy cập chặt chẽ.
 - **`apps/server/src/modules/auth/token.service.ts`**: Tạo cặp Access Token và Refresh Token an toàn.
 
-### 3.3. Tầng 3: `apps/client`
+### 4.3. Tầng 3: `apps/client`
 - **`apps/client/src/api/errorHandler.ts`**: Bộ helper client bóc tách lỗi:
   - `parseApiError()`: Xử lý AxiosError, lỗi mất mạng (`ERR_NETWORK`), lỗi timeout (`ERR_TIMEOUT`).
   - `mapValidationErrors()`: Chuyển đổi lỗi validation về React form field errors.
@@ -214,7 +267,7 @@ Lưu trữ tại `apps/client/public/images/`:
 
 ---
 
-## 4. Bảng Kiểm Tra Chất Lượng (Quality Gate & Test Suite)
+## 5. Bảng Kiểm Tra Chất Lượng (Quality Gate & Test Suite)
 
 | Hạng mục kiểm tra | Lệnh thực thi | Kết quả | Ghi chú |
 | :--- | :--- | :---: | :--- |
@@ -228,10 +281,12 @@ Lưu trữ tại `apps/client/public/images/`:
 
 ---
 
-## 5. Lịch Sử Git Commits
+## 6. Lịch Sử Git Commits
 
 | Hash Commit | Loại commit | Nội dung chi tiết |
 | :--- | :--- | :--- |
+| `1d7ef1d` | `feat(farmer)` | Chuyển đổi và thiết kế lại giao diện Staff Field Ops thành trải nghiệm Web Desktop chuẩn mực |
+| `651ef79` | `docs(note)` | Cập nhật tài liệu tổng hợp thay đổi về auth và landing page |
 | `60c7094` | `feat(client)` | Triển khai giao diện Landing Page CloudFarm hoàn chỉnh theo đúng thiết kế mockup |
 | `537c5fc` | `style(auth)` | Bỏ thanh tab switch trên đầu trang login và register, đưa tiêu đề lên trên cùng |
 | `e2c7203` | `style(auth)` | Căn chỉnh các ô nhập liệu của form đăng ký thành một cột dọc duy nhất |
