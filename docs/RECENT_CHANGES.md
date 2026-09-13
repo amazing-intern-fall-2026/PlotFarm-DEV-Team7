@@ -343,7 +343,7 @@ Thiết kế và nâng cấp từ các bản phác thảo di động sang giao d
 
 | Hash Commit | Loại commit | Nội dung chi tiết |
 | :--- | :--- | :--- |
-| *Pending* | `feat(farmer)` | Triển khai bộ 3 màn hình Thu hoạch & Xuất kho, Báo cáo sự cố, Lịch sử công việc & Đối soát thực địa |
+| `96c6686` | `feat(farmer)` | Triển khai bộ 3 màn hình Thu hoạch & Xuất kho, Báo cáo sự cố, Lịch sử công việc & Đối soát thực địa |
 | `1d7ef1d` | `feat(farmer)` | Chuyển đổi và thiết kế lại giao diện Staff Field Ops thành trải nghiệm Web Desktop chuẩn mực |
 | `651ef79` | `docs(note)` | Cập nhật tài liệu tổng hợp thay đổi về auth và landing page |
 | `60c7094` | `feat(client)` | Triển khai giao diện Landing Page CloudFarm hoàn chỉnh theo đúng thiết kế mockup |
