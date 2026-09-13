@@ -34,7 +34,6 @@ export interface RegisterFormErrors {
 
 export function useRegisterForm() {
   const navigate = useNavigate();
-  const [selectedRole, setSelectedRole] = React.useState<"CUSTOMER" | "STAFF">("CUSTOMER");
   const [isSuccess, setIsSuccess] = React.useState(false);
 
   const {
@@ -57,6 +56,7 @@ export function useRegisterForm() {
     mode: "onSubmit",
     reValidateMode: "onSubmit",
   });
+
 
   const passwordValue = watch("password");
 
@@ -141,7 +141,7 @@ export function useRegisterForm() {
         email: values.email.trim().toLowerCase(),
         phone: values.phone.trim(),
         password: values.password,
-        role: selectedRole,
+        role: "CUSTOMER",
       });
 
       const { accessToken, refreshToken, user } = response;
@@ -202,11 +202,10 @@ export function useRegisterForm() {
     registerPhone,
     registerPassword,
     registerConfirmPassword,
-    selectedRole,
-    setSelectedRole,
     handleSubmit: handleSubmit(onSubmit),
     errors: formErrors,
     isLoading: isSubmitting,
     isSuccess,
   };
 }
+

@@ -10,9 +10,8 @@ import {
   CheckCircle2,
   User,
   Phone,
-  Sprout,
-  Wrench,
 } from "lucide-react";
+
 import {
   Box,
   Typography,
@@ -394,8 +393,6 @@ function RegisterFormPanel({ onSwitchToLogin }: { onSwitchToLogin: () => void })
     registerPhone,
     registerPassword,
     registerConfirmPassword,
-    selectedRole,
-    setSelectedRole,
     handleSubmit,
     errors,
     isLoading,
@@ -419,51 +416,6 @@ function RegisterFormPanel({ onSwitchToLogin }: { onSwitchToLogin: () => void })
         </Text>
       </Box>
 
-      {/* Role Selection */}
-      <Box className="space-y-1.5">
-        <Text variant="small" className="text-xs font-semibold text-foreground">
-          Chọn vai trò tài khoản:
-        </Text>
-        <Box className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => setSelectedRole("CUSTOMER")}
-            className={cn(
-              "flex flex-col items-start p-2.5 rounded-xl border text-left transition-all",
-              selectedRole === "CUSTOMER"
-                ? "border-primary bg-primary/10 text-primary shadow-sm font-semibold"
-                : "border-border bg-card/60 hover:border-primary/50 text-muted-foreground"
-            )}
-          >
-            <Box className="flex items-center gap-1.5 mb-0.5">
-              <Sprout className="h-4 w-4" />
-              <span className="text-xs sm:text-sm font-medium">Khách hàng</span>
-            </Box>
-            <span className="text-[11px] leading-tight opacity-75">
-              Thuê đất & nhận rau sạch
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedRole("STAFF")}
-            className={cn(
-              "flex flex-col items-start p-2.5 rounded-xl border text-left transition-all",
-              selectedRole === "STAFF"
-                ? "border-primary bg-primary/10 text-primary shadow-sm font-semibold"
-                : "border-border bg-card/60 hover:border-primary/50 text-muted-foreground"
-            )}
-          >
-            <Box className="flex items-center gap-1.5 mb-0.5">
-              <Wrench className="h-4 w-4" />
-              <span className="text-xs sm:text-sm font-medium">Kỹ thuật viên</span>
-            </Box>
-            <span className="text-[11px] leading-tight opacity-75">
-              Chăm sóc & giám sát nông vụ
-            </span>
-          </button>
-        </Box>
-      </Box>
-
       {errors.general && (
         <Box className="rounded-lg border border-destructive/40 bg-destructive/10 px-3.5 py-2.5 text-xs sm:text-sm text-destructive">
           {errors.general}
@@ -475,6 +427,7 @@ function RegisterFormPanel({ onSwitchToLogin }: { onSwitchToLogin: () => void })
           Đăng ký tài khoản thành công! Đang tự động đăng nhập...
         </Box>
       )}
+
 
       <Input
         id="register-fullname"
