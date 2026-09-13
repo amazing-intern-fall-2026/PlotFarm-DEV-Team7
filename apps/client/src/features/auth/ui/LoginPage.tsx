@@ -441,59 +441,56 @@ function RegisterFormPanel({ onSwitchToLogin }: { onSwitchToLogin: () => void })
         {...registerFullName}
       />
 
-      <Box className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Input
-          id="register-email"
-          type="email"
-          label="Email"
-          placeholder="tenban@gmail.com"
-          autoComplete="email"
-          error={errors.email}
-          leftIcon={<Mail className="h-4 w-4" />}
-          disabled={isLoading || isSuccess}
-          {...registerEmail}
-        />
+      <Input
+        id="register-email"
+        type="email"
+        label="Email"
+        placeholder="tenban@gmail.com"
+        autoComplete="email"
+        error={errors.email}
+        leftIcon={<Mail className="h-4 w-4" />}
+        disabled={isLoading || isSuccess}
+        {...registerEmail}
+      />
 
-        <Input
-          id="register-phone"
-          type="tel"
-          label="Số điện thoại"
-          placeholder="0912 345 678"
-          autoComplete="tel"
-          error={errors.phone}
-          leftIcon={<Phone className="h-4 w-4" />}
-          disabled={isLoading || isSuccess}
-          {...registerPhone}
-        />
-      </Box>
+      <Input
+        id="register-phone"
+        type="tel"
+        label="Số điện thoại"
+        placeholder="0912 345 678"
+        autoComplete="tel"
+        error={errors.phone}
+        leftIcon={<Phone className="h-4 w-4" />}
+        disabled={isLoading || isSuccess}
+        {...registerPhone}
+      />
 
-      <Box className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Input
-          id="register-password"
-          type="password"
-          label="Mật khẩu"
-          placeholder="Tối thiểu 6 ký tự"
-          autoComplete="new-password"
-          error={errors.password}
-          leftIcon={<Lock className="h-4 w-4" />}
-          showPasswordToggle
-          disabled={isLoading || isSuccess}
-          {...registerPassword}
-        />
+      <Input
+        id="register-password"
+        type="password"
+        label="Mật khẩu"
+        placeholder="Tối thiểu 6 ký tự"
+        autoComplete="new-password"
+        error={errors.password}
+        leftIcon={<Lock className="h-4 w-4" />}
+        showPasswordToggle
+        disabled={isLoading || isSuccess}
+        {...registerPassword}
+      />
 
-        <Input
-          id="register-confirm-password"
-          type="password"
-          label="Xác nhận mật khẩu"
-          placeholder="Nhập lại mật khẩu"
-          autoComplete="new-password"
-          error={errors.confirmPassword}
-          leftIcon={<Lock className="h-4 w-4" />}
-          showPasswordToggle
-          disabled={isLoading || isSuccess}
-          {...registerConfirmPassword}
-        />
-      </Box>
+      <Input
+        id="register-confirm-password"
+        type="password"
+        label="Xác nhận mật khẩu"
+        placeholder="Nhập lại mật khẩu"
+        autoComplete="new-password"
+        error={errors.confirmPassword}
+        leftIcon={<Lock className="h-4 w-4" />}
+        showPasswordToggle
+        disabled={isLoading || isSuccess}
+        {...registerConfirmPassword}
+      />
+
 
       <Button
         type="submit"
