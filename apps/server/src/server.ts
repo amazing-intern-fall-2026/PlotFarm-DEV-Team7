@@ -8,7 +8,7 @@ import { errorHandler } from "./middlewares/errorHandler";
 import { authRoutes } from "./modules/auth/auth.routes";
 import { plotsRouter } from "./modules/plots/plots.routes";
 import { careRouter } from "./modules/care/care.routes";
-import { login } from "./modules/auth/auth.controller";
+import { gatewayController } from "./modules/gateway/gateway.controller";
 
 dotenv.config();
 
@@ -38,7 +38,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/v1", plotsRouter);
 app.use("/api/v1", authRoutes);
 app.use("/api/v1", careRouter);
-app.post("/api/gateway", login);
+app.post("/api/gateway", gatewayController);
 
 
 // Centralized Global Error Handler Middleware (MUST be placed after all routes)

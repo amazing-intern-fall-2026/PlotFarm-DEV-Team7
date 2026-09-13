@@ -2,7 +2,8 @@ import type { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { LoginRequestSchema } from "@repo/shared";
 import { TokenService } from "./token.service";
-import { getMockLoginResponse } from "./auth.service";
+import { loginWithCredentials } from "./auth.service";
+
 import { buildSuccessResponse } from "../../common/utils/envelope";
 
 const RefreshSchema = z.object({
@@ -14,10 +15,16 @@ export class AuthController {
    * Endpoint: POST /api/auth/refresh
    * Nhận refreshToken và trả về accessToken mới
    */
-  static async refresh(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async refresh(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const validatedBody = RefreshSchema.parse(req.body);
-      const result = await TokenService.refreshAccessToken(validatedBody.refreshToken);
+      const result = await TokenService.refreshAccessToken(
+        validatedBody.refreshToken,
+      );
 
       res.status(200).json({
         success: true,
@@ -34,7 +41,11 @@ export class AuthController {
    * Endpoint: GET /api/auth/profile
    * Route được bảo vệ bởi authGuard
    */
-  static async getProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async getProfile(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       res.status(200).json({
         success: true,
@@ -47,8 +58,11 @@ export class AuthController {
     }
   }
 }
-
-export function login(req: Request, res: Response): void {
+export async function login(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   const credentials = req.body?.payload ?? req.body;
   const parsed = LoginRequestSchema.safeParse(credentials);
   if (!parsed.success) {
@@ -60,6 +74,13 @@ export function login(req: Request, res: Response): void {
     return;
   }
 
-  const data = getMockLoginResponse(parsed.data.email);
-  res.json(buildSuccessResponse(data, "Đăng nhập thành công (mock)."));
+  try {
+    const data = await loginWithCredentials(
+      parsed.data.email,
+      parsed.data.password,
+    );
+    res.json(buildSuccessResponse(data, "Đăng nhập thành công."));
+  } catch (error) {
+    next(error);
+  }
 }
